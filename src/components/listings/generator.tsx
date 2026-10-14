@@ -112,12 +112,22 @@ export function ListingGenerator({
       {limit !== null && (
         <Card>
           <CardContent className="space-y-2 pt-5 sm:pt-6">
-            <div className="flex justify-between text-sm">
-              <span>{period === "day" ? "Annonces générées aujourd'hui" : "Annonces générées ce mois-ci"}</span>
-              <span className="font-medium">{Math.min(used, limit)}/{limit}</span>
-            </div>
-            <Progress value={(Math.min(used, limit) / limit) * 100} indicatorClassName={limitReached ? "bg-destructive" : undefined} />
-            {credits > 0 && <p className="text-sm text-muted-foreground">Crédits d'annonces restants : {credits}</p>}
+            {limitReached && credits > 0 ? (
+              // Quota du plan épuisé mais crédits disponibles : pas de barre d'alerte, la génération reste possible.
+              <div className="flex justify-between text-sm">
+                <span>Crédits d'annonces restants</span>
+                <span className="font-medium">{credits}</span>
+              </div>
+            ) : (
+              <>
+                <div className="flex justify-between text-sm">
+                  <span>{period === "day" ? "Annonces générées aujourd'hui" : "Annonces générées ce mois-ci"}</span>
+                  <span className="font-medium">{Math.min(used, limit)}/{limit}</span>
+                </div>
+                <Progress value={(Math.min(used, limit) / limit) * 100} indicatorClassName={limitReached ? "bg-destructive" : undefined} />
+                {credits > 0 && <p className="text-sm text-muted-foreground">Crédits d'annonces restants : {credits}</p>}
+              </>
+            )}
             {blocked && (
               <p className="text-sm">
                 Limite atteinte. <Link href="/pricing" className="font-medium text-primary underline">Voir les packs et abonnements</Link> pour générer d'autres annonces.
