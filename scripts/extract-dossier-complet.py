@@ -36,6 +36,47 @@ def detect_delimiter(header_line: str) -> str:
     return ";" if header_line.count(";") >= header_line.count(",") else ","
 
 
+def discover_long_format(f, header, delim, codes) -> None:
+    """Fichier au format long (une ligne par commune et par mesure) : affiche sa structure pour adapter l'extraction."""
+    import collections
+    import re as _re
+
+    idx = {h: i for i, h in enumerate(header)}
+    geo_i = idx["GEO"]
+    code_rx = _re.compile(r"(?:^|[^0-9A-Za-z])(" + "|".join(sorted(codes)) + r")(?:$|[^0-9A-Za-z])")
+    sample_code = "21231"  # Dijon : une seule commune suffit pour décrire la structure
+    print("Format long détecté (colonne GEO, pas de CODGEO).")
+    print("Colonnes :", header)
+    combos = collections.Counter()
+    geo_seen = collections.Counter()
+    samples = []
+    n_total = 0
+    for line in f:
+        n_total += 1
+        parsed = line.rstrip("\r\n").split(delim)
+        if geo_i >= len(parsed):
+            continue
+        geo = parsed[geo_i].strip().strip('"')
+        m = code_rx.search(geo)
+        if not m:
+            continue
+        geo_seen[geo] += 1
+        if m.group(1) != sample_code:
+            continue
+        key = tuple(parsed[idx[c]].strip('"') for c in ("DS", "ID_TAB") if c in idx)
+        combos[key] += 1
+        if len(samples) < 6:
+            samples.append(line.rstrip())
+    print(f"Lignes lues : {n_total}")
+    print("Valeurs GEO correspondant aux 20 communes (échantillon) :", list(geo_seen.items())[:25])
+    print("Lignes d'exemple pour Dijon :")
+    for line in samples:
+        print("  ", line[:300])
+    print(f"Jeux (DS, ID_TAB) pour Dijon : {len(combos)}")
+    for key, n in sorted(combos.items(), key=lambda kv: kv[0])[:80]:
+        print("  ", key, n)
+
+
 def main() -> None:
     if len(sys.argv) != 2:
         raise SystemExit(__doc__)
@@ -50,6 +91,9 @@ def main() -> None:
         header = [h.strip().strip('"') for h in header]
         idx = {h: i for i, h in enumerate(header)}
         if "CODGEO" not in idx:
+            if "GEO" in idx:
+                discover_long_format(f, header, delim, codes)
+                return
             raise SystemExit(f"Colonne CODGEO introuvable. Premières colonnes : {header[:10]}")
         keep = [h for h in header if h in KEEP_ID or any(rx.match(h) for rx in FAMILIES.values())]
         for family, rx in FAMILIES.items():
