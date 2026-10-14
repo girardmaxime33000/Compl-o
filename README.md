@@ -74,7 +74,7 @@ Création de devis et de factures sans TVA avec la mention « TVA non applicable
 
 ### 5. Abonnement Premium (`/pricing`)
 
-Paiement par Stripe Checkout, gestion de l'abonnement (moyen de paiement, résiliation) via le portail client Stripe, et mise à jour automatique du statut par webhook.
+Paiement par Stripe Checkout (acceptation des CGU/CGV et renonciation à la rétractation validées côté serveur avant création de la session), gestion de l'abonnement (moyen de paiement, résiliation) via le portail client Stripe, et mise à jour automatique du statut par webhook.
 
 ## Offres
 
@@ -110,6 +110,7 @@ src/
 │   ├── onboarding/               Diagnostic en 3 étapes
 │   ├── pricing/                  Offres et paiement
 │   ├── mentions-legales/         Mentions légales
+│   ├── cgu/ cgv/ confidentialite/ CGU, CGV, politique de confidentialité (brouillons à faire relire)
 │   ├── dashboard/                Espace connecté
 │   │   ├── listings/             Générateur d'annonces
 │   │   ├── simulator/            Net dans la poche
