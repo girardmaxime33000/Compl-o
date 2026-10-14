@@ -109,6 +109,7 @@ src/
 │   ├── auth/callback/            Échange du code d'authentification
 │   ├── onboarding/               Diagnostic en 3 étapes
 │   ├── pricing/                  Offres et paiement
+│   ├── simulateur-micro-entrepreneur/ Simulateur public (sans compte)
 │   ├── mentions-legales/         Mentions légales
 │   ├── cgu/ cgv/ confidentialite/ CGU, CGV, politique de confidentialité (brouillons à faire relire)
 │   ├── dashboard/                Espace connecté

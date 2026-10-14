@@ -17,6 +17,7 @@ export default function HomePage() {
       <header className="container flex h-14 items-center justify-between">
         <span className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</span>
         <nav className="flex items-center gap-1">
+          <Button asChild variant="ghost" size="sm"><Link href="/simulateur-micro-entrepreneur">Simulateur</Link></Button>
           <Button asChild variant="ghost" size="sm"><Link href="/pricing">Tarifs</Link></Button>
           <Button asChild size="sm"><Link href="/login">Connexion</Link></Button>
         </nav>

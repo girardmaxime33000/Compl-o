@@ -26,11 +26,12 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - vérifications faites / non faites:
 
 ### T04 Simulateur public
-- statut: todo
+- statut: done
 - dépend de: -
-- branche:
+- branche: claude/new-session-og6dhq
 - critères d'acceptation: accessible déconnecté, métadonnées propres, bandeau d'estimation indicative.
-- vérifications faites / non faites:
+- vérifications faites / non faites: typecheck, lint, build OK (2026-10-14). `next start` : `/simulateur-micro-entrepreneur` répond 200 sans session, titre, canonical et bandeau présents ; `/dashboard/simulator` redirige (307) déconnecté. Non fait : test navigateur interactif, régression manuelle des autres flux, Lighthouse (T09).
+- notes: page publique réutilisant `Simulator` (calcul inchangé, `tax.ts`). Sauvegarde et export PDF de simulation n'existent pas dans l'app : seule la porte d'inscription (CTA compte gratuit) est posée ; fonctionnalités à créer avec T07. Route `/dashboard/simulator` conservée. Valeurs de `tax.ts` non revérifiées : mention ajoutée en commentaire, date de vérification à fournir par le propriétaire. Lien ajouté au footer et à l'accueil.
 
 ### T05 Modèle de facture et devis public
 - statut: todo

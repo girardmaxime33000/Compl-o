@@ -10,6 +10,7 @@ export function SiteFooter() {
           <Link href="/cgu" className="hover:text-foreground hover:underline">CGU</Link>
           <Link href="/cgv" className="hover:text-foreground hover:underline">CGV</Link>
           <Link href="/confidentialite" className="hover:text-foreground hover:underline">Confidentialité</Link>
+          <Link href="/simulateur-micro-entrepreneur" className="hover:text-foreground hover:underline">Simulateur</Link>
           <Link href="/pricing" className="hover:text-foreground hover:underline">Tarifs</Link>
         </nav>
       </div>

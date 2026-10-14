@@ -1,6 +1,8 @@
 /**
  * Paramètres micro-entreprise utilisés par le simulateur.
  * Valeurs de référence du cahier des charges : à vérifier chaque année sur autoentrepreneur.urssaf.fr.
+ * Sources : autoentrepreneur.urssaf.fr, service-public.fr. Date de vérification : AUCUNE (valeurs non revérifiées
+ * à ce jour, à faire par le propriétaire avant mise en production).
  */
 export const TAX_PARAMS = {
   /** Taux de cotisations URSSAF sur le chiffre d'affaires. */
