@@ -1,20 +1,249 @@
 # Compléo
 
-SaaS B2C : diagnostic d'activité, annonces générées par IA, simulateur « Net dans la poche », devis/factures PDF, abonnement Premium (Stripe).
+**Votre complément de revenu, simplifié.**
 
-## Démarrage
+Compléo est une application web (SaaS B2C) qui aide les particuliers en France à générer un complément de revenu de 200 € à 1 000 € par mois grâce à une micro-activité : choisir une activité adaptée à son profil, rédiger ses annonces avec une IA, estimer ce qu'il reste après cotisations et émettre ses devis et factures.
 
-```bash
-cp .env.example .env.local   # renseigner les variables
-npm install
-npm run dev
+> Statut : MVP fonctionnel en développement local (connexion, diagnostic, annonces IA, simulateur, facturation PDF, paiement Stripe en mode test). Non déployé en production.
+
+---
+
+## Sommaire
+
+1. [Le problème et l'objectif](#le-problème-et-lobjectif)
+2. [Public visé](#public-visé)
+3. [Fonctionnalités](#fonctionnalités)
+4. [Offres](#offres)
+5. [Stack technique](#stack-technique)
+6. [Architecture](#architecture)
+7. [Modèle de données](#modèle-de-données)
+8. [Installation](#installation)
+9. [Variables d'environnement](#variables-denvironnement)
+10. [Configuration des services](#configuration-des-services)
+11. [Scripts](#scripts)
+12. [Sécurité](#sécurité)
+13. [Limites connues et avertissements](#limites-connues-et-avertissements)
+14. [Feuille de route](#feuille-de-route)
+
+---
+
+## Le problème et l'objectif
+
+Beaucoup de particuliers veulent arrondir leurs fins de mois mais se heurtent à trois obstacles :
+
+- **Quoi faire ?** Ils ne savent pas quelle activité correspond à leurs compétences, à leur matériel et au temps dont ils disposent.
+- **Comment se faire connaître ?** Rédiger une annonce efficace sur LeBonCoin, AlloVoisins ou GensDeConfiance n'est pas évident.
+- **Quel impact financier ?** Cotisations URSSAF, plafonds de TVA et de chiffre d'affaires, cumul avec le chômage : les règles sont opaques, et la facturation conforme intimide.
+
+**Objectif de Compléo** : accompagner l'utilisateur de l'idée à la première facture, en quatre étapes guidées, avec des outils simples, en français, pensés d'abord pour le mobile.
+
+## Public visé
+
+- Salariés, étudiants, retraités ou demandeurs d'emploi qui souhaitent démarrer une micro-activité de services de proximité.
+- Personnes qui débutent en micro-entreprise (régime micro-entrepreneur) et veulent comprendre leurs charges avant de se lancer.
+
+## Fonctionnalités
+
+### 1. Diagnostic et recommandation d'activités (`/onboarding`)
+
+Formulaire en trois étapes : domaines qui plaisent, matériel disponible, temps disponible par semaine. Un algorithme de correspondance (`src/lib/activities.ts`) classe un catalogue d'activités (bricolage, soutien scolaire, cours de langue, livraison, garde d'animaux, ménage, jardinage, aide informatique, dépôt-vente) et renvoie **3 recommandations** avec :
+
+- le service recommandé et son pitch ;
+- le tarif moyen pratiqué en France (par exemple 20 € à 35 €/h) ;
+- les plateformes où trouver des clients ;
+- une estimation de revenu mensuel selon le temps disponible (60 % du temps considéré comme facturable) ;
+- le matériel manquant le cas échéant.
+
+### 2. Générateur d'annonces par IA (`/dashboard/listings`)
+
+À partir du service, de la ville et de la plateforme cible (LeBonCoin, AlloVoisins, GensDeConfiance), l'IA produit un titre optimisé, un texte structuré (avantages, compétences, tarifs, appel à l'action) et 3 hashtags. Chaque annonce est enregistrée en base et copiable en un clic.
+
+L'offre gratuite est limitée à **2 annonces par mois** ; la limite est appliquée côté serveur.
+
+### 3. Simulateur « Net dans la poche » (`/dashboard/simulator`)
+
+Calcul en temps réel pour une prestation de services en micro-entreprise :
+
+- cotisations URSSAF (BNC 21,1 %, BIC 21,2 %) et net avant impôts, mensuel et annuel ;
+- alertes visuelles sur le **seuil de franchise de TVA** (36 800 €) et le **plafond micro-entrepreneur** (77 700 € en prestations, 188 700 € en vente) ;
+- option de cumul avec le **chômage (ARE / France Travail)** : estimation de la réduction de l'allocation et du total mensuel.
+
+### 4. Facturation simplifiée (`/dashboard/invoices`)
+
+Création de devis et de factures sans TVA avec la mention « TVA non applicable, art. 293 B du CGI », numérotation automatique, suivi du statut (brouillon, envoyé, payé) et **téléchargement en PDF**.
+
+### 5. Abonnement Premium (`/pricing`)
+
+Paiement par Stripe Checkout, gestion de l'abonnement (moyen de paiement, résiliation) via le portail client Stripe, et mise à jour automatique du statut par webhook.
+
+## Offres
+
+| | Gratuit | Premium |
+|---|---|---|
+| Prix | 0 € | 6,99 € / mois |
+| Diagnostic et recommandations | Oui | Oui |
+| Annonces IA | 2 par mois | Illimitées |
+| Simulateur | Oui | Oui |
+| Devis et factures PDF | Oui | Oui |
+
+## Stack technique
+
+| Domaine | Technologie |
+|---|---|
+| Framework | Next.js 14 (App Router, Server Components, Server Actions), React 18 |
+| Langage | TypeScript (mode strict) |
+| Interface | Tailwind CSS, composants de style shadcn/ui (Radix UI), `lucide-react` |
+| Base de données et authentification | Supabase (PostgreSQL, Row Level Security, lien magique et Google) |
+| Paiements | Stripe (Checkout, Billing, portail client, webhooks) |
+| IA | Vercel AI SDK, par défaut un modèle open source via une API compatible OpenAI (Ollama en local, Groq en production). OpenAI et Anthropic sont également supportés. |
+| PDF | `@react-pdf/renderer` |
+| Validation | Zod |
+
+## Architecture
+
+```
+src/
+├── app/
+│   ├── page.tsx                  Page d'accueil
+│   ├── login/                    Connexion (lien magique, Google)
+│   ├── auth/callback/            Échange du code d'authentification
+│   ├── onboarding/               Diagnostic en 3 étapes
+│   ├── pricing/                  Offres et paiement
+│   ├── mentions-legales/         Mentions légales
+│   ├── dashboard/                Espace connecté
+│   │   ├── listings/             Générateur d'annonces
+│   │   ├── simulator/            Net dans la poche
+│   │   └── invoices/             Devis et factures
+│   ├── actions/                  Server Actions (onboarding, factures, déconnexion)
+│   └── api/
+│       ├── generate-listing/     Génération d'annonce par IA (quota Freemium)
+│       ├── invoices/[id]/pdf/    Génération du PDF
+│       ├── stripe/checkout|portal/
+│       └── webhooks/stripe/      Synchronisation de l'abonnement
+├── components/                   Composants UI et composants par fonctionnalité
+├── lib/
+│   ├── activities.ts             Catalogue et algorithme de correspondance
+│   ├── tax.ts                    Taux, plafonds et calculs fiscaux
+│   ├── ai.ts                     Sélection du fournisseur d'IA
+│   ├── platforms.ts              Plateformes et quota gratuit
+│   ├── legal.ts                  Informations légales de l'éditeur
+│   ├── stripe/ supabase/         Clients serveur, navigateur, admin, middleware
+│   └── auth.ts                   Accès utilisateur et redirections sûres
+├── middleware.ts                 Rafraîchissement de session et routes protégées
+└── types/database.ts             Types des tables
+supabase/migrations/              Schéma SQL
 ```
 
-1. Supabase : exécuter `supabase/migrations/0001_init.sql` puis `0002_invoice_details.sql` (éditeur SQL ou `supabase db push`). Activer Magic Link et Google dans Authentication, avec `<SITE_URL>/auth/callback` en URL de redirection.
-2. Stripe : créer un produit récurrent à 6,99 €/mois, renseigner `STRIPE_PREMIUM_PRICE_ID`. Webhook vers `/api/webhooks/stripe` (événements `checkout.session.completed`, `customer.subscription.created|updated|deleted`). En local : `stripe listen --forward-to localhost:3000/api/webhooks/stripe`.
-3. IA : modèle open source via une API compatible OpenAI (`AI_PROVIDER=openai-compatible`, `AI_BASE_URL`, `AI_MODEL`, `AI_API_KEY`). Ollama en local, Groq ou OpenRouter en production. `openai` et `anthropic` restent disponibles.
+Principes :
 
-## Points d'attention
+- Les routes `/dashboard` et `/onboarding` sont protégées par le middleware.
+- Les quotas et les droits (Premium) sont vérifiés **côté serveur**, jamais uniquement dans l'interface.
+- La logique métier (fiscalité, recommandations) est isolée dans `src/lib`, en fonctions pures faciles à tester.
 
-- Les taux et plafonds fiscaux sont centralisés dans `src/lib/tax.ts` : à vérifier chaque année.
-- `subscription_status` et `stripe_customer_id` ne sont modifiables que via le service role (RLS + grants).
+## Modèle de données
+
+Quatre tables, toutes protégées par Row Level Security (chaque utilisateur n'accède qu'à ses propres lignes) :
+
+- `profiles` : identité, `stripe_customer_id`, `subscription_status` (`free`, `active`, `canceled`), SIRET et adresse de l'émetteur. Créé automatiquement à l'inscription par un trigger.
+- `user_skills` : catégorie d'activité, matériel disponible, heures hebdomadaires.
+- `listings` : annonces générées (titre, plateforme, texte, tarif suggéré).
+- `invoices` : devis et factures (client, montant, statut, date, description, type).
+
+Scripts : `supabase/migrations/0001_init.sql` puis `0002_invoice_details.sql`.
+
+## Installation
+
+Prérequis : Node.js 20 ou plus, un projet Supabase, un compte Stripe (mode test), un fournisseur d'IA.
+
+```bash
+git clone https://github.com/girardmaxime33000/Compl-o.git
+cd Compl-o
+npm install
+cp .env.example .env.local   # puis renseigner les variables
+npm run dev                  # http://localhost:3000
+```
+
+Après chaque `git pull` qui modifie `package.json`, relancer `npm install`.
+
+## Variables d'environnement
+
+Elles se renseignent uniquement dans `.env.local` (ignoré par git) et dans les variables d'environnement de l'hébergeur. Ne jamais les commiter ni les partager.
+
+| Variable | Rôle |
+|---|---|
+| `NEXT_PUBLIC_SITE_URL` | URL publique du site (retours Stripe, redirections) |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL du projet Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé publique (publishable) Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clé secrète Supabase : serveur uniquement, contourne la RLS |
+| `STRIPE_SECRET_KEY` | Clé secrète Stripe |
+| `STRIPE_PREMIUM_PRICE_ID` | Identifiant du prix Premium (`price_...`) |
+| `STRIPE_WEBHOOK_SECRET` | Secret de signature du webhook (`whsec_...`) |
+| `AI_PROVIDER` | `openai-compatible` (défaut), `openai` ou `anthropic` |
+| `AI_BASE_URL`, `AI_MODEL`, `AI_API_KEY` | Fournisseur compatible OpenAI (Ollama, Groq, OpenRouter) |
+| `OPENAI_API_KEY`, `ANTHROPIC_API_KEY` | Si l'un de ces deux fournisseurs est choisi |
+
+## Configuration des services
+
+### Supabase
+
+1. Dans le `SQL Editor`, exécuter `0001_init.sql` puis `0002_invoice_details.sql`.
+2. `Authentication` > `URL Configuration` : `Site URL` et `Redirect URLs` avec `<SITE_URL>/auth/callback`.
+3. `Authentication` > `Providers` : activer l'e-mail (lien magique) et Google si souhaité.
+4. `Project Settings` > `API Keys` : copier la clé publishable et la clé secrète.
+
+### Stripe (mode test)
+
+1. Créer un produit « Compléo Premium » avec un prix récurrent de 6,99 € par mois ; reporter le `price_...` dans `STRIPE_PREMIUM_PRICE_ID`.
+2. Activer et enregistrer le portail client : `Settings` > `Billing` > `Customer portal`.
+3. En local, rediriger les webhooks avec la CLI Stripe :
+   ```bash
+   stripe login
+   stripe listen --forward-to localhost:3000/api/webhooks/stripe
+   ```
+   et reporter le secret `whsec_...` affiché.
+4. Événements traités : `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`.
+5. Carte de test : `4242 4242 4242 4242`, date future, CVC quelconque.
+
+### IA
+
+- **Ollama (local, gratuit)** : `ollama pull llama3.1:8b`, `AI_BASE_URL=http://localhost:11434/v1`, `AI_MODEL=llama3.1:8b`.
+- **Groq (hébergé, palier gratuit)** : `AI_BASE_URL=https://api.groq.com/openai/v1`, `AI_MODEL=openai/gpt-oss-120b`, `AI_API_KEY` créé sur la console Groq.
+
+Ollama ne fonctionne pas sur un hébergement type Vercel : en production, utiliser un fournisseur hébergé.
+
+## Scripts
+
+| Commande | Action |
+|---|---|
+| `npm run dev` | Serveur de développement |
+| `npm run build` | Build de production |
+| `npm run start` | Serveur de production |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | Vérification TypeScript |
+
+## Sécurité
+
+- Row Level Security sur toutes les tables.
+- Les colonnes `subscription_status` et `stripe_customer_id` ne sont modifiables que via le service role (webhook Stripe) : un utilisateur ne peut pas s'attribuer le statut Premium.
+- Signature des webhooks Stripe vérifiée.
+- Quotas et droits contrôlés côté serveur.
+- Redirections après connexion limitées aux chemins internes.
+- La clé `SUPABASE_SERVICE_ROLE_KEY` reste côté serveur uniquement.
+
+## Limites connues et avertissements
+
+- Les estimations de revenus, le simulateur et le calcul de cumul avec le chômage sont **indicatifs** et ne constituent pas un conseil fiscal, juridique ou comptable. Les taux et plafonds sont centralisés dans `src/lib/tax.ts` et doivent être vérifiés chaque année (autoentrepreneur.urssaf.fr, service-public.fr).
+- Les annonces générées par IA doivent être relues avant publication.
+- Les modèles open source de petite taille respectent moins bien le format de sortie attendu ; en cas d'échec de génération, choisir un modèle plus grand.
+- Les mentions légales sont un modèle : les champs de `src/lib/legal.ts` (statut, adresse, SIRET, TVA, e-mail, médiateur) sont à compléter et le texte à faire relire avant la mise en ligne.
+- Pas encore de CGU/CGV, de politique de confidentialité dédiée ni de tests automatisés.
+
+## Feuille de route
+
+- [ ] Compléter `src/lib/legal.ts` et faire relire les mentions légales
+- [ ] CGU/CGV (droit de rétractation de 14 jours) et politique de confidentialité
+- [ ] Tests automatisés de `tax.ts` et `activities.ts`
+- [ ] Déploiement (Vercel), webhook Stripe de production, passage en mode live
+- [ ] Choix d'un fournisseur d'IA pour la production
+- [ ] Suppression de compte et export des données (RGPD)
+- [ ] Envoi des factures par e-mail
