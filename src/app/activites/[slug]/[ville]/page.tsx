@@ -4,7 +4,7 @@ import { Info, Rocket } from "lucide-react";
 import { activitySlug, findActivityBySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
 import {
   activitiesForCity, BMO_PREVIOUS_YEAR, BMO_YEAR, bmoEvolution, bmoFor, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA,
-  cityActivityPath, findCity, hasLocalData, neighbourCities,
+  cityActivityPath, findCity, hasLocalData, inseeRows, neighbourCities,
 } from "@/lib/cities";
 import { LEGAL } from "@/lib/legal";
 import { PLATFORMS } from "@/lib/platforms";
@@ -20,6 +20,8 @@ export function generateStaticParams() {
 }
 
 const nf = new Intl.NumberFormat("fr-FR");
+const formatIndicator = (value: number, unit: "%" | "€") =>
+  unit === "€" ? `${nf.format(Math.round(value))} €` : `${new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1, minimumFractionDigits: 1 }).format(value)} %`;
 
 function resolve(params: { slug: string; ville: string }) {
   const activity = findActivityBySlug(params.slug);
@@ -51,6 +53,7 @@ export default function CityActivityPage({ params }: { params: { slug: string; v
   const atLeast = (complete: boolean) => (complete ? "" : "au moins ");
   const difficultShare = now.complete.met && now.complete.xmet && now.met > 0 ? Math.round((now.xmet / now.met) * 100) : null;
   const ideal = monthlyIncomeRange(activity, activity.idealHours);
+  const profile = inseeRows(city, activity);
   const neighbours = neighbourCities(city, activity);
   const otherActivities = activitiesForCity(city).filter((a) => a.id !== activity.id).slice(0, 6);
   const activityPath = `/activites/${activitySlug(activity)}`;
@@ -107,6 +110,33 @@ export default function CityActivityPage({ params }: { params: { slug: string; v
             Métiers retenus : {group?.metiers.map((m) => m.name).join(" ; ")}.
           </p>
         </section>
+
+        {profile.length > 0 && (
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold">Population et logements à {city.name}</h2>
+            <div className="overflow-x-auto rounded-lg border">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/50 text-left">
+                  <tr><th className="p-3">Indicateur</th><th className="p-3">{city.name}</th><th className="p-3">Moyenne des 20 villes</th></tr>
+                </thead>
+                <tbody>
+                  {profile.map((row) => (
+                    <tr key={row.key} className="border-t">
+                      <td className="p-3">{row.label}</td>
+                      <td className="p-3 font-medium">{formatIndicator(row.value, row.unit)}</td>
+                      <td className="p-3 text-muted-foreground">{formatIndicator(row.average, row.unit)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Source : {CITY_DATA.sources.insee.label}. {CITY_DATA.sources.insee.note} Millésime {city.insee.censusYear}
+              {city.insee.incomeYear !== city.insee.censusYear ? ` (revenus ${city.insee.incomeYear})` : ""}. Moyenne simple
+              des 20 villes de cette page, non pondérée par la population. Données téléchargées le {CITY_DATA.downloadedOn}.
+            </p>
+          </section>
+        )}
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold">Tarif et revenu estimé</h2>

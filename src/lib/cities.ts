@@ -10,6 +10,21 @@ export interface BmoFigures {
   metiersFound: number;
 }
 
+export interface InseeProfile {
+  censusYear: number;
+  incomeYear: number;
+  under15: number;
+  age15to24: number;
+  age65plus: number;
+  age80plus: number;
+  houses: number;
+  noCar: number;
+  builtBefore1971: number;
+  movedLessThan2y: number;
+  medianIncome: number;
+  povertyRate: number;
+}
+
 export interface City {
   slug: string;
   name: string;
@@ -18,12 +33,14 @@ export interface City {
   rank: number;
   population: { total: number; municipal: number };
   bassin: string;
+  insee: InseeProfile;
   bmo: Record<string, Record<string, BmoFigures>>;
 }
 
 export interface CityDataset {
   sources: {
     population: { label: string; url: string; note: string };
+    insee: { label: string; url: string; note: string };
     bmo: { label: string; url: string; note: string };
   };
   downloadedOn: string;
@@ -75,4 +92,45 @@ export function neighbourCities(city: City, activity: Activity, count = 4): City
       return ra - rb || Math.abs(a.rank - city.rank) - Math.abs(b.rank - city.rank);
     })
     .slice(0, count);
+}
+
+type IndicatorKey = Exclude<keyof InseeProfile, "censusYear" | "incomeYear">;
+
+export const INDICATORS: Record<IndicatorKey, { label: string; unit: "%" | "€" }> = {
+  under15: { label: "Part des moins de 15 ans", unit: "%" },
+  age15to24: { label: "Part des 15-24 ans", unit: "%" },
+  age65plus: { label: "Part des 65 ans et plus", unit: "%" },
+  age80plus: { label: "Part des 80 ans et plus", unit: "%" },
+  houses: { label: "Part de maisons parmi les logements", unit: "%" },
+  noCar: { label: "Part des ménages sans voiture", unit: "%" },
+  builtBefore1971: { label: "Résidences principales construites avant 1971", unit: "%" },
+  movedLessThan2y: { label: "Ménages installés depuis moins de 2 ans", unit: "%" },
+  medianIncome: { label: "Niveau de vie médian (par unité de consommation, par an)", unit: "€" },
+  povertyRate: { label: "Taux de pauvreté (seuil à 60 % du niveau de vie médian)", unit: "%" },
+};
+
+/** Indicateurs INSEE mis en avant selon l'activité : repères factuels, sans lien de causalité affirmé. */
+export const INDICATORS_BY_ACTIVITY: Record<string, IndicatorKey[]> = {
+  bricolage: ["builtBefore1971", "houses", "movedLessThan2y"],
+  montage_meubles: ["movedLessThan2y", "age15to24"],
+  soutien_scolaire: ["under15", "age15to24"],
+  cours_langue: ["age15to24", "medianIncome"],
+  coursier: ["noCar", "age65plus"],
+  garde_animaux: ["houses", "movedLessThan2y"],
+  menage: ["age65plus", "medianIncome"],
+  jardinage: ["houses", "age65plus"],
+  aide_informatique: ["age65plus", "age80plus"],
+  depot_vente: ["movedLessThan2y", "medianIncome"],
+};
+
+const mean = (key: IndicatorKey) => CITIES.reduce((sum, c) => sum + c.insee[key], 0) / CITIES.length;
+
+/** Valeur de la ville et moyenne simple des 20 villes pour les indicateurs retenus pour l'activité. */
+export function inseeRows(city: City, activity: Activity) {
+  return (INDICATORS_BY_ACTIVITY[activity.id] ?? []).map((key) => ({
+    key,
+    ...INDICATORS[key],
+    value: city.insee[key],
+    average: mean(key),
+  }));
 }

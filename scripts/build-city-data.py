@@ -5,6 +5,8 @@ Construit src/data/cities.json à partir des fichiers bruts de data/raw/.
 Sources (téléchargées par le propriétaire le 2026-10-14) :
 - INSEE, populations légales des communes (fichier donnees_communes.csv, archive datée du 2022-12-14,
   populations en vigueur au 1er janvier 2023) : data/raw/insee_populations_legales_communes.csv
+- INSEE, « Dossier complet » (recensement 2023, Filosofi), extrait des 20 communes par
+  scripts/extract-dossier-complet.py : data/raw/insee_dossier_complet_20_communes.csv
 - France Travail, enquête Besoins en main-d'œuvre (BMO), données ouvertes 2024 et 2025 :
   data/raw/Base_open_data_BMO_2024.xlsx, data/raw/Base_open_data_BMO_2025.xlsx
   Le millésime 2026 (Base-open-data-BMO-2026.xlsx) n'est pas utilisé : il est publié par comité local pour
@@ -100,6 +102,57 @@ def load_population() -> dict:
     return agg
 
 
+def load_insee(codes) -> dict:
+    """Indicateurs INSEE par commune (GEO_OBJECT = COM), au dernier millésime disponible de chaque tableau."""
+    values: dict = {}  # (code, tableau) -> (période, {mesure: valeur})
+    with open(RAW / "insee_dossier_complet_20_communes.csv", encoding="utf-8", newline="") as f:
+        for r in csv.DictReader(f, delimiter=";"):
+            if r["GEO_OBJECT"] != "COM" or r["GEO"] not in codes or r["OBS_VALUE"] in ("", None):
+                continue
+            key = (r["GEO"], r["ID_TAB"])
+            period = r["TIME_PERIOD"]
+            if key not in values or period > values[key][0]:
+                values[key] = (period, {})
+            if values[key][0] == period:
+                values[key][1][r["TAB_MEASURE"]] = float(r["OBS_VALUE"])
+
+    def get(code, tab, measure):
+        period, m = values[(code, tab)]
+        if measure not in m:
+            raise SystemExit(f"Mesure {measure} absente de {tab} pour {code}")
+        return m[measure]
+
+    def pct(a, b):
+        return round(100 * a / b, 1)
+
+    out = {}
+    for code in codes:
+        pop = get(code, "POP_T1", "POP")
+        age = lambda m: get(code, "POP_T1", m)  # noqa: E731
+        houses = get(code, "LOG_T3", "DWELLINGS_TDW_1")
+        dwellings = sum(get(code, "LOG_T3", m) for m in ("DWELLINGS_TDW_1", "DWELLINGS_TDW_2", "DWELLINGS_TDW_3T6"))
+        main = get(code, "LOG_T5", "DWELLINGS_OCS_DW_MAIN")
+        built_total = get(code, "LOG_T8", "DWELLINGS_OCS_DW_MAIN_BUILD_END_Y_LT2021")
+        old = sum(
+            get(code, "LOG_T8", f"DWELLINGS_OCS_DW_MAIN_BUILD_END_Y{p}") for p in ("_LT1919", "1919T1945", "1946T1970")
+        )
+        out[code] = {
+            "censusYear": int(values[(code, "POP_T1")][0]),
+            "incomeYear": int(values[(code, "REV_T1")][0]),
+            "under15": pct(age("POP_AGE_Y_LT15"), pop),
+            "age15to24": pct(age("POP_AGE_Y15T24"), pop),
+            "age65plus": pct(age("POP_AGE_Y65T79") + age("POP_AGE_Y_GE80"), pop),
+            "age80plus": pct(age("POP_AGE_Y_GE80"), pop),
+            "houses": pct(houses, dwellings),
+            "noCar": round(100 - pct(get(code, "LOG_T12", "DWELLINGS_OCS_DW_MAIN_CARS_C_GE1"), main), 1),
+            "builtBefore1971": pct(old, built_total),
+            "movedLessThan2y": pct(get(code, "LOG_T9", "DWELLINGS_OCS_DW_MAIN_L_STAY_Y_LT2"), get(code, "LOG_T9", "DWELLINGS_OCS_DW_MAIN")),
+            "medianIncome": round(get(code, "REV_T1", "MED_SL")),
+            "povertyRate": round(get(code, "REV_T1", "PR_MD60"), 1),
+        }
+    return out
+
+
 def num(v):
     """Entier, ou None si la valeur est masquée (« * », secret statistique)."""
     try:
@@ -140,6 +193,7 @@ def main():
     if missing:
         raise SystemExit(f"Rattachement bassin manquant pour : {missing}")
 
+    insee = load_insee({c for c, _ in ranking})
     bmo = {y: load_bmo(y, f) for y, f in YEARS.items()}
     metier_names: dict = {}
     for rows in bmo.values():
@@ -157,6 +211,7 @@ def main():
             "rank": rank,
             "population": {"total": p["ptot"], "municipal": p["pmun"]},
             "bassin": bassin,
+            "insee": insee[code],
             "bmo": {},
         }
         for year, rows in bmo.items():
@@ -190,6 +245,12 @@ def main():
                 "url": "https://www.insee.fr/fr/statistiques/6683035",
                 "file": "data/raw/insee_populations_legales_communes.csv",
                 "note": "Paris, Lyon et Marseille : somme des arrondissements.",
+            },
+            "insee": {
+                "label": "INSEE, Dossier complet : recensement de la population (millésime 2023) et Filosofi (revenus et pauvreté)",
+                "url": "https://www.insee.fr/fr/statistiques/5359146",
+                "file": "data/raw/insee_dossier_complet_20_communes.csv",
+                "note": "Parts calculées sur les résidences principales (voiture, ancienneté d'emménagement, période de construction) ou sur l'ensemble des logements (maisons).",
             },
             "bmo": {
                 "label": "France Travail, enquête Besoins en main-d'œuvre (BMO), données ouvertes 2024 et 2025",

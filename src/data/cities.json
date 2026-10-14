@@ -7,6 +7,12 @@
       "file": "data/raw/insee_populations_legales_communes.csv",
       "note": "Paris, Lyon et Marseille : somme des arrondissements."
     },
+    "insee": {
+      "label": "INSEE, Dossier complet : recensement de la population (millésime 2023) et Filosofi (revenus et pauvreté)",
+      "url": "https://www.insee.fr/fr/statistiques/5359146",
+      "file": "data/raw/insee_dossier_complet_20_communes.csv",
+      "note": "Parts calculées sur les résidences principales (voiture, ancienneté d'emménagement, période de construction) ou sur l'ensemble des logements (maisons)."
+    },
     "bmo": {
       "label": "France Travail, enquête Besoins en main-d'œuvre (BMO), données ouvertes 2024 et 2025",
       "url": "https://statistiques.francetravail.org/bmo",
@@ -194,6 +200,20 @@
         "municipal": 2145906
       },
       "bassin": "T1 Paris",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 12.8,
+        "age15to24": 14.1,
+        "age65plus": 17.7,
+        "age80plus": 5.2,
+        "houses": 0.8,
+        "noCar": 68.8,
+        "builtBefore1971": 68.7,
+        "movedLessThan2y": 15.2,
+        "medianIncome": 33650,
+        "povertyRate": 16.8
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -432,6 +452,20 @@
         "municipal": 870321
       },
       "bassin": "MARSEILLE",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 17.4,
+        "age15to24": 12.9,
+        "age65plus": 19.5,
+        "age80plus": 6.0,
+        "houses": 14.9,
+        "noCar": 33.1,
+        "builtBefore1971": 56.7,
+        "movedLessThan2y": 12.3,
+        "medianIncome": 22860,
+        "povertyRate": 28.1
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -670,6 +704,20 @@
         "municipal": 522228
       },
       "bassin": "LYON CENTRE",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 14.5,
+        "age15to24": 19.3,
+        "age65plus": 14.9,
+        "age80plus": 5.1,
+        "houses": 2.4,
+        "noCar": 41.7,
+        "builtBefore1971": 45.5,
+        "movedLessThan2y": 19.3,
+        "medianIncome": 28290,
+        "povertyRate": 18.0
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -908,6 +956,20 @@
         "municipal": 498003
       },
       "bassin": "TOULOUSE",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 13.8,
+        "age15to24": 21.6,
+        "age65plus": 13.0,
+        "age80plus": 4.2,
+        "houses": 15.0,
+        "noCar": 33.1,
+        "builtBefore1971": 34.3,
+        "movedLessThan2y": 23.1,
+        "medianIncome": 24500,
+        "povertyRate": 24.0
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -1146,6 +1208,20 @@
         "municipal": 343477
       },
       "bassin": "NICE",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 15.4,
+        "age15to24": 12.7,
+        "age65plus": 23.4,
+        "age80plus": 7.9,
+        "houses": 6.6,
+        "noCar": 37.6,
+        "builtBefore1971": 53.3,
+        "movedLessThan2y": 13.6,
+        "medianIncome": 24080,
+        "povertyRate": 23.4
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -1384,6 +1460,20 @@
         "municipal": 320732
       },
       "bassin": "NANTES",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 15.5,
+        "age15to24": 18.8,
+        "age65plus": 14.3,
+        "age80plus": 4.6,
+        "houses": 18.2,
+        "noCar": 31.6,
+        "builtBefore1971": 36.5,
+        "movedLessThan2y": 21.3,
+        "medianIncome": 26720,
+        "povertyRate": 19.1
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -1622,6 +1712,20 @@
         "municipal": 299096
       },
       "bassin": "MONTPELLIER",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 14.7,
+        "age15to24": 22.4,
+        "age65plus": 14.9,
+        "age80plus": 4.5,
+        "houses": 11.6,
+        "noCar": 32.1,
+        "builtBefore1971": 29.8,
+        "movedLessThan2y": 21.8,
+        "medianIncome": 21440,
+        "povertyRate": 30.9
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -1860,6 +1964,20 @@
         "municipal": 290576
       },
       "bassin": "STRASBOURG",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 16.5,
+        "age15to24": 19.7,
+        "age65plus": 14.8,
+        "age80plus": 4.3,
+        "houses": 6.1,
+        "noCar": 39.8,
+        "builtBefore1971": 46.4,
+        "movedLessThan2y": 17.7,
+        "medianIncome": 21980,
+        "povertyRate": 29.6
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -2098,6 +2216,20 @@
         "municipal": 259809
       },
       "bassin": "BORDEAUX",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 13.4,
+        "age15to24": 19.7,
+        "age65plus": 15.0,
+        "age80plus": 4.8,
+        "houses": 20.3,
+        "noCar": 37.6,
+        "builtBefore1971": 51.1,
+        "movedLessThan2y": 21.8,
+        "medianIncome": 27590,
+        "povertyRate": 18.9
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -2336,6 +2468,20 @@
         "municipal": 236234
       },
       "bassin": "LILLE",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 14.1,
+        "age15to24": 26.0,
+        "age65plus": 11.1,
+        "age80plus": 3.0,
+        "houses": 19.7,
+        "noCar": 45.2,
+        "builtBefore1971": 49.9,
+        "movedLessThan2y": 24.1,
+        "medianIncome": 22470,
+        "povertyRate": 28.6
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -2574,6 +2720,20 @@
         "municipal": 222485
       },
       "bassin": "RENNES",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 14.1,
+        "age15to24": 24.1,
+        "age65plus": 14.3,
+        "age80plus": 4.8,
+        "houses": 12.0,
+        "noCar": 31.9,
+        "builtBefore1971": 35.3,
+        "movedLessThan2y": 22.3,
+        "medianIncome": 25100,
+        "povertyRate": 22.7
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -2812,6 +2972,20 @@
         "municipal": 180318
       },
       "bassin": "REIMS",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 15.7,
+        "age15to24": 19.3,
+        "age65plus": 17.4,
+        "age80plus": 5.2,
+        "houses": 19.1,
+        "noCar": 28.8,
+        "builtBefore1971": 41.1,
+        "movedLessThan2y": 19.1,
+        "medianIncome": 22410,
+        "povertyRate": 25.7
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -3050,6 +3224,20 @@
         "municipal": 179659
       },
       "bassin": "TOULON",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 15.6,
+        "age15to24": 11.4,
+        "age65plus": 23.8,
+        "age80plus": 7.6,
+        "houses": 20.5,
+        "noCar": 25.7,
+        "builtBefore1971": 60.1,
+        "movedLessThan2y": 12.7,
+        "medianIncome": 23270,
+        "povertyRate": 24.3
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -3288,6 +3476,20 @@
         "municipal": 174082
       },
       "bassin": "SAINT ETIENNE",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 17.0,
+        "age15to24": 17.2,
+        "age65plus": 20.5,
+        "age80plus": 7.2,
+        "houses": 10.7,
+        "noCar": 33.6,
+        "builtBefore1971": 52.4,
+        "movedLessThan2y": 18.2,
+        "medianIncome": 20880,
+        "povertyRate": 30.4
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -3526,6 +3728,20 @@
         "municipal": 165830
       },
       "bassin": "LE HAVRE",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 17.8,
+        "age15to24": 13.8,
+        "age65plus": 20.9,
+        "age80plus": 6.2,
+        "houses": 25.8,
+        "noCar": 31.2,
+        "builtBefore1971": 57.6,
+        "movedLessThan2y": 14.2,
+        "medianIncome": 22480,
+        "povertyRate": 24.2
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -3764,6 +3980,20 @@
         "municipal": 159106
       },
       "bassin": "DIJON",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 12.7,
+        "age15to24": 22.0,
+        "age65plus": 17.9,
+        "age80plus": 5.5,
+        "houses": 13.8,
+        "noCar": 30.1,
+        "builtBefore1971": 42.0,
+        "movedLessThan2y": 21.8,
+        "medianIncome": 25140,
+        "povertyRate": 19.2
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -4002,6 +4232,20 @@
         "municipal": 158240
       },
       "bassin": "GRENOBLE",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 14.4,
+        "age15to24": 21.1,
+        "age65plus": 15.3,
+        "age80plus": 5.1,
+        "houses": 2.8,
+        "noCar": 40.1,
+        "builtBefore1971": 50.7,
+        "movedLessThan2y": 21.4,
+        "medianIncome": 24270,
+        "povertyRate": 23.6
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -4240,6 +4484,20 @@
         "municipal": 155876
       },
       "bassin": "ANGERS",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 14.7,
+        "age15to24": 23.4,
+        "age65plus": 17.9,
+        "age80plus": 6.2,
+        "houses": 21.7,
+        "noCar": 28.3,
+        "builtBefore1971": 36.3,
+        "movedLessThan2y": 20.7,
+        "medianIncome": 23930,
+        "povertyRate": 22.0
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -4478,6 +4736,20 @@
         "municipal": 154781
       },
       "bassin": "VILLEURBANNE",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 16.4,
+        "age15to24": 19.4,
+        "age65plus": 13.6,
+        "age80plus": 4.3,
+        "houses": 4.8,
+        "noCar": 39.7,
+        "builtBefore1971": 31.9,
+        "movedLessThan2y": 19.3,
+        "medianIncome": 24160,
+        "povertyRate": 23.1
+      },
       "bmo": {
         "2024": {
           "bricolage": {
@@ -4716,6 +4988,20 @@
         "municipal": 153001
       },
       "bassin": "REUNION NORD",
+      "insee": {
+        "censusYear": 2023,
+        "incomeYear": 2023,
+        "under15": 20.6,
+        "age15to24": 15.2,
+        "age65plus": 14.5,
+        "age80plus": 3.4,
+        "houses": 34.0,
+        "noCar": 29.8,
+        "builtBefore1971": 13.6,
+        "movedLessThan2y": 14.6,
+        "medianIncome": 20240,
+        "povertyRate": 35.0
+      },
       "bmo": {
         "2024": {
           "bricolage": {

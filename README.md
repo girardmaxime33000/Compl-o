@@ -232,7 +232,7 @@ Ollama ne fonctionne pas sur un hébergement type Vercel : en production, utilis
 
 ## Données locales (pages activité × ville)
 
-`src/data/cities.json` est généré par `python3 scripts/build-city-data.py` (nécessite `openpyxl`) à partir de `data/raw/` : populations légales INSEE (20 plus grandes communes, Paris, Lyon et Marseille agrégées par arrondissements) et enquête BMO de France Travail (2024 et 2025, par bassin d'emploi). Ne pas éditer le JSON à la main. Une page `/activites/[slug]/[ville]` n'est générée que si la ville a au moins un projet de recrutement dans les métiers rattachés à l'activité (voir `GROUPS` dans le script). Le millésime BMO 2026 et la base des équipements par commune ne sont pas utilisés (voir `TASKS.md`, T11).
+`src/data/cities.json` est généré par `python3 scripts/build-city-data.py` (nécessite `openpyxl`) à partir de `data/raw/` : populations légales INSEE (20 plus grandes communes, Paris, Lyon et Marseille agrégées par arrondissements), « Dossier complet » INSEE (recensement 2023 et Filosofi, extrait par `scripts/extract-dossier-complet.py`) et enquête BMO de France Travail (2024 et 2025, par bassin d'emploi). Ne pas éditer le JSON à la main. Une page `/activites/[slug]/[ville]` n'est générée que si la ville a au moins un projet de recrutement dans les métiers rattachés à l'activité (voir `GROUPS` dans le script). Le millésime BMO 2026 et la base des équipements par commune ne sont pas utilisés (voir `TASKS.md`, T11).
 
 ## Mesure d'audience
 
