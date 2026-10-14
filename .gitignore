@@ -5,3 +5,6 @@ out
 .env
 next-env.d.ts
 *.tsbuildinfo
+
+# macOS
+.DS_Store

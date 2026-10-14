@@ -100,11 +100,12 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - bloqué / questions propriétaire : appliquer `0004_analytics_events.sql`, jouer le parcours (simulateur, annonce, paiement test) puis vérifier les lignes dans `analytics_events` ; confirmer que la mesure interne convient (sinon choisir Plausible/Umami/autre).
 
 ### T13 Guides éditoriaux
-- statut: todo
+- statut: blocked
 - dépend de: T09
 - branche:
 - critères d'acceptation: 6 guides, chiffres issus de `tax.ts`.
-- vérifications faites / non faites:
+- vérifications faites / non faites: rien implémenté.
+- notes: BLOQUÉ (sources officielles inaccessibles). Les 6 guides (cumul chômage/micro-entreprise, franchise de TVA, plafonds 2026, premier devis, activité complémentaire retraité, annonces efficaces) portent sur des règles fiscales et sociales : la règle du projet impose une source officielle citée et une date de vérification, et les valeurs de `tax.ts` n'ont jamais été revérifiées. Test du 2026-10-14 : `www.autoentrepreneur.urssaf.fr`, `www.urssaf.fr`, `entreprendre.service-public.fr`, `www.service-public.fr`, `www.impots.gouv.fr`, `bofip.impots.gouv.fr` et `francetravail.fr` ne répondent pas depuis l'environnement (hôtes non autorisés ou connexion coupée). Écrire ces guides de mémoire et afficher une date de vérification serait faux. Deux voies : (a) autoriser ces domaines dans Network access (certains sites officiels coupent peut-être les connexions venant d'une infrastructure cloud, comme data.gouv.fr) ; (b) le propriétaire colle ici les passages officiels (plafonds, seuils de TVA, règles de cumul ARE) avec leur URL et la date de consultation. Le guide « annonces efficaces » ne dépend d'aucune source fiscale et pourrait être rédigé seul.
 
 ### T14 E-mail et rétention
 - statut: todo
