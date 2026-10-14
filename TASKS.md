@@ -19,11 +19,21 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - notes: deux cases (acceptation CGU/CGV/confidentialité ; accès immédiat + renonciation rétractation), validées dans `/api/stripe/checkout` (400 sinon) ; version et horodatage stockés en metadata de la session Stripe (`LEGAL.termsVersion`). Branche imposée par la session : `claude/new-session-og6dhq`.
 
 ### T03 Déploiement production
-- statut: todo
+- statut: blocked
 - dépend de: T01, T02
-- branche:
-- critères d'acceptation: checklist précise ; étapes nécessitant des accès propriétaire marquées `blocked`.
-- vérifications faites / non faites:
+- branche: claude/new-session-og6dhq
+- critères d'acceptation: Vercel, variables d'environnement, `NEXT_PUBLIC_SITE_URL` définitif, redirections Supabase, webhook Stripe de production, Stripe en mode live, fournisseur d'IA hébergé.
+- vérifications faites / non faites: rien déployé ; build de production vérifié en local à chaque tâche (typecheck, lint, build, 37 tests).
+- notes: checklist ci-dessous (2026-10-14). Étapes marquées [PROPRIÉTAIRE] : nécessitent vos accès ou décisions ; [CLAUDE] : je peux les faire dans le dépôt.
+  A. Prérequis légaux : [PROPRIÉTAIRE] fournir les champs de `src/lib/legal.ts` (T01) ; [PROPRIÉTAIRE] choisir le médiateur de la consommation ; [PROPRIÉTAIRE] faire relire CGU, CGV et confidentialité par un juriste ; [CLAUDE] renseigner `legal.ts` dès réception.
+  B. Domaine : [PROPRIÉTAIRE] choisir et acheter le nom de domaine ; fixer `NEXT_PUBLIC_SITE_URL=https://<domaine>` (canonical, sitemap, retours Stripe en dépendent).
+  C. Supabase production : [PROPRIÉTAIRE] créer ou confirmer le projet (région UE) ; exécuter dans l'ordre `0001` à `0005` ; Authentication > URL Configuration : Site URL = domaine, Redirect URL = `https://<domaine>/auth/callback` ; si connexion Google : créer les identifiants OAuth Google et y déclarer l'URL de rappel indiquée par Supabase ; configurer un SMTP personnalisé pour les liens magiques (l'envoi intégré est limité en volume) ; relever URL, clé anon et clé service role.
+  D. Stripe live : [PROPRIÉTAIRE] activer le compte (identité, banque, activité) ; recréer les 3 prix en mode live (pack 4,99 € paiement unique, mensuel 6,99 €, annuel 69,99 € : les `price_...` live sont différents de ceux du mode test) ; clé secrète live ; destination webhook `https://<domaine>/api/webhooks/stripe` avec `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted` ; relever le `whsec_` live ; configurer le portail client live (résiliation, moyen de paiement, changement mensuel vers annuel) ; renseigner nom commercial et libellé de relevé bancaire.
+  E. IA hébergée : [PROPRIÉTAIRE] choisir le fournisseur (Groq, OpenRouter, autre) et créer la clé ; variables `AI_PROVIDER`, `AI_BASE_URL`, `AI_MODEL`, `AI_API_KEY` ; [PROPRIÉTAIRE] fixer un plafond de dépense chez le fournisseur ; [CLAUDE] tester la génération avec le modèle retenu une fois la clé fournie (sorties structurées requises).
+  F. Vercel : [PROPRIÉTAIRE] importer le dépôt ; la production se construit depuis `main` : une pull request de `claude/new-session-og6dhq` vers `main` est nécessaire (aucune créée à ce jour, à demander explicitement) ; variables : `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PACK_PRICE_ID`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_ANNUAL_PRICE_ID`, `AI_PROVIDER`, `AI_BASE_URL`, `AI_MODEL`, `AI_API_KEY` (valeurs live) ; région des fonctions proche de Supabase ; vérifier que la durée maximale de fonction de votre plan couvre les 60 s demandées par `/api/generate-listing` ; rattacher le domaine et configurer le DNS.
+  G. Après mise en ligne : [PROPRIÉTAIRE + CLAUDE] vérifier `/robots.txt` et `/sitemap.xml` sur le domaine ; déclarer le sitemap dans Google Search Console ; parcours complet (inscription, diagnostic, annonce, quota gratuit, achat live de chaque offre puis remboursement, webhook 200, PDF facture, PDF simulation, export et suppression de compte) ; Lighthouse avant/après (T09).
+  H. Sécurité : aucune clé dans le dépôt ; renouveler toute clé qui aurait été partagée ; clés Stripe restreintes si possible.
+- bloqué / décisions : T01 (champs légaux), nom de domaine, comptes Stripe live / Vercel / fournisseur IA, autorisation de créer la pull request vers `main`.
 
 ### T04 Simulateur public
 - statut: done
