@@ -6,6 +6,8 @@ import { DashboardNav } from "@/components/dashboard/nav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+export const metadata = { robots: { index: false, follow: false } };
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { profile } = await requireUser();
 

@@ -1,3 +1,5 @@
+import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Check, Rocket, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
@@ -8,7 +10,7 @@ import { CheckoutButton } from "@/components/pricing/checkout-button";
 import { FREE_MONTHLY_LISTINGS } from "@/lib/platforms";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
-export const metadata = { title: "Tarifs · Compléo" };
+export const metadata = pageMetadata({ title: "Tarifs simples : gratuit ou Premium", description: "Comparez l'offre gratuite et l'offre Premium de Compléo : annonces IA, simulateur et factures PDF.", path: "/pricing" });
 
 const FREE = [
   { label: "Diagnostic et 3 idées d'activités", ok: true },
@@ -47,7 +49,8 @@ export default async function PricingPage() {
 
   return (
     <>
-    <main className="container max-w-4xl py-10">
+    <BreadcrumbJsonLd path="/pricing" />
+      <main className="container max-w-4xl py-10">
       <Link href="/" className="mb-8 flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
       <h1 className="text-3xl font-bold">Des tarifs simples</h1>
       <p className="mt-2 text-muted-foreground">Commencez gratuitement, passez Premium quand vous avez besoin de plus d'annonces.</p>

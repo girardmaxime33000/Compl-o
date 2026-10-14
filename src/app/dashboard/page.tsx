@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, Calculator, FileText, Megaphone, Sparkles } from "lucide-react";
 import { requireUser, isPremium } from "@/lib/auth";
@@ -8,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ManageSubscription } from "@/components/pricing/manage-subscription";
 
-export const metadata = { title: "Tableau de bord · Compléo" };
+export const metadata = { title: "Tableau de bord | Compléo" };
 
 export default async function DashboardPage({ searchParams }: { searchParams: { checkout?: string } }) {
   const { supabase, user, profile } = await requireUser();

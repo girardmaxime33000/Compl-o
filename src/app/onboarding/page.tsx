@@ -1,7 +1,8 @@
+import { pageMetadata, NOINDEX } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import { OnboardingWizard } from "@/components/onboarding/wizard";
 
-export const metadata = { title: "Diagnostic · Compléo" };
+export const metadata = { title: "Diagnostic d'activité | Compléo", ...NOINDEX };
 
 export default async function OnboardingPage() {
   const {

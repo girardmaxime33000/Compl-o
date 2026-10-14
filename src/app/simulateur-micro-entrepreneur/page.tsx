@@ -1,25 +1,22 @@
+import { pageMetadata } from "@/lib/seo";
+import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import Link from "next/link";
 import { Info, Rocket } from "lucide-react";
-import { LEGAL } from "@/lib/legal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Simulator } from "@/components/simulator/simulator";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
-const TITLE = "Simulateur micro-entrepreneur : calculez votre net | Compléo";
+const TITLE = "Simulateur micro-entrepreneur : calculez votre net";
 const DESCRIPTION =
   "Estimez gratuitement vos cotisations URSSAF, votre net avant impôts, vos plafonds de TVA et de chiffre d'affaires, et le cumul avec le chômage.";
 
-export const metadata = {
-  title: TITLE,
-  description: DESCRIPTION,
-  alternates: { canonical: `${LEGAL.siteUrl}/simulateur-micro-entrepreneur` },
-  openGraph: { title: TITLE, description: DESCRIPTION, type: "website", locale: "fr_FR", siteName: LEGAL.siteName },
-};
+export const metadata = pageMetadata({ title: TITLE, description: DESCRIPTION, path: "/simulateur-micro-entrepreneur" });
 
 export default function PublicSimulatorPage() {
   return (
     <>
+      <BreadcrumbJsonLd path="/simulateur-micro-entrepreneur" />
       <main className="container space-y-6 py-10">
         <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>

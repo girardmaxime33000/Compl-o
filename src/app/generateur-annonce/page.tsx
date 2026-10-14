@@ -1,24 +1,21 @@
+import { pageMetadata } from "@/lib/seo";
+import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import Link from "next/link";
 import { Rocket } from "lucide-react";
-import { LEGAL } from "@/lib/legal";
 import { Button } from "@/components/ui/button";
 import { ListingDemo } from "@/components/listings/demo";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
-const TITLE = "Exemples d'annonces de services pour micro-activité | Compléo";
+const TITLE = "Exemples d'annonces de services pour micro-activité";
 const DESCRIPTION =
   "Découvrez des exemples d'annonces pour LeBonCoin, AlloVoisins ou GensDeConfiance. Créez un compte gratuit pour générer la vôtre avec l'IA.";
 
-export const metadata = {
-  title: TITLE,
-  description: DESCRIPTION,
-  alternates: { canonical: `${LEGAL.siteUrl}/generateur-annonce` },
-  openGraph: { title: TITLE, description: DESCRIPTION, type: "website", locale: "fr_FR", siteName: LEGAL.siteName },
-};
+export const metadata = pageMetadata({ title: TITLE, description: DESCRIPTION, path: "/generateur-annonce" });
 
 export default function ListingDemoPage() {
   return (
     <>
+      <BreadcrumbJsonLd path="/generateur-annonce" />
       <main className="container max-w-3xl space-y-8 py-10">
         <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>

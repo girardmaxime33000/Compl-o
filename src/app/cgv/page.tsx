@@ -1,11 +1,12 @@
+import { pageMetadata } from "@/lib/seo";
 import { LEGAL } from "@/lib/legal";
 import { LegalPage, LegalSection } from "@/components/marketing/legal-page";
 
-export const metadata = { title: "Conditions générales de vente · Compléo" };
+export const metadata = pageMetadata({ title: "Conditions générales de vente", description: "Conditions de vente de l'offre Premium Compléo : prix, paiement, rétractation, résiliation et médiation.", path: "/cgv" });
 
 export default function TermsOfSalePage() {
   return (
-    <LegalPage title="Conditions générales de vente">
+    <LegalPage title="Conditions générales de vente" path="/cgv">
       <LegalSection title="1. Objet et vendeur">
         <p>
           Les présentes conditions régissent la souscription de l'offre Premium de {LEGAL.siteName} par un consommateur.

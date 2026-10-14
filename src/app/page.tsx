@@ -1,8 +1,13 @@
+import { OrganizationJsonLd } from "@/components/seo/json-ld";
 import Link from "next/link";
 import { Calculator, FileText, Megaphone, Rocket, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { SiteFooter } from "@/components/marketing/site-footer";
+
+export const metadata = {
+  alternates: { canonical: "/" },
+};
 
 const FEATURES = [
   { icon: Sparkles, title: "Trouvez votre activité", text: "3 questions, 3 idées de micro-activités avec tarifs et plateformes adaptés." },
@@ -14,6 +19,7 @@ const FEATURES = [
 export default function HomePage() {
   return (
     <main>
+      <OrganizationJsonLd />
       <header className="container flex h-14 items-center justify-between">
         <span className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</span>
         <nav className="flex items-center gap-1">

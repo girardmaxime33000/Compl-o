@@ -1,11 +1,12 @@
+import { pageMetadata } from "@/lib/seo";
 import { LEGAL } from "@/lib/legal";
 import { LegalPage, LegalSection } from "@/components/marketing/legal-page";
 
-export const metadata = { title: "Politique de confidentialité · Compléo" };
+export const metadata = pageMetadata({ title: "Politique de confidentialité", description: "Données collectées par Compléo, finalités, sous-traitants, durées de conservation et exercice de vos droits.", path: "/confidentialite" });
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Politique de confidentialité">
+    <LegalPage title="Politique de confidentialité" path="/confidentialite">
       <LegalSection title="1. Responsable du traitement">
         <p>
           {LEGAL.publisherName}, éditeur de {LEGAL.siteName}. Contact :{" "}

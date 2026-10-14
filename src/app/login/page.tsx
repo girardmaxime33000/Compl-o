@@ -1,10 +1,11 @@
+import { pageMetadata, NOINDEX } from "@/lib/seo";
 import Link from "next/link";
 import { Rocket } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoginForm } from "@/components/marketing/login-form";
 import { safeNext } from "@/lib/auth";
 
-export const metadata = { title: "Connexion · Compléo" };
+export const metadata = { title: "Connexion | Compléo", ...NOINDEX };
 
 export default function LoginPage({ searchParams }: { searchParams: { next?: string; error?: string } }) {
   return (

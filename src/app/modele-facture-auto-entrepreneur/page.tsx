@@ -1,20 +1,17 @@
+import { LEGAL } from "@/lib/legal";
+import { pageMetadata } from "@/lib/seo";
+import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import Link from "next/link";
 import { Info, Rocket } from "lucide-react";
-import { LEGAL } from "@/lib/legal";
 import { TVA_MENTION } from "@/lib/invoice-number";
 import { Button } from "@/components/ui/button";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
-const TITLE = "Modèle de facture et devis auto-entrepreneur | Compléo";
+const TITLE = "Modèle de facture et devis auto-entrepreneur";
 const DESCRIPTION =
   "Aperçu d'un modèle de facture et de devis pour micro-entrepreneur, avec la mention de TVA non applicable. Créez et téléchargez votre PDF après inscription gratuite.";
 
-export const metadata = {
-  title: TITLE,
-  description: DESCRIPTION,
-  alternates: { canonical: `${LEGAL.siteUrl}/modele-facture-auto-entrepreneur` },
-  openGraph: { title: TITLE, description: DESCRIPTION, type: "website", locale: "fr_FR", siteName: LEGAL.siteName },
-};
+export const metadata = pageMetadata({ title: TITLE, description: DESCRIPTION, path: "/modele-facture-auto-entrepreneur" });
 
 const MENTIONS = [
   "Numéro et date du document",
@@ -29,6 +26,7 @@ const MENTIONS = [
 export default function InvoiceTemplatePage() {
   return (
     <>
+      <BreadcrumbJsonLd path="/modele-facture-auto-entrepreneur" />
       <main className="container max-w-4xl space-y-8 py-10">
         <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>

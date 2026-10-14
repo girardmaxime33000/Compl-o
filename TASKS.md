@@ -65,11 +65,12 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - notes: `/onboarding` publique (retirée des routes protégées). Anonyme : réponses gardées en localStorage, recommandations affichées sans e-mail, CTA compte ; à la connexion sur `/onboarding`, les réponses sont enregistrées via `saveOnboarding` (serveur, utilisateur requis) puis effacées. Mesure de l'entonnoir à brancher en T12.
 
 ### T09 Fondations SEO
-- statut: todo
+- statut: done
 - dépend de: -
-- branche:
+- branche: claude/new-session-og6dhq
 - critères d'acceptation: metadata, sitemap, robots, noindex pages privées, JSON-LD, Lighthouse avant/après.
-- vérifications faites / non faites:
+- vérifications faites / non faites: typecheck, lint, build OK (2026-10-14). `next start` : robots.txt, sitemap.xml (9 URL), canonical et titre `Promesse | Compléo` par page publique, `noindex` sur /login et /onboarding, /dashboard redirige et porte noindex, image OG 200 image/png, JSON-LD de l'accueil parsé en JSON valide. NON fait : Lighthouse avant/après (non lancé), validation JSON-LD avec l'outil Google/schema.org, noindex de /auth (route handler : exclue via robots.txt uniquement).
+- notes: helper `src/lib/seo.ts` (pageMetadata, PUBLIC_PAGES, NOINDEX), `src/components/seo/json-ld.tsx` (Organization, SoftwareApplication avec offres, BreadcrumbList). `PREMIUM_PRICE_EUR` dans seo.ts duplique le prix de /pricing : à aligner si le prix change (décision propriétaire en T07). Image OG unique (texte statique), non dynamique par page. `NEXT_PUBLIC_SITE_URL` doit être définitif (T03) pour canonical et sitemap.
 
 ### T10 Pages activité
 - statut: todo

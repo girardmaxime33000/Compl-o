@@ -1,9 +1,11 @@
+import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Rocket } from "lucide-react";
 import { LEGAL } from "@/lib/legal";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
-export const metadata = { title: "Mentions légales · Compléo" };
+export const metadata = pageMetadata({ title: "Mentions légales", description: "Mentions légales du site Compléo : éditeur, hébergement, données personnelles et médiation.", path: "/mentions-legales" });
 
 function Field({ value }: { value: string }) {
   return value ? <>{value}</> : <mark className="rounded bg-amber-100 px-1 text-amber-900">[À compléter]</mark>;
@@ -21,6 +23,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function LegalNoticePage() {
   return (
     <>
+      <BreadcrumbJsonLd path="/mentions-legales" />
       <main className="container max-w-3xl space-y-8 py-10">
         <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>

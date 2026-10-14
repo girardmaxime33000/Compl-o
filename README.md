@@ -112,6 +112,7 @@ src/
 │   ├── simulateur-micro-entrepreneur/ Simulateur public (sans compte)
 │   ├── modele-facture-auto-entrepreneur/ Aperçu public de facture (PDF après inscription)
 │   ├── generateur-annonce/       Démo publique d'annonces pré-rédigées (aucun appel IA anonyme)
+│   ├── sitemap.ts robots.ts opengraph-image.tsx  SEO : sitemap, robots, image Open Graph
 │   ├── mentions-legales/         Mentions légales
 │   ├── cgu/ cgv/ confidentialite/ CGU, CGV, politique de confidentialité (brouillons à faire relire)
 │   ├── dashboard/                Espace connecté
