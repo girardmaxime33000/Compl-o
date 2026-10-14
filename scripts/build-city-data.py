@@ -56,9 +56,9 @@ BASSINS = {
     "38185": ("38", "GRENOBLE"),
     "49007": ("49", "ANGERS"),
     "69266": ("69", "VILLEURBANNE"),
-    "974411": ("974", "REUNION NORD"),
+    "97411": ("974", "REUNION NORD"),
 }
-SLUG_OVERRIDES = {"974411": "saint-denis-reunion"}
+SLUG_OVERRIDES = {"97411": "saint-denis-reunion"}
 
 # Activité du catalogue -> métiers BMO (code FAP) retenus. Choix éditorial : les chiffres BMO sont des projets de
 # recrutement de salariés, utilisés comme indicateur de l'activité locale du secteur, pas de demande de services.
@@ -86,7 +86,8 @@ def load_population() -> dict:
     with open(RAW / "insee_populations_legales_communes.csv", encoding="utf-8", newline="") as f:
         for r in csv.DictReader(f, delimiter=";"):
             dep, com = r["CODDEP"], r["CODCOM"]
-            code, name = dep + com, r["COM"]
+            # Code INSEE : département + commune ; outre-mer (97x) : « 97 » + code commune à 3 chiffres (ex. 97411).
+            code, name = ("97" + com if dep.startswith("97") else dep + com), r["COM"]
             if dep == "75":
                 code, name = "75056", "Paris"
             elif dep == "69" and com.startswith("38") and len(com) == 3 and 381 <= int(com) <= 389:
