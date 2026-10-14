@@ -1,0 +1,179 @@
+"use client";
+
+import { useMemo, useState, useTransition } from "react";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/components/ui/toast";
+import { cn } from "@/lib/utils";
+import { CATEGORIES, EQUIPMENT, formatRate, recommend, type Option } from "@/lib/activities";
+import { PLATFORMS } from "@/lib/platforms";
+import { saveOnboarding } from "@/app/actions/onboarding";
+
+const STEPS = ["Compétences", "Matériel", "Disponibilité"] as const;
+const HOURS = [2, 5, 8, 12, 20];
+
+function Chips({ options, selected, onToggle }: { options: Option[]; selected: string[]; onToggle: (id: string) => void }) {
+  return (
+    <div className="grid gap-2 sm:grid-cols-2">
+      {options.map((o) => {
+        const on = selected.includes(o.id);
+        return (
+          <button
+            key={o.id}
+            type="button"
+            aria-pressed={on}
+            onClick={() => onToggle(o.id)}
+            className={cn(
+              "flex min-h-[48px] items-center justify-between rounded-md border px-4 py-3 text-left text-sm transition-colors",
+              on ? "border-primary bg-accent font-medium" : "bg-card hover:bg-accent/50",
+            )}
+          >
+            {o.label}
+            {on && <Check className="h-4 w-4 text-primary" />}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+export function OnboardingWizard() {
+  const [step, setStep] = useState(0);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [equipment, setEquipment] = useState<string[]>([]);
+  const [hours, setHours] = useState<number | null>(null);
+  const [done, setDone] = useState(false);
+  const [pending, startTransition] = useTransition();
+  const { toast } = useToast();
+
+  const toggle = (setter: React.Dispatch<React.SetStateAction<string[]>>) => (id: string) =>
+    setter((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  const canNext = step === 0 ? categories.length > 0 : step === 1 ? true : hours !== null;
+  const results = useMemo(
+    () => (done && hours ? recommend({ categories, equipment, weeklyHours: hours }) : []),
+    [done, categories, equipment, hours],
+  );
+
+  function finish() {
+    if (hours === null) return;
+    startTransition(async () => {
+      const res = await saveOnboarding({ categories, equipment, weeklyHours: hours });
+      if (!res.ok) toast(res.error ?? "Enregistrement impossible.", "error");
+      else setDone(true);
+    });
+  }
+
+  if (done) {
+    return (
+      <div className="space-y-5">
+        <div>
+          <h1 className="text-2xl font-bold">Vos 3 activités recommandées</h1>
+          <p className="text-muted-foreground">Estimations basées sur {hours} h/semaine, dont 60 % réellement facturées.</p>
+        </div>
+        {results.map(({ activity, monthlyMin, monthlyMax, missingEquipment }, i) => (
+          <Card key={activity.id}>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Badge>#{i + 1}</Badge>
+                {missingEquipment.length > 0 && <Badge variant="warning">Matériel à prévoir</Badge>}
+              </div>
+              <CardTitle>{activity.title}</CardTitle>
+              <CardDescription>{activity.pitch}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <p><span className="text-muted-foreground">Tarif moyen en France :</span> <strong>{formatRate(activity)}</strong></p>
+              <p className="font-semibold text-success">≈ {monthlyMin} € à {monthlyMax} € / mois</p>
+              <p>
+                <span className="text-muted-foreground">Où trouver des clients :</span>{" "}
+                {activity.platforms.map((p) => PLATFORMS[p].label).join(", ")}
+              </p>
+              {missingEquipment.length > 0 && (
+                <p className="text-amber-700">
+                  Il vous faudrait : {missingEquipment.map((id) => EQUIPMENT.find((e) => e.id === id)?.label).join(" ou ")}.
+                </p>
+              )}
+              <Button asChild size="sm" variant="outline">
+                <Link href={`/dashboard/listings?service=${encodeURIComponent(activity.title)}`}>Rédiger mon annonce</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+        <Button asChild size="lg" className="w-full"><Link href="/dashboard">Aller au tableau de bord</Link></Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground">Étape {step + 1} sur {STEPS.length} · {STEPS[step]}</p>
+        <Progress value={((step + 1) / STEPS.length) * 100} />
+      </div>
+
+      <Card>
+        {step === 0 && (
+          <>
+            <CardHeader>
+              <CardTitle>Qu'aimez-vous faire ?</CardTitle>
+              <CardDescription>Sélectionnez un ou plusieurs domaines.</CardDescription>
+            </CardHeader>
+            <CardContent><Chips options={CATEGORIES} selected={categories} onToggle={toggle(setCategories)} /></CardContent>
+          </>
+        )}
+        {step === 1 && (
+          <>
+            <CardHeader>
+              <CardTitle>De quel matériel disposez-vous ?</CardTitle>
+              <CardDescription>Vous pouvez ne rien sélectionner : certaines activités n'en demandent pas.</CardDescription>
+            </CardHeader>
+            <CardContent><Chips options={EQUIPMENT} selected={equipment} onToggle={toggle(setEquipment)} /></CardContent>
+          </>
+        )}
+        {step === 2 && (
+          <>
+            <CardHeader>
+              <CardTitle>Combien de temps par semaine ?</CardTitle>
+              <CardDescription>Le temps que vous pouvez consacrer à cette activité.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                {HOURS.map((h) => (
+                  <button
+                    key={h}
+                    type="button"
+                    aria-pressed={hours === h}
+                    onClick={() => setHours(h)}
+                    className={cn(
+                      "min-h-[48px] rounded-md border px-3 py-3 text-sm transition-colors",
+                      hours === h ? "border-primary bg-accent font-medium" : "bg-card hover:bg-accent/50",
+                    )}
+                  >
+                    {h === 20 ? "20 h et +" : `${h} h`}
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </>
+        )}
+      </Card>
+
+      <div className="flex justify-between gap-3">
+        <Button variant="ghost" onClick={() => setStep((s) => s - 1)} disabled={step === 0 || pending}>
+          <ArrowLeft className="h-4 w-4" /> Retour
+        </Button>
+        {step < STEPS.length - 1 ? (
+          <Button onClick={() => setStep((s) => s + 1)} disabled={!canNext}>Suivant <ArrowRight className="h-4 w-4" /></Button>
+        ) : (
+          <Button variant="success" onClick={finish} disabled={!canNext || pending}>
+            {pending && <Loader2 className="h-4 w-4 animate-spin" />} Voir mes activités
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
