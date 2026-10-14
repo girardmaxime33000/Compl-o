@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,28 @@ function Chips({ options, selected, onToggle }: { options: Option[]; selected: s
   );
 }
 
-export function OnboardingWizard() {
+const PENDING_KEY = "compleo:pending-diagnostic";
+
+interface Answers { categories: string[]; equipment: string[]; weeklyHours: number }
+
+const readPending = (): Answers | null => {
+  try {
+    const raw = window.localStorage.getItem(PENDING_KEY);
+    return raw ? (JSON.parse(raw) as Answers) : null;
+  } catch {
+    return null;
+  }
+};
+const writePending = (a: Answers | null) => {
+  try {
+    if (a) window.localStorage.setItem(PENDING_KEY, JSON.stringify(a));
+    else window.localStorage.removeItem(PENDING_KEY);
+  } catch {
+    /* stockage indisponible : on ignore */
+  }
+};
+
+export function OnboardingWizard({ signedIn }: { signedIn: boolean }) {
   const [step, setStep] = useState(0);
   const [categories, setCategories] = useState<string[]>([]);
   const [equipment, setEquipment] = useState<string[]>([]);
@@ -59,8 +80,29 @@ export function OnboardingWizard() {
     [done, categories, equipment, hours],
   );
 
+  // Après inscription : les réponses faites avant la connexion sont enregistrées automatiquement.
+  useEffect(() => {
+    if (!signedIn) return;
+    const pending = readPending();
+    if (!pending || !Array.isArray(pending.categories) || !Array.isArray(pending.equipment)) return;
+    saveOnboarding(pending).then((res) => {
+      if (!res.ok) return;
+      writePending(null);
+      setCategories(pending.categories);
+      setEquipment(pending.equipment);
+      setHours(pending.weeklyHours);
+      setDone(true);
+    });
+  }, [signedIn]);
+
   function finish() {
     if (hours === null) return;
+    if (!signedIn) {
+      // Les recommandations s'affichent avant toute demande d'inscription.
+      writePending({ categories, equipment, weeklyHours: hours });
+      setDone(true);
+      return;
+    }
     startTransition(async () => {
       const res = await saveOnboarding({ categories, equipment, weeklyHours: hours });
       if (!res.ok) toast(res.error ?? "Enregistrement impossible.", "error");
@@ -103,7 +145,18 @@ export function OnboardingWizard() {
             </CardContent>
           </Card>
         ))}
-        <Button asChild size="lg" className="w-full"><Link href="/dashboard">Aller au tableau de bord</Link></Button>
+        {signedIn ? (
+          <Button asChild size="lg" className="w-full"><Link href="/dashboard">Aller au tableau de bord</Link></Button>
+        ) : (
+          <div className="space-y-2 rounded-lg border border-primary/40 p-4">
+            <p className="font-semibold">Enregistrez vos résultats</p>
+            <p className="text-sm text-muted-foreground">
+              Créez un compte gratuit pour conserver ce diagnostic, rédiger vos annonces et simuler votre net.
+            </p>
+            <Button asChild size="lg" className="w-full"><Link href="/login?next=/onboarding">Créer un compte gratuit</Link></Button>
+          </div>
+        )}
+        <p className="text-xs text-muted-foreground">Estimations selon profil et temps disponible, sans garantie de revenu.</p>
       </div>
     );
   }

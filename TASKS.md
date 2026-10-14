@@ -57,11 +57,12 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - vérifications faites / non faites:
 
 ### T08 Onboarding vers inscription
-- statut: todo
+- statut: done
 - dépend de: -
-- branche:
+- branche: claude/new-session-og6dhq
 - critères d'acceptation: 3 recommandations affichées avant demande d'e-mail.
-- vérifications faites / non faites:
+- vérifications faites / non faites: typecheck, lint, build OK (2026-10-14). Non fait : parcours complet anonyme puis connexion (pas de Supabase réel), mesure de l'entonnoir (dépend de T12).
+- notes: `/onboarding` publique (retirée des routes protégées). Anonyme : réponses gardées en localStorage, recommandations affichées sans e-mail, CTA compte ; à la connexion sur `/onboarding`, les réponses sont enregistrées via `saveOnboarding` (serveur, utilisateur requis) puis effacées. Mesure de l'entonnoir à brancher en T12.
 
 ### T09 Fondations SEO
 - statut: todo

@@ -140,7 +140,7 @@ supabase/migrations/              Schéma SQL
 
 Principes :
 
-- Les routes `/dashboard` et `/onboarding` sont protégées par le middleware.
+- La route `/dashboard` est protégée par le middleware ; `/onboarding` est publique (recommandations affichées sans compte, enregistrées après connexion).
 - Les quotas et les droits (Premium) sont vérifiés **côté serveur**, jamais uniquement dans l'interface.
 - La logique métier (fiscalité, recommandations) est isolée dans `src/lib`, en fonctions pures faciles à tester.
 
