@@ -119,7 +119,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
       ) : (
         <Card className="border-primary/30 bg-accent">
           <CardHeader>
-            <CardTitle>Passez Premium à 6,99 €/mois</CardTitle>
+            <CardTitle>Passez Premium à 49 €/an</CardTitle>
             <CardDescription>Annonces IA illimitées pour toutes vos plateformes ({Object.values(PLATFORMS).length} supportées).</CardDescription>
           </CardHeader>
           <CardContent><Button asChild><Link href="/pricing">Voir l'offre</Link></Button></CardContent>

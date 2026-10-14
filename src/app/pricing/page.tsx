@@ -21,7 +21,7 @@ const PREMIUM = [
   { label: "Tout le plan Gratuit", ok: true },
   { label: "Annonces IA illimitées", ok: true },
   { label: "Toutes les plateformes", ok: true },
-  { label: "Résiliable à tout moment", ok: true },
+  { label: "Un seul paiement par an, sans engagement au-delà", ok: true },
 ];
 
 function Features({ items }: { items: { label: string; ok: boolean }[] }) {
@@ -73,7 +73,7 @@ export default async function PricingPage() {
               <Badge>Recommandé</Badge>
             </div>
             <CardDescription>Pour passer à la vitesse supérieure</CardDescription>
-            <p className="pt-2 text-3xl font-bold">6,99 € <span className="text-base font-normal text-muted-foreground">/ mois</span></p>
+            <p className="pt-2 text-3xl font-bold">49 € <span className="text-base font-normal text-muted-foreground">/ an</span></p>
           </CardHeader>
           <CardContent className="space-y-6">
             <Features items={PREMIUM} />

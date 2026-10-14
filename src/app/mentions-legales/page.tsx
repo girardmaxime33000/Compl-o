@@ -62,7 +62,7 @@ export default function LegalNoticePage() {
           <p>
             {LEGAL.siteName} aide les particuliers à choisir une micro-activité, à rédiger leurs annonces à l'aide d'un outil
             d'intelligence artificielle, à estimer leurs cotisations et à émettre des devis et factures. Le service est proposé
-            gratuitement dans une offre limitée et par abonnement mensuel (offre Premium).
+            gratuitement dans une offre limitée et par abonnement annuel de 49 € (offre Premium), payable en une seule fois.
           </p>
           <p>
             Les paiements sont traités par Stripe Payments Europe Ltd, 1 Grand Canal Street Lower, Dublin 2, Irlande.
