@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Extrait du « Dossier complet » INSEE (CSV très volumineux) les lignes des 20 communes de src/data/cities.json
-et les colonnes utiles, pour produire un petit fichier versionnable :
+pour produire un petit fichier versionnable (format large ou long, détecté automatiquement) :
     data/raw/insee_dossier_complet_20_communes.csv
 
 Usage (à lancer en local, sans dépendance, Python 3.8+) :
@@ -36,45 +36,35 @@ def detect_delimiter(header_line: str) -> str:
     return ";" if header_line.count(";") >= header_line.count(",") else ","
 
 
-def discover_long_format(f, header, delim, codes) -> None:
-    """Fichier au format long (une ligne par commune et par mesure) : affiche sa structure pour adapter l'extraction."""
-    import collections
-    import re as _re
+# Jeux du format long retenus (structure observée sur le fichier du propriétaire, 2026-10-14) :
+# population par âge, logements, revenus (Filosofi), séries historiques. Toutes les mesures de ces jeux sont
+# conservées pour les 20 communes (tous GEO_OBJECT confondus) : le tri se fait ensuite dans build-city-data.py.
+LONG_KEEP_DS = {"DS_RP_POPULATION_PRINC", "DS_RP_LOGEMENT_PRINC", "DS_FILOSOFI_CC", "DS_RP_SERIE_HISTORIQUE"}
 
+
+def extract_long_format(f, header, delim, codes) -> None:
+    """Format long (une ligne par commune et par mesure) : copie les lignes utiles des 20 communes."""
     idx = {h: i for i, h in enumerate(header)}
-    geo_i = idx["GEO"]
-    code_rx = _re.compile(r"(?:^|[^0-9A-Za-z])(" + "|".join(sorted(codes)) + r")(?:$|[^0-9A-Za-z])")
-    sample_code = "21231"  # Dijon : une seule commune suffit pour décrire la structure
-    print("Format long détecté (colonne GEO, pas de CODGEO).")
-    print("Colonnes :", header)
-    combos = collections.Counter()
-    geo_seen = collections.Counter()
-    samples = []
+    for needed in ("GEO", "DS"):
+        if needed not in idx:
+            raise SystemExit(f"Colonne {needed} introuvable : {header}")
+    geo_i, ds_i = idx["GEO"], idx["DS"]
+    kept = []
     n_total = 0
     for line in f:
         n_total += 1
-        parsed = line.rstrip("\r\n").split(delim)
-        if geo_i >= len(parsed):
+        parsed = next(csv.reader(io.StringIO(line), delimiter=delim)) if '"' in line else line.rstrip("\r\n").split(delim)
+        if len(parsed) <= max(geo_i, ds_i):
             continue
-        geo = parsed[geo_i].strip().strip('"')
-        m = code_rx.search(geo)
-        if not m:
-            continue
-        geo_seen[geo] += 1
-        if m.group(1) != sample_code:
-            continue
-        key = tuple(parsed[idx[c]].strip('"') for c in ("DS", "ID_TAB") if c in idx)
-        combos[key] += 1
-        if len(samples) < 6:
-            samples.append(line.rstrip())
-    print(f"Lignes lues : {n_total}")
-    print("Valeurs GEO correspondant aux 20 communes (échantillon) :", list(geo_seen.items())[:25])
-    print("Lignes d'exemple pour Dijon :")
-    for line in samples:
-        print("  ", line[:300])
-    print(f"Jeux (DS, ID_TAB) pour Dijon : {len(combos)}")
-    for key, n in sorted(combos.items(), key=lambda kv: kv[0])[:80]:
-        print("  ", key, n)
+        if parsed[geo_i].strip().strip('"') in codes and parsed[ds_i].strip().strip('"') in LONG_KEEP_DS:
+            kept.append(parsed)
+    print(f"Lignes lues : {n_total} ; lignes conservées : {len(kept)}")
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    with open(OUT, "w", encoding="utf-8", newline="") as out:
+        w = csv.writer(out, delimiter=";")
+        w.writerow(header)
+        w.writerows(kept)
+    print(f"Écrit : {OUT.relative_to(ROOT)} ({OUT.stat().st_size / 1_000_000:.1f} Mo)")
 
 
 def main() -> None:
@@ -92,7 +82,7 @@ def main() -> None:
         idx = {h: i for i, h in enumerate(header)}
         if "CODGEO" not in idx:
             if "GEO" in idx:
-                discover_long_format(f, header, delim, codes)
+                extract_long_format(f, header, delim, codes)
                 return
             raise SystemExit(f"Colonne CODGEO introuvable. Premières colonnes : {header[:10]}")
         keep = [h for h in header if h in KEEP_ID or any(rx.match(h) for rx in FAMILIES.values())]
