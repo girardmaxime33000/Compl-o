@@ -43,18 +43,21 @@ export function OrganizationJsonLd() {
   );
 }
 
-export function BreadcrumbJsonLd({ path }: { path: string }) {
+export function BreadcrumbJsonLd({ path, items }: { path: string; items?: { name: string; path: string }[] }) {
   const page = PUBLIC_PAGES.find((p) => p.path === path);
-  if (!page || path === "/") return null;
+  const trail = items ?? (page && path !== "/" ? [{ name: page.name, path }] : null);
+  if (!trail) return null;
   return (
     <JsonLd
       data={{
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Accueil", item: absoluteUrl("/") },
-          { "@type": "ListItem", position: 2, name: page.name, item: absoluteUrl(path) },
-        ],
+        itemListElement: [{ name: "Accueil", path: "/" }, ...trail].map((it, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: it.name,
+          item: absoluteUrl(it.path),
+        })),
       }}
     />
   );

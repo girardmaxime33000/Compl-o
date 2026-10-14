@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LEGAL } from "@/lib/legal";
+import { ACTIVITIES, activitySlug } from "@/lib/activities";
 
 /** Pages publiques indexables (sitemap + fil d'Ariane). */
 export const PUBLIC_PAGES = [
@@ -7,12 +8,16 @@ export const PUBLIC_PAGES = [
   { path: "/simulateur-micro-entrepreneur", name: "Simulateur micro-entrepreneur", priority: 0.9 },
   { path: "/modele-facture-auto-entrepreneur", name: "Modèle de facture auto-entrepreneur", priority: 0.8 },
   { path: "/generateur-annonce", name: "Exemples d'annonces", priority: 0.8 },
+  { path: "/activites", name: "Activités", priority: 0.8 },
   { path: "/pricing", name: "Tarifs", priority: 0.7 },
   { path: "/mentions-legales", name: "Mentions légales", priority: 0.2 },
   { path: "/cgu", name: "CGU", priority: 0.2 },
   { path: "/cgv", name: "CGV", priority: 0.2 },
   { path: "/confidentialite", name: "Confidentialité", priority: 0.2 },
 ] as const;
+
+/** Pages activité, une par entrée du catalogue `activities.ts` (source unique). */
+export const ACTIVITY_PAGES = ACTIVITIES.map((a) => ({ path: `/activites/${activitySlug(a)}`, name: a.title, priority: 0.8 }));
 
 export const absoluteUrl = (path: string) => `${LEGAL.siteUrl.replace(/\/$/, "")}${path === "/" ? "" : path}`;
 

@@ -75,11 +75,12 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - notes: helper `src/lib/seo.ts` (pageMetadata, PUBLIC_PAGES, NOINDEX), `src/components/seo/json-ld.tsx` (Organization, SoftwareApplication avec offres, BreadcrumbList). `PREMIUM_PRICE_EUR` dans seo.ts duplique le prix de /pricing : à aligner si le prix change (décision propriétaire en T07). Image OG unique (texte statique), non dynamique par page. `NEXT_PUBLIC_SITE_URL` doit être définitif (T03) pour canonical et sitemap.
 
 ### T10 Pages activité
-- statut: todo
+- statut: done
 - dépend de: T09
-- branche:
+- branche: claude/new-session-og6dhq
 - critères d'acceptation: `/activites/[slug]` pour les 9 activités, source unique `activities.ts`.
-- vérifications faites / non faites:
+- vérifications faites / non faites: typecheck, lint, build OK (2026-10-14). `next start` : 5 slugs testés 200, slug inconnu 404, canonical et titre uniques, sitemap à 20 URL (9 pages + index + 10 activités), BreadcrumbList à 3 niveaux. Non fait : test navigateur (simulateur pré-rempli), Lighthouse, régressions manuelles.
+- notes: le catalogue `activities.ts` compte 10 activités (le backlog en annonçait 9) : une page par entrée, source unique, sitemap et slugs générés depuis le catalogue. Ajouts : `/activites` (index), `monthlyIncomeRange`, `regimeOf` (BNC/BIC indicatif d'après les repères du simulateur, à faire confirmer sur urssaf.fr), `relatedActivities`. Pour `garde_animaux` et `depot_vente` (unités « visite » / « article vendu ») le revenu assimile une heure à une unité : mention affichée sur la page. Simulateur pré-rempli au milieu de fourchette pour `idealHours`. Exemple d'annonce issu de `demo-listings.ts`.
 
 ### T11 Pages activité × ville
 - statut: todo

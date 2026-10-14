@@ -19,9 +19,9 @@ const LEVEL_STYLE: Record<AlertLevel, { box: string; bar: string; Icon: typeof C
 
 const num = (v: string) => (v === "" ? 0 : Number(v.replace(",", ".")) || 0);
 
-export function Simulator() {
-  const [revenue, setRevenue] = useState("500");
-  const [regime, setRegime] = useState<ActivityRegime>("bnc");
+export function Simulator({ initialRevenue = 500, initialRegime = "bnc" }: { initialRevenue?: number; initialRegime?: ActivityRegime }) {
+  const [revenue, setRevenue] = useState(String(initialRevenue));
+  const [regime, setRegime] = useState<ActivityRegime>(initialRegime);
   const [areOn, setAreOn] = useState(false);
   const [are, setAre] = useState("1200");
   const [reference, setReference] = useState("");

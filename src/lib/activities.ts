@@ -156,6 +156,35 @@ const WEEKS_PER_MONTH = 4;
 /** Part du temps disponible réellement facturable (démarchage, trajets, annulations). */
 const BILLABLE_RATIO = 0.6;
 
+/** Chiffre d'affaires mensuel indicatif (€) d'une activité pour un nombre d'heures par semaine. */
+export function monthlyIncomeRange(activity: Activity, weeklyHours: number) {
+  const billable = Math.max(0, weeklyHours) * WEEKS_PER_MONTH * BILLABLE_RATIO;
+  return {
+    monthlyMin: Math.round((billable * activity.rateMin) / 10) * 10,
+    monthlyMax: Math.round((billable * activity.rateMax) / 10) * 10,
+  };
+}
+
+/** Slug d'URL d'une activité (identifiant sans underscore). */
+export const activitySlug = (a: Activity) => a.id.replace(/_/g, "-");
+export const findActivityBySlug = (slug: string) => ACTIVITIES.find((a) => activitySlug(a) === slug);
+
+/**
+ * Régime déclaratif indicatif d'une catégorie (BNC : cours, conseil, informatique ; BIC : services artisanaux,
+ * commerciaux et vente), d'après les repères du simulateur. À vérifier sur autoentrepreneur.urssaf.fr.
+ */
+const BNC_CATEGORIES = ["cours", "cours_langue", "informatique"];
+export const regimeOf = (a: Activity): "bnc" | "bic" => (BNC_CATEGORIES.includes(a.category) ? "bnc" : "bic");
+
+/** Activités proches : même catégorie d'abord, puis plateformes en commun. */
+export function relatedActivities(activity: Activity, count = 3): Activity[] {
+  const score = (a: Activity) =>
+    (a.category === activity.category ? 10 : 0) + a.platforms.filter((p) => activity.platforms.includes(p)).length;
+  return ACTIVITIES.filter((a) => a.id !== activity.id)
+    .sort((a, b) => score(b) - score(a))
+    .slice(0, count);
+}
+
 export function recommend(input: DiagnosticInput, count = 3): Recommendation[] {
   const hours = Math.max(0, input.weeklyHours);
 
@@ -173,12 +202,10 @@ export function recommend(input: DiagnosticInput, count = 3): Recommendation[] {
     if (hours >= activity.minHours) score += hours >= activity.idealHours ? 10 : 6;
     else score -= 5;
 
-    const billable = hours * WEEKS_PER_MONTH * BILLABLE_RATIO;
     return {
       activity,
       score,
-      monthlyMin: Math.round((billable * activity.rateMin) / 10) * 10,
-      monthlyMax: Math.round((billable * activity.rateMax) / 10) * 10,
+      ...monthlyIncomeRange(activity, hours),
       missingEquipment: hasRequired ? [] : activity.requiredAnyOf,
     };
   });
