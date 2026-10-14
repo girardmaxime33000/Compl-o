@@ -2,7 +2,7 @@ import { requireUser } from "@/lib/auth";
 import { InvoiceManager } from "@/components/invoices/invoice-manager";
 import type { Invoice } from "@/types/database";
 
-export const metadata = { title: "Factures · JobBoost FR" };
+export const metadata = { title: "Factures · Compléo" };
 
 export default async function InvoicesPage() {
   const { supabase, user, profile } = await requireUser();

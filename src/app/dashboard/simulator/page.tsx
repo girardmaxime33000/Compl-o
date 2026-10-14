@@ -1,7 +1,7 @@
 import { requireUser } from "@/lib/auth";
 import { Simulator } from "@/components/simulator/simulator";
 
-export const metadata = { title: "Simulateur · JobBoost FR" };
+export const metadata = { title: "Simulateur · Compléo" };
 
 export default async function SimulatorPage() {
   await requireUser();

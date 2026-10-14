@@ -1,4 +1,4 @@
--- JobBoost FR : schéma initial
+-- Compléo : schéma initial
 -- À exécuter dans l'éditeur SQL Supabase ou via `supabase db push`.
 
 create extension if not exists "pgcrypto";

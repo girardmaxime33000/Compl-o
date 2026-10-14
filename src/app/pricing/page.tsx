@@ -6,8 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { CheckoutButton } from "@/components/pricing/checkout-button";
 import { FREE_MONTHLY_LISTINGS } from "@/lib/platforms";
+import { SiteFooter } from "@/components/marketing/site-footer";
 
-export const metadata = { title: "Tarifs · JobBoost FR" };
+export const metadata = { title: "Tarifs · Compléo" };
 
 const FREE = [
   { label: "Diagnostic et 3 idées d'activités", ok: true },
@@ -45,8 +46,9 @@ export default async function PricingPage() {
   const premium = profile?.subscription_status === "active";
 
   return (
+    <>
     <main className="container max-w-4xl py-10">
-      <Link href="/" className="mb-8 flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> JobBoost FR</Link>
+      <Link href="/" className="mb-8 flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
       <h1 className="text-3xl font-bold">Des tarifs simples</h1>
       <p className="mt-2 text-muted-foreground">Commencez gratuitement, passez Premium quand vous avez besoin de plus d'annonces.</p>
 
@@ -84,5 +86,7 @@ export default async function PricingPage() {
         </Card>
       </div>
     </main>
+    <SiteFooter />
+    </>
   );
 }

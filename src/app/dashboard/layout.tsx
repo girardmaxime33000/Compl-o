@@ -14,7 +14,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <header className="sticky top-0 z-30 border-b bg-card/95 backdrop-blur">
         <div className="container flex h-14 items-center justify-between gap-4">
           <Link href="/dashboard" className="flex items-center gap-2 font-bold text-primary">
-            <Rocket className="h-5 w-5" /> JobBoost FR
+            <Rocket className="h-5 w-5" /> Compléo
           </Link>
           <DashboardNav />
           <div className="flex items-center gap-2">

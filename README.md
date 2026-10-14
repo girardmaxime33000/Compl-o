@@ -1,4 +1,4 @@
-# JobBoost FR
+# Compléo
 
 SaaS B2C : diagnostic d'activité, annonces générées par IA, simulateur « Net dans la poche », devis/factures PDF, abonnement Premium (Stripe).
 

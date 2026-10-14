@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Calculator, FileText, Megaphone, Rocket, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { SiteFooter } from "@/components/marketing/site-footer";
 
 const FEATURES = [
   { icon: Sparkles, title: "Trouvez votre activité", text: "3 questions, 3 idées de micro-activités avec tarifs et plateformes adaptés." },
@@ -14,7 +15,7 @@ export default function HomePage() {
   return (
     <main>
       <header className="container flex h-14 items-center justify-between">
-        <span className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> JobBoost FR</span>
+        <span className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</span>
         <nav className="flex items-center gap-1">
           <Button asChild variant="ghost" size="sm"><Link href="/pricing">Tarifs</Link></Button>
           <Button asChild size="sm"><Link href="/login">Connexion</Link></Button>
@@ -26,7 +27,7 @@ export default function HomePage() {
           Gagnez <span className="text-success">200 € à 1 000 € de plus</span> par mois, simplement.
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-muted-foreground md:text-lg">
-          JobBoost FR vous guide dans le choix d'une micro-activité, rédige vos annonces et calcule ce qu'il vous reste vraiment.
+          Compléo vous guide dans le choix d'une micro-activité, rédige vos annonces et calcule ce qu'il vous reste vraiment.
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Button asChild size="lg"><Link href="/onboarding">Faire mon diagnostic gratuit</Link></Button>
@@ -45,6 +46,7 @@ export default function HomePage() {
           </Card>
         ))}
       </section>
+      <SiteFooter />
     </main>
   );
 }

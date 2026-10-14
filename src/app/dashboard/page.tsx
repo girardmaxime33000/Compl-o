@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ManageSubscription } from "@/components/pricing/manage-subscription";
 
-export const metadata = { title: "Tableau de bord · JobBoost FR" };
+export const metadata = { title: "Tableau de bord · Compléo" };
 
 export default async function DashboardPage({ searchParams }: { searchParams: { checkout?: string } }) {
   const { supabase, user, profile } = await requireUser();

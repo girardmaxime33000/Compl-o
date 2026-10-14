@@ -3,7 +3,7 @@ import { FREE_MONTHLY_LISTINGS } from "@/lib/platforms";
 import { ListingGenerator } from "@/components/listings/generator";
 import type { Listing } from "@/types/database";
 
-export const metadata = { title: "Annonces · JobBoost FR" };
+export const metadata = { title: "Annonces · Compléo" };
 
 export default async function ListingsPage({ searchParams }: { searchParams: { service?: string } }) {
   const { supabase, user, profile } = await requireUser();

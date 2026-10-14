@@ -1,7 +1,7 @@
 import { requireUser } from "@/lib/auth";
 import { OnboardingWizard } from "@/components/onboarding/wizard";
 
-export const metadata = { title: "Diagnostic · JobBoost FR" };
+export const metadata = { title: "Diagnostic · Compléo" };
 
 export default async function OnboardingPage() {
   await requireUser();

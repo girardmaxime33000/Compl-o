@@ -4,13 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { LoginForm } from "@/components/marketing/login-form";
 import { safeNext } from "@/lib/auth";
 
-export const metadata = { title: "Connexion · JobBoost FR" };
+export const metadata = { title: "Connexion · Compléo" };
 
 export default function LoginPage({ searchParams }: { searchParams: { next?: string; error?: string } }) {
   return (
     <main className="container flex min-h-screen flex-col items-center justify-center py-10">
       <Link href="/" className="mb-6 flex items-center gap-2 text-xl font-bold text-primary">
-        <Rocket className="h-6 w-6" /> JobBoost FR
+        <Rocket className="h-6 w-6" /> Compléo
       </Link>
       <Card className="w-full max-w-md">
         <CardHeader>
