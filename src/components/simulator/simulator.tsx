@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, CheckCircle2, OctagonAlert } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { track } from "@/lib/analytics";
 import { eur, simulate, TAX_PARAMS, type ActivityRegime, type AlertLevel } from "@/lib/tax";
 
 const LEVEL_STYLE: Record<AlertLevel, { box: string; bar: string; Icon: typeof CheckCircle2 }> = {
@@ -25,6 +26,23 @@ export function Simulator({ initialRevenue = 500, initialRegime = "bnc" }: { ini
   const [areOn, setAreOn] = useState(false);
   const [are, setAre] = useState("1200");
   const [reference, setReference] = useState("");
+
+  // Mesure anonyme : vue du simulateur, puis première modification d'un paramètre (simulation réalisée).
+  const interacted = useRef(false);
+  const mounted = useRef(false);
+  useEffect(() => {
+    track("simulator_view");
+  }, []);
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    if (!interacted.current) {
+      interacted.current = true;
+      track("simulation_completed");
+    }
+  }, [revenue, regime, areOn, are, reference]);
 
   const result = useMemo(
     () =>

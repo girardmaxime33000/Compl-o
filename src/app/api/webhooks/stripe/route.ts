@@ -3,6 +3,7 @@ import type Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe/server";
 import { OFFERS } from "@/lib/offers";
+import { recordEvent } from "@/lib/analytics-server";
 import { PACK_LISTING_CREDITS } from "@/lib/platforms";
 import type { SubscriptionPlan, SubscriptionStatus } from "@/types/database";
 
@@ -78,12 +79,14 @@ export async function POST(request: Request) {
           const offer = session.metadata?.offer;
           const plan: SubscriptionPlan | null = offer === "annual" ? "annual" : offer === "monthly" ? "monthly" : null;
           await setStatus(customerId, "active", session.client_reference_id, plan);
+          await recordEvent("payment_success", { offer: offer ?? "subscription" });
         } else if (session.mode === "payment" && session.metadata?.offer === "pack" && session.client_reference_id) {
           const { error } = await admin.rpc("grant_listing_credits", {
             p_user: session.client_reference_id,
             p_amount: PACK_LISTING_CREDITS,
           });
           if (error) throw error;
+          await recordEvent("payment_success", { offer: "pack" });
         }
         break;
       }

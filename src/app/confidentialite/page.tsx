@@ -49,8 +49,10 @@ export default function PrivacyPage() {
       </LegalSection>
       <LegalSection title="6. Cookies">
         <p>
-          Seuls des cookies strictement nécessaires (session de connexion) sont utilisés. Aucun cookie publicitaire ni de
-          mesure d'audience n'est déposé.
+          Seuls des cookies strictement nécessaires (session de connexion) sont utilisés. Aucun cookie publicitaire n'est
+          déposé. Une mesure d'audience interne enregistre des événements anonymes (nom de l'événement, page, offre ou
+          plateforme concernée) sans cookie, sans identifiant utilisateur, sans adresse IP et sans transmission à un
+          tiers. Elle est désactivée si votre navigateur envoie « Do Not Track » ou « Global Privacy Control ».
         </p>
       </LegalSection>
     </LegalPage>

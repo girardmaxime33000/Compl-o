@@ -6,6 +6,7 @@ import { getModel } from "@/lib/ai";
 import { PLATFORMS } from "@/lib/platforms";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getQuota, quotaExhausted } from "@/lib/quota";
+import { recordEvent } from "@/lib/analytics-server";
 
 export const maxDuration = 60;
 
@@ -109,5 +110,6 @@ export async function POST(request: Request) {
     await refundCredit();
     return NextResponse.json({ error: "Enregistrement de l'annonce impossible." }, { status: 500 });
   }
+  await recordEvent("listing_generated", { platform }, "/dashboard/listings");
   return NextResponse.json({ listing, credits: creditsLeft });
 }

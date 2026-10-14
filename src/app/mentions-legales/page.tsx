@@ -129,7 +129,9 @@ export default function LegalNoticePage() {
         <Section title="7. Cookies">
           <p>
             Le site n'utilise que des cookies strictement nécessaires à son fonctionnement (session de connexion). Aucun
-            cookie publicitaire ni de mesure d'audience n'est déposé : aucun consentement n'est donc requis.
+            cookie publicitaire n'est déposé. Une mesure d'audience interne, anonyme et sans cookie compte des événements
+            (pages vues du simulateur, inscriptions, achats) sans identifiant, sans adresse IP et sans outil tiers ; elle
+            respecte les signaux « Do Not Track » et « Global Privacy Control ».
           </p>
         </Section>
 

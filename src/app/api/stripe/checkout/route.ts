@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe, siteUrl } from "@/lib/stripe/server";
 import { LEGAL } from "@/lib/legal";
 import { isOfferId, OFFERS } from "@/lib/offers";
+import { recordEvent } from "@/lib/analytics-server";
 
 export async function POST(request: Request) {
   const supabase = createClient();
@@ -73,5 +74,6 @@ export async function POST(request: Request) {
     ...(offer.mode === "subscription" ? { subscription_data: { metadata } } : {}),
   });
 
+  await recordEvent("checkout_started", { offer: offerId }, "/pricing");
   return NextResponse.json({ url: session.url });
 }

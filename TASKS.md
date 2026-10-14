@@ -84,18 +84,21 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - notes: le catalogue `activities.ts` compte 10 activités (le backlog en annonçait 9) : une page par entrée, source unique, sitemap et slugs générés depuis le catalogue. Ajouts : `/activites` (index), `monthlyIncomeRange`, `regimeOf` (BNC/BIC indicatif d'après les repères du simulateur, à faire confirmer sur urssaf.fr), `relatedActivities`. Pour `garde_animaux` et `depot_vente` (unités « visite » / « article vendu ») le revenu assimile une heure à une unité : mention affichée sur la page. Simulateur pré-rempli au milieu de fourchette pour `idealHours`. Exemple d'annonce issu de `demo-listings.ts`.
 
 ### T11 Pages activité × ville
-- statut: todo
+- statut: blocked
 - dépend de: T10
 - branche:
 - critères d'acceptation: 20 villes validées, donnée propre à la ville par page, sinon `blocked`.
-- vérifications faites / non faites:
+- vérifications faites / non faites: rien implémenté.
+- notes: BLOQUÉ : aucune source de données locale vérifiable dans le dépôt, et le critère impose au moins un élément de donnée propre à chaque ville (sinon pas de page, contenu mince). Sources possibles à valider par le propriétaire : INSEE (population, part de retraités, de ménages avec enfants, par commune), data.gouv.fr (équipements, établissements scolaires, densité de services), Pôle emploi / France Travail (offres de services à la personne par bassin), tarifs locaux observés sur les plateformes (à relever à la main, sourcés et datés). Question exacte : quelle(s) source(s) retenir et quelle liste de 20 villes de départ ?
 
 ### T12 Mesure
-- statut: todo
+- statut: blocked
 - dépend de: -
-- branche:
+- branche: claude/new-session-og6dhq
 - critères d'acceptation: analytics sans données personnelles, événements listés.
-- vérifications faites / non faites:
+- vérifications faites / non faites: typecheck, lint, build OK (2026-10-14). `next start` : `/api/track` refuse un événement serveur (400) et un corps invalide (400), accepte `simulator_view` (204), ignore les propriétés hors liste (code de `sanitizeProps`, non testé par appel réel). NON fait : application de la migration 0004, vérification des lignes réellement insérées, déclenchement navigateur des 3 événements client, `signup`, `listing_generated`, `checkout_started`, `payment_success` de bout en bout, comportement avec Do Not Track activé.
+- notes: choix sans fournisseur tiers : mesure interne dans Supabase (aucun envoi de données à un outil externe), sans cookie ni identifiant. Mentions légales et confidentialité mises à jour (cookies/mesure d'audience), textes toujours en brouillon : l'exemption de consentement dépend des conditions CNIL pour la mesure d'audience, à faire relire par un juriste. Pas de limitation de débit sur `/api/track` (risque de pollution des compteurs par un tiers). Aucun tableau de bord : requête SQL dans le README. `simulation_completed` = première modification d'un paramètre.
+- bloqué / questions propriétaire : appliquer `0004_analytics_events.sql`, jouer le parcours (simulateur, annonce, paiement test) puis vérifier les lignes dans `analytics_events` ; confirmer que la mesure interne convient (sinon choisir Plausible/Umami/autre).
 
 ### T13 Guides éditoriaux
 - statut: todo

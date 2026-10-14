@@ -229,6 +229,27 @@ Ollama ne fonctionne pas sur un hébergement type Vercel : en production, utilis
 | `npm run lint` | ESLint |
 | `npm run typecheck` | Vérification TypeScript |
 
+## Mesure d'audience
+
+Mesure interne, sans cookie, sans outil tiers : table `analytics_events` (migration `0004_analytics_events.sql`), écrite uniquement par le service role. Un événement = nom, page, propriétés non personnelles (`source`, `offer`, `platform`, `activity`). Aucun identifiant utilisateur, aucune adresse IP, aucun agent utilisateur. Les signaux « Do Not Track » et « Global Privacy Control » désactivent l'envoi navigateur.
+
+| Événement | Origine | Déclencheur |
+|---|---|---|
+| `simulator_view` | navigateur | affichage du simulateur |
+| `simulation_completed` | navigateur | première modification d'un paramètre du simulateur |
+| `paywall_click` | navigateur | clic sur « Voir les packs et abonnements » depuis la limite d'annonces |
+| `signup` | serveur | retour d'authentification d'un compte créé depuis moins de 2 minutes |
+| `listing_generated` | serveur | annonce enregistrée |
+| `checkout_started` | serveur | session Stripe Checkout créée |
+| `payment_success` | serveur | webhook Stripe de paiement confirmé |
+
+`/api/track` n'accepte que les trois événements navigateur. Entonnoir sur 30 jours :
+
+```sql
+select name, count(*) from analytics_events
+where created_at > now() - interval '30 days' group by name order by count(*) desc;
+```
+
 ## Sécurité
 
 - Row Level Security sur toutes les tables.

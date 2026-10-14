@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Quota } from "@/lib/quota";
+import { track } from "@/lib/analytics";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -130,7 +131,7 @@ export function ListingGenerator({
             )}
             {blocked && (
               <p className="text-sm">
-                Limite atteinte. <Link href="/pricing" className="font-medium text-primary underline">Voir les packs et abonnements</Link> pour générer d'autres annonces.
+                Limite atteinte. <Link href="/pricing" onClick={() => track("paywall_click", { source: "listings" })} className="font-medium text-primary underline">Voir les packs et abonnements</Link> pour générer d'autres annonces.
               </p>
             )}
           </CardContent>
