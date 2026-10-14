@@ -35,7 +35,8 @@ export default function TermsOfSalePage() {
         </p>
         <p>
           Les annonces du pack ponctuel sont créditées sur le compte après confirmation du paiement et sont utilisées une
-          fois le quota gratuit ou celui de l'abonnement épuisé.
+          fois le quota gratuit ou celui de l'abonnement épuisé. Elles sont valables 12 mois à compter de l'achat : les annonces
+          non utilisées à cette échéance sont perdues, sans remboursement.
         </p>
       </LegalSection>
       <LegalSection title="4. Droit de rétractation">

@@ -3,16 +3,20 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { effectivePlan, getQuota, quotaExhausted } from "@/lib/quota";
 import { FREE_MONTHLY_LISTINGS, MONTHLY_PLAN_DAILY_LISTINGS } from "@/lib/platforms";
 
-const fake = (opts: { rpcCount?: number; monthCount?: number }) =>
+type Grant = { remaining: number; expires_at: string };
+
+const fake = (opts: { rpcCount?: number; monthCount?: number; grants?: Grant[] }) =>
   ({
     rpc: async () => ({ data: opts.rpcCount ?? 0 }),
-    from: () => ({ select: () => ({ eq: () => ({ gte: async () => ({ count: opts.monthCount ?? 0 }) }) }) }),
+    from: (table: string) =>
+      table === "listing_credit_grants"
+        ? { select: () => ({ gt: () => ({ gt: () => ({ order: async () => ({ data: opts.grants ?? [] }) }) }) }) }
+        : { select: () => ({ eq: () => ({ gte: async () => ({ count: opts.monthCount ?? 0 }) }) }) },
   }) as unknown as SupabaseClient;
 
-const profile = (status: "free" | "active" | "canceled", plan: "monthly" | "annual" | null, credits = 0) => ({
+const profile = (status: "free" | "active" | "canceled", plan: "monthly" | "annual" | null) => ({
   subscription_status: status,
   subscription_plan: plan,
-  listing_credits: credits,
 });
 
 describe("effectivePlan", () => {
@@ -25,9 +29,18 @@ describe("effectivePlan", () => {
 });
 
 describe("getQuota", () => {
+  it("sans lot de crédits non expiré : 0 crédit et pas de date", async () => {
+    const q = await getQuota(fake({ monthCount: 0 }), "u", profile("free", null));
+    expect(q).toMatchObject({ credits: 0, creditsExpireAt: null });
+  });
+
   it("gratuit : plafond mensuel", async () => {
-    const q = await getQuota(fake({ monthCount: 2 }), "u", profile("free", null, 3));
-    expect(q).toEqual({ limit: FREE_MONTHLY_LISTINGS, period: "month", used: 2, credits: 3 });
+    const grants = [
+      { remaining: 1, expires_at: "2027-03-01T00:00:00Z" },
+      { remaining: 2, expires_at: "2027-09-01T00:00:00Z" },
+    ];
+    const q = await getQuota(fake({ monthCount: 2, grants }), "u", profile("free", null));
+    expect(q).toEqual({ limit: FREE_MONTHLY_LISTINGS, period: "month", used: 2, credits: 3, creditsExpireAt: "2027-03-01T00:00:00Z" });
     expect(quotaExhausted(q)).toBe(true);
     expect(quotaExhausted({ ...q, used: 1 })).toBe(false);
   });

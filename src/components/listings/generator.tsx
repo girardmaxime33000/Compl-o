@@ -79,6 +79,7 @@ export function ListingGenerator({
 
   const limitReached = limit !== null && used >= limit;
   const blocked = limitReached && credits <= 0;
+  const expiry = quota.creditsExpireAt ? ` (valables jusqu'au ${new Date(quota.creditsExpireAt).toLocaleDateString("fr-FR")})` : "";
 
   async function generate(e: React.FormEvent) {
     e.preventDefault();
@@ -116,7 +117,7 @@ export function ListingGenerator({
             {limitReached && credits > 0 ? (
               // Quota du plan épuisé mais crédits disponibles : pas de barre d'alerte, la génération reste possible.
               <div className="flex justify-between text-sm">
-                <span>Crédits d'annonces restants</span>
+                <span>Crédits d'annonces restants{expiry}</span>
                 <span className="font-medium">{credits}</span>
               </div>
             ) : (
@@ -126,7 +127,7 @@ export function ListingGenerator({
                   <span className="font-medium">{Math.min(used, limit)}/{limit}</span>
                 </div>
                 <Progress value={(Math.min(used, limit) / limit) * 100} indicatorClassName={limitReached ? "bg-destructive" : undefined} />
-                {credits > 0 && <p className="text-sm text-muted-foreground">Crédits d'annonces restants : {credits}</p>}
+                {credits > 0 && <p className="text-sm text-muted-foreground">Crédits d'annonces restants : {credits}{expiry}</p>}
               </>
             )}
             {blocked && (

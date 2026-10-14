@@ -11,7 +11,7 @@ import { formatCents, OFFERS, type OfferId } from "@/lib/offers";
 import { MONTHLY_PLAN_DAILY_LISTINGS, PACK_LISTING_CREDITS } from "@/lib/platforms";
 
 const FEATURES: Record<OfferId, string[]> = {
-  pack: [`${PACK_LISTING_CREDITS} annonces IA`, "Paiement unique, sans abonnement", "Utilisables quand votre quota est épuisé"],
+  pack: [`${PACK_LISTING_CREDITS} annonces IA`, "Paiement unique, sans abonnement", "Utilisables quand votre quota est épuisé", "Valables 12 mois après l'achat"],
   monthly: [`${MONTHLY_PLAN_DAILY_LISTINGS} annonces IA par jour`, "Toutes les plateformes", "Résiliable à tout moment"],
   annual: ["Annonces IA illimitées", "Toutes les plateformes", "Résiliable à tout moment"],
 };

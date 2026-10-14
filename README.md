@@ -81,7 +81,7 @@ Paiement par Stripe Checkout (acceptation des CGU/CGV et renonciation à la rét
 | | Gratuit | Pack ponctuel | Pack mensuel | Annuel |
 |---|---|---|---|---|
 | Prix | 0 € | 4,99 € (une fois) | 6,99 € / mois | 69,99 € / an |
-| Annonces IA | 2 par mois | 4 annonces créditées | 10 par jour | Illimitées |
+| Annonces IA | 2 par mois | 4 annonces créditées, valables 12 mois | 10 par jour | Illimitées |
 | Diagnostic, simulateur, devis et factures PDF | Oui | Oui | Oui | Oui |
 
 Le quota du plan est consommé d'abord, puis les crédits du pack ponctuel. Les quotas sont appliqués côté serveur (`src/lib/quota.ts`, `/api/generate-listing`). Le quota journalier suit l'heure de Paris.
@@ -116,6 +116,7 @@ src/
 │   ├── activites/ activites/[slug]/  Pages activité publiques (une par activité du catalogue)
 │   ├── activites/[slug]/[ville]/ Pages activité × ville (20 villes, SSG, seulement avec donnée locale)
 │   ├── dashboard/account/        Mon compte : export JSON et suppression du compte (RGPD)
+│   ├── api/simulation/pdf/       Export PDF d'une simulation (compte requis, résultat recalculé côté serveur)
 │   ├── mentions-legales/         Mentions légales
 │   ├── cgu/ cgv/ confidentialite/ CGU, CGV, politique de confidentialité (brouillons à faire relire)
 │   ├── dashboard/                Espace connecté
@@ -152,7 +153,7 @@ Principes :
 
 Quatre tables, toutes protégées par Row Level Security (chaque utilisateur n'accède qu'à ses propres lignes) :
 
-- `profiles` : identité, `stripe_customer_id`, `subscription_status` (`free`, `active`, `canceled`), `subscription_plan` (`monthly`, `annual`), `listing_credits` (crédits du pack ponctuel), SIRET et adresse de l'émetteur. Créé automatiquement à l'inscription par un trigger.
+- `profiles` : identité, `stripe_customer_id`, `subscription_status` (`free`, `active`, `canceled`), `subscription_plan` (`monthly`, `annual`), `subscription_plan` déjà cité ; les crédits du pack ponctuel sont dans `listing_credit_grants` (un lot par achat, expiration à 12 mois, consommation du lot le plus proche de l'expiration), SIRET et adresse de l'émetteur. Créé automatiquement à l'inscription par un trigger.
 - `user_skills` : catégorie d'activité, matériel disponible, heures hebdomadaires.
 - `listings` : annonces générées (titre, plateforme, texte, tarif suggéré).
 - `invoices` : devis et factures (client, montant, statut, date, description, type).
@@ -203,7 +204,7 @@ Elles se renseignent uniquement dans `.env.local` (ignoré par git) et dans les 
 
 ### Stripe (mode test)
 
-1. Créer trois prix Stripe et reporter leurs `price_...` dans les variables ci-dessus : pack ponctuel (4,99 €, paiement unique), pack mensuel (6,99 € par mois), abonnement annuel (69,99 € par an). Les montants affichés sont dans `src/lib/offers.ts` et doivent rester identiques à Stripe. Appliquer la migration `supabase/migrations/0003_offers_credits.sql`. Dans le webhook Stripe, activer `checkout.session.completed`, `checkout.session.async_payment_succeeded` et `customer.subscription.*`.
+1. Créer trois prix Stripe et reporter leurs `price_...` dans les variables ci-dessus : pack ponctuel (4,99 €, paiement unique), pack mensuel (6,99 € par mois), abonnement annuel (69,99 € par an). Les montants affichés sont dans `src/lib/offers.ts` et doivent rester identiques à Stripe. Appliquer dans l'ordre les migrations `0003_offers_credits.sql` puis `0005_credit_expiry.sql` (et `0004_analytics_events.sql`). Dans le webhook Stripe, activer `checkout.session.completed`, `checkout.session.async_payment_succeeded` et `customer.subscription.*`.
 2. Activer et enregistrer le portail client : `Settings` > `Billing` > `Customer portal`.
 3. En local, rediriger les webhooks avec la CLI Stripe :
    ```bash

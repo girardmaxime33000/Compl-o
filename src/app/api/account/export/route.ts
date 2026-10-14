@@ -11,13 +11,14 @@ export async function GET() {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Connexion requise." }, { status: 401 });
 
-  const [profile, skills, listings, invoices] = await Promise.all([
+  const [profile, skills, listings, invoices, creditGrants] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).single(),
     supabase.from("user_skills").select("*").eq("user_id", user.id),
     supabase.from("listings").select("*").eq("user_id", user.id).order("created_at"),
     supabase.from("invoices").select("*").eq("user_id", user.id).order("created_at"),
+    supabase.from("listing_credit_grants").select("*").eq("user_id", user.id).order("granted_at"),
   ]);
-  if (profile.error || skills.error || listings.error || invoices.error) {
+  if (profile.error || skills.error || listings.error || invoices.error || creditGrants.error) {
     return NextResponse.json({ error: "Export impossible." }, { status: 500 });
   }
 
@@ -28,6 +29,7 @@ export async function GET() {
     skills: skills.data,
     listings: listings.data,
     invoices: invoices.data,
+    listingCreditGrants: creditGrants.data,
   };
   return new NextResponse(JSON.stringify(body, null, 2), {
     headers: {

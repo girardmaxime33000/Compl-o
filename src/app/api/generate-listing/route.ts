@@ -40,7 +40,7 @@ export async function POST(request: Request) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("subscription_status, subscription_plan, listing_credits")
+    .select("subscription_status, subscription_plan")
     .eq("id", user.id)
     .single();
   if (!profile) return NextResponse.json({ error: "Profil introuvable." }, { status: 404 });

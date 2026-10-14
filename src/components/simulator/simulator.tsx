@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, CheckCircle2, OctagonAlert } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Download, Loader2, OctagonAlert } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +45,39 @@ export function Simulator({ initialRevenue = 500, initialRegime = "bnc" }: { ini
       track("simulation_completed");
     }
   }, [revenue, regime, areOn, are, reference]);
+
+  const [exporting, setExporting] = useState(false);
+  const { toast } = useToast();
+
+  async function exportPdf() {
+    setExporting(true);
+    try {
+      const res = await fetch("/api/simulation/pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          monthlyRevenue: num(revenue),
+          regime,
+          unemployment: { enabled: areOn, monthlyAre: num(are), referenceSalary: num(reference) },
+        }),
+      });
+      if (res.status === 401) {
+        window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+        return;
+      }
+      if (!res.ok) throw new Error("Export impossible.");
+      const url = URL.createObjectURL(await res.blob());
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "simulation-compleo.pdf";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Export impossible.", "error");
+    } finally {
+      setExporting(false);
+    }
+  }
 
   const result = useMemo(
     () =>
@@ -116,6 +151,12 @@ export function Simulator({ initialRevenue = 500, initialRegime = "bnc" }: { ini
             <Row label="Chiffre d'affaires" value={eur(result.monthlyRevenue)} />
             <Row label={`Cotisations URSSAF (${(result.urssafRate * 100).toFixed(1)} %)`} value={`− ${eur(result.urssaf)}`} />
             <Row label="Net annuel estimé" value={eur(result.netAnnual)} strong />
+            <div className="pt-2">
+              <Button type="button" variant="outline" size="sm" onClick={exportPdf} disabled={exporting}>
+                {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} Exporter en PDF
+              </Button>
+              <p className="mt-1 text-xs text-muted-foreground">Export réservé aux comptes (gratuits).</p>
+            </div>
           </CardContent>
         </Card>
 

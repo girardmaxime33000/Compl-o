@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
   user: { id: "user-1" } as { id: string } | null,
-  profile: { subscription_status: "free", subscription_plan: null, listing_credits: 0 } as Record<string, unknown>,
+  profile: { subscription_status: "free", subscription_plan: null } as Record<string, unknown>,
   monthCount: 0,
   dayCount: 0,
   rpc: vi.fn(),
@@ -15,6 +15,7 @@ vi.mock("@/lib/supabase/server", () => ({
     auth: { getUser: async () => ({ data: { user: h.user } }) },
     rpc: async () => ({ data: h.dayCount }),
     from: (table: string) => {
+      if (table === "listing_credit_grants") return { select: () => ({ gt: () => ({ gt: () => ({ order: async () => ({ data: [] }) }) }) }) };
       if (table === "profiles") return { select: () => ({ eq: () => ({ single: async () => ({ data: h.profile }) }) }) };
       return {
         select: (_cols?: string, opts?: { head?: boolean }) =>
@@ -51,7 +52,7 @@ const generated = {
 
 beforeEach(() => {
   h.user = { id: "user-1" };
-  h.profile = { subscription_status: "free", subscription_plan: null, listing_credits: 0 };
+  h.profile = { subscription_status: "free", subscription_plan: null };
   h.monthCount = 0;
   h.dayCount = 0;
   h.inserted = [];
@@ -100,7 +101,7 @@ describe("POST /api/generate-listing : quotas", () => {
   });
 
   it("plan mensuel : plafond quotidien", async () => {
-    h.profile = { subscription_status: "active", subscription_plan: "monthly", listing_credits: 0 };
+    h.profile = { subscription_status: "active", subscription_plan: "monthly" };
     h.dayCount = MONTHLY_PLAN_DAILY_LISTINGS;
     expect((await call()).status).toBe(403);
     h.dayCount = MONTHLY_PLAN_DAILY_LISTINGS - 1;
@@ -108,7 +109,7 @@ describe("POST /api/generate-listing : quotas", () => {
   });
 
   it("plan annuel : jamais bloqué", async () => {
-    h.profile = { subscription_status: "active", subscription_plan: "annual", listing_credits: 0 };
+    h.profile = { subscription_status: "active", subscription_plan: "annual" };
     h.dayCount = 500;
     expect((await call()).status).toBe(200);
   });

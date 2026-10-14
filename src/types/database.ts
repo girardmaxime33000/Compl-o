@@ -13,6 +13,7 @@ export interface Profile {
   address: string | null;
   subscription_status: SubscriptionStatus;
   subscription_plan: SubscriptionPlan | null;
+  /** Obsolète depuis la migration 0005 : les crédits sont dans listing_credit_grants. */
   listing_credits: number;
   created_at: string;
 }
@@ -46,4 +47,13 @@ export interface Invoice {
   document_type: DocumentType;
   issue_date: string;
   created_at: string;
+}
+
+export interface ListingCreditGrant {
+  id: string;
+  user_id: string;
+  amount: number;
+  remaining: number;
+  granted_at: string;
+  expires_at: string;
 }
