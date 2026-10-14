@@ -42,11 +42,12 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - notes: aperçu HTML statique à données fictives ; création et téléchargement PDF restent derrière connexion (`/dashboard/invoices`, existant) via CTA. Mention `TVA_MENTION` importée de `invoice-number.ts`. Liste des mentions non validée juridiquement (renvoi service-public.fr).
 
 ### T06 Générateur d'annonce : démo publique
-- statut: todo
+- statut: done
 - dépend de: -
-- branche:
+- branche: claude/new-session-og6dhq
 - critères d'acceptation: démo sans compte, appel IA anonyme borné.
-- vérifications faites / non faites:
+- vérifications faites / non faites: typecheck, lint, build OK (2026-10-14) ; `next start` : `/generateur-annonce` 200 sans session. Non fait : test navigateur interactif, régressions manuelles.
+- notes: option sans IA anonyme : un exemple pré-rédigé par activité du catalogue (titre/pitch/tarif issus de `activities.ts`, détails dans `demo-listings.ts`). Aucun appel IA anonyme, donc pas de limitation IP/cookie nécessaire. `/api/generate-listing` reste réservé aux connectés.
 
 ### T07 Paywall et offres
 - statut: todo

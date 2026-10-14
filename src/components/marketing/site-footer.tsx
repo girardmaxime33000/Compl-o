@@ -12,6 +12,7 @@ export function SiteFooter() {
           <Link href="/confidentialite" className="hover:text-foreground hover:underline">Confidentialité</Link>
           <Link href="/simulateur-micro-entrepreneur" className="hover:text-foreground hover:underline">Simulateur</Link>
           <Link href="/modele-facture-auto-entrepreneur" className="hover:text-foreground hover:underline">Modèle de facture</Link>
+          <Link href="/generateur-annonce" className="hover:text-foreground hover:underline">Exemples d'annonces</Link>
           <Link href="/pricing" className="hover:text-foreground hover:underline">Tarifs</Link>
         </nav>
       </div>
