@@ -34,11 +34,12 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - notes: page publique réutilisant `Simulator` (calcul inchangé, `tax.ts`). Sauvegarde et export PDF de simulation n'existent pas dans l'app : seule la porte d'inscription (CTA compte gratuit) est posée ; fonctionnalités à créer avec T07. Route `/dashboard/simulator` conservée. Valeurs de `tax.ts` non revérifiées : mention ajoutée en commentaire, date de vérification à fournir par le propriétaire. Lien ajouté au footer et à l'accueil.
 
 ### T05 Modèle de facture et devis public
-- statut: todo
+- statut: done
 - dépend de: T04
-- branche:
+- branche: claude/new-session-og6dhq
 - critères d'acceptation: page publique avec aperçu ; PDF après inscription.
-- vérifications faites / non faites:
+- vérifications faites / non faites: typecheck, lint, build OK (2026-10-14) ; `next start` : page 200 sans session, titre et mention 293 B présents. Non fait : test navigateur, régressions manuelles.
+- notes: aperçu HTML statique à données fictives ; création et téléchargement PDF restent derrière connexion (`/dashboard/invoices`, existant) via CTA. Mention `TVA_MENTION` importée de `invoice-number.ts`. Liste des mentions non validée juridiquement (renvoi service-public.fr).
 
 ### T06 Générateur d'annonce : démo publique
 - statut: todo

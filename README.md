@@ -110,6 +110,7 @@ src/
 │   ├── onboarding/               Diagnostic en 3 étapes
 │   ├── pricing/                  Offres et paiement
 │   ├── simulateur-micro-entrepreneur/ Simulateur public (sans compte)
+│   ├── modele-facture-auto-entrepreneur/ Aperçu public de facture (PDF après inscription)
 │   ├── mentions-legales/         Mentions légales
 │   ├── cgu/ cgv/ confidentialite/ CGU, CGV, politique de confidentialité (brouillons à faire relire)
 │   ├── dashboard/                Espace connecté
