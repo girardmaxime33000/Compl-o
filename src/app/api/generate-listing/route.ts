@@ -3,7 +3,9 @@ import { generateObject } from "ai";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getModel } from "@/lib/ai";
-import { FREE_MONTHLY_LISTINGS, PLATFORMS } from "@/lib/platforms";
+import { PLATFORMS } from "@/lib/platforms";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getQuota, quotaExhausted } from "@/lib/quota";
 
 export const maxDuration = 60;
 
@@ -35,25 +37,33 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: "Paramètres invalides." }, { status: 400 });
   const { service, city, platform } = parsed.data;
 
-  const { data: profile } = await supabase.from("profiles").select("subscription_status").eq("id", user.id).single();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("subscription_status, subscription_plan, listing_credits")
+    .eq("id", user.id)
+    .single();
   if (!profile) return NextResponse.json({ error: "Profil introuvable." }, { status: 404 });
 
-  if (profile.subscription_status !== "active") {
-    const monthStart = new Date();
-    monthStart.setUTCDate(1);
-    monthStart.setUTCHours(0, 0, 0, 0);
-    const { count } = await supabase
-      .from("listings")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .gte("created_at", monthStart.toISOString());
-    if ((count ?? 0) >= FREE_MONTHLY_LISTINGS) {
-      return NextResponse.json(
-        { error: `Limite de ${FREE_MONTHLY_LISTINGS} annonces par mois atteinte. Passez Premium pour en générer sans limite.`, code: "LIMIT_REACHED" },
-        { status: 403 },
-      );
+  // Quota du plan (gratuit : mois, mensuel : jour, annuel : illimité), puis crédits du pack ponctuel.
+  const quota = await getQuota(supabase, user.id, profile);
+  let creditsLeft: number | undefined;
+  let creditConsumed = false;
+  if (quotaExhausted(quota)) {
+    const { data: remaining, error: creditError } = await createAdminClient().rpc("consume_listing_credit", { p_user: user.id });
+    if (creditError || typeof remaining !== "number" || remaining < 0) {
+      const message =
+        quota.period === "day"
+          ? `Limite de ${quota.limit} annonces par jour atteinte. Revenez demain, passez à l'abonnement annuel ou achetez un pack d'annonces.`
+          : `Limite de ${quota.limit} annonces par mois atteinte. Achetez un pack d'annonces ou abonnez-vous pour en générer davantage.`;
+      return NextResponse.json({ error: message, code: "LIMIT_REACHED" }, { status: 403 });
     }
+    creditConsumed = true;
+    creditsLeft = remaining;
   }
+
+  const refundCredit = async () => {
+    if (creditConsumed) await createAdminClient().rpc("grant_listing_credits", { p_user: user.id, p_amount: 1 });
+  };
 
   let object: z.infer<typeof outputSchema>;
   try {
@@ -70,6 +80,7 @@ export async function POST(request: Request) {
     }));
   } catch (error) {
     console.error("generate-listing", error);
+    await refundCredit();
     return NextResponse.json({ error: "La génération a échoué. Réessayez dans un instant." }, { status: 502 });
   }
 
@@ -94,6 +105,9 @@ export async function POST(request: Request) {
     .select("id, title, platform, description, price_suggested, created_at")
     .single();
 
-  if (error || !listing) return NextResponse.json({ error: "Enregistrement de l'annonce impossible." }, { status: 500 });
-  return NextResponse.json({ listing });
+  if (error || !listing) {
+    await refundCredit();
+    return NextResponse.json({ error: "Enregistrement de l'annonce impossible." }, { status: 500 });
+  }
+  return NextResponse.json({ listing, credits: creditsLeft });
 }

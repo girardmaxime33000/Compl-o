@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe/server";
-import type { SubscriptionStatus } from "@/types/database";
+import { OFFERS } from "@/lib/offers";
+import { PACK_LISTING_CREDITS } from "@/lib/platforms";
+import type { SubscriptionPlan, SubscriptionStatus } from "@/types/database";
 
 export const runtime = "nodejs";
 
@@ -20,9 +22,23 @@ function mapStatus(status: Stripe.Subscription.Status): SubscriptionStatus | nul
   }
 }
 
-async function setStatus(customerId: string, status: SubscriptionStatus, userId?: string | null) {
+/** Plan déduit du prix Stripe (source d'autorité), via les variables d'environnement. */
+function planOfPrice(priceId: string | undefined): SubscriptionPlan | null {
+  if (!priceId) return null;
+  if (priceId === process.env[OFFERS.annual.priceEnv]) return "annual";
+  if (priceId === process.env[OFFERS.monthly.priceEnv]) return "monthly";
+  return null;
+}
+
+async function setStatus(customerId: string, status: SubscriptionStatus, userId?: string | null, plan?: SubscriptionPlan | null) {
   const admin = createAdminClient();
-  const query = admin.from("profiles").update({ subscription_status: status, stripe_customer_id: customerId });
+  const patch: { subscription_status: SubscriptionStatus; stripe_customer_id: string; subscription_plan?: SubscriptionPlan | null } = {
+    subscription_status: status,
+    stripe_customer_id: customerId,
+  };
+  if (status === "canceled") patch.subscription_plan = null;
+  else if (plan) patch.subscription_plan = plan;
+  const query = admin.from("profiles").update(patch);
   const { error } = await (userId ? query.eq("id", userId) : query.eq("stripe_customer_id", customerId));
   if (error) throw error;
 }
@@ -42,13 +58,32 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Signature invalide." }, { status: 400 });
   }
 
+  // Idempotence : on réserve l'identifiant de l'événement avant de le traiter.
+  const admin = createAdminClient();
+  const { error: claimError } = await admin.from("stripe_events").insert({ id: event.id, type: event.type });
+  if (claimError) {
+    if (claimError.code === "23505") return NextResponse.json({ received: true, duplicate: true });
+    console.error("stripe webhook claim", event.id, claimError);
+    return NextResponse.json({ error: "Traitement échoué." }, { status: 500 });
+  }
+
   try {
     switch (event.type) {
-      case "checkout.session.completed": {
+      case "checkout.session.completed":
+      case "checkout.session.async_payment_succeeded": {
         const session = event.data.object;
         const customerId = customerIdOf(session.customer);
-        if (session.mode === "subscription" && customerId && session.payment_status !== "unpaid") {
-          await setStatus(customerId, "active", session.client_reference_id);
+        if (session.payment_status !== "paid" && session.payment_status !== "no_payment_required") break;
+        if (session.mode === "subscription" && customerId) {
+          const offer = session.metadata?.offer;
+          const plan: SubscriptionPlan | null = offer === "annual" ? "annual" : offer === "monthly" ? "monthly" : null;
+          await setStatus(customerId, "active", session.client_reference_id, plan);
+        } else if (session.mode === "payment" && session.metadata?.offer === "pack" && session.client_reference_id) {
+          const { error } = await admin.rpc("grant_listing_credits", {
+            p_user: session.client_reference_id,
+            p_amount: PACK_LISTING_CREDITS,
+          });
+          if (error) throw error;
         }
         break;
       }
@@ -58,12 +93,15 @@ export async function POST(request: Request) {
         const sub = event.data.object;
         const customerId = customerIdOf(sub.customer);
         const status = event.type === "customer.subscription.deleted" ? "canceled" : mapStatus(sub.status);
-        if (customerId && status) await setStatus(customerId, status);
+        const plan = planOfPrice(sub.items.data[0]?.price.id);
+        if (customerId && status) await setStatus(customerId, status, null, plan);
         break;
       }
     }
   } catch (error) {
     console.error("stripe webhook", event.type, error);
+    // Libère la réservation pour que Stripe puisse rejouer l'événement.
+    await admin.from("stripe_events").delete().eq("id", event.id);
     return NextResponse.json({ error: "Traitement échoué." }, { status: 500 });
   }
 

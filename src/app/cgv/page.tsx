@@ -14,10 +14,15 @@ export default function TermsOfSalePage() {
           <a className="text-primary underline" href="/mentions-legales">mentions légales</a>).
         </p>
       </LegalSection>
-      <LegalSection title="2. Offre et prix">
+      <LegalSection title="2. Offres et prix">
+        <p>Trois offres payantes de contenu numérique (annonces rédigées par IA) sont proposées :</p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>le pack ponctuel : un nombre défini d'annonces, payé une seule fois ;</li>
+          <li>le pack mensuel : un nombre maximal d'annonces par jour, par abonnement mensuel ;</li>
+          <li>l'abonnement annuel : annonces illimitées, par abonnement annuel.</li>
+        </ul>
         <p>
-          L'offre Premium est un abonnement à un contenu numérique (annonces IA illimitées, toutes plateformes). Le prix
-          applicable, toutes taxes comprises, est celui affiché sur la page{" "}
+          Le contenu de chaque offre et son prix, toutes taxes comprises, sont ceux affichés sur la page{" "}
           <a className="text-primary underline" href="/pricing">Tarifs</a> au moment de la commande. Les prix s'entendent en
           euros ; la TVA n'est pas applicable le cas échéant, conformément aux mentions légales.
         </p>
@@ -25,18 +30,22 @@ export default function TermsOfSalePage() {
       <LegalSection title="3. Commande et paiement">
         <p>
           La commande est conclue après acceptation des présentes conditions et validation du paiement sur la page
-          sécurisée de Stripe. L'abonnement est renouvelé automatiquement à chaque échéance jusqu'à résiliation. Le
-          paiement est traité par Stripe ; {LEGAL.siteName} ne conserve aucun numéro de carte.
+          sécurisée de Stripe. Les abonnements sont renouvelés automatiquement à chaque échéance (mensuelle ou annuelle)
+          jusqu'à résiliation. Le paiement est traité par Stripe ; {LEGAL.siteName} ne conserve aucun numéro de carte.
+        </p>
+        <p>
+          Les annonces du pack ponctuel sont créditées sur le compte après confirmation du paiement et sont utilisées une
+          fois le quota gratuit ou celui de l'abonnement épuisé.
         </p>
       </LegalSection>
       <LegalSection title="4. Droit de rétractation">
         <p>
-          Le consommateur dispose d'un délai de 14 jours à compter de la souscription pour se rétracter, sans motif, en
+          Le consommateur dispose d'un délai de 14 jours à compter de la commande pour se rétracter, sans motif, en
           écrivant à <span>{LEGAL.email || "l'adresse e-mail indiquée dans les mentions légales"}</span>.
         </p>
         <p>
           Lorsque le consommateur demande l'accès immédiat au contenu numérique avant la fin de ce délai, il reconnaît
-          expressément que l'exécution commence dès l'activation de l'abonnement et <strong>renonce à son droit de
+          expressément que l'exécution commence dès l'activation de l'offre et <strong>renonce à son droit de
           rétractation</strong> une fois le contenu numérique fourni, conformément à l'article L. 221-28, 13° du Code de
           la consommation. Cette demande et cette renonciation sont recueillies par une case à cocher distincte avant le
           paiement.
@@ -44,9 +53,10 @@ export default function TermsOfSalePage() {
       </LegalSection>
       <LegalSection title="5. Durée et résiliation">
         <p>
-          L'abonnement est sans engagement de durée. L'utilisateur le résilie à tout moment depuis le portail de gestion
-          de l'abonnement accessible dans son compte ; la résiliation prend effet à la fin de la période déjà payée, qui
-          n'est pas remboursée, sauf obligation légale contraire.
+          Les abonnements sont sans engagement au-delà de la période en cours. L'utilisateur les résilie à tout moment
+          depuis le portail de gestion de l'abonnement accessible dans son compte ; la résiliation prend effet à la fin de
+          la période déjà payée, qui n'est pas remboursée, sauf obligation légale contraire. Le pack ponctuel n'est pas
+          un abonnement et ne se renouvelle pas.
         </p>
       </LegalSection>
       <LegalSection title="6. Disponibilité du service">

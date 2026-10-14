@@ -1,5 +1,6 @@
 import { LEGAL } from "@/lib/legal";
-import { absoluteUrl, PREMIUM_PRICE_EUR, PUBLIC_PAGES } from "@/lib/seo";
+import { absoluteUrl, PUBLIC_PAGES } from "@/lib/seo";
+import { centsToDecimal, OFFERS } from "@/lib/offers";
 
 function JsonLd({ data }: { data: object }) {
   // Échappe "<" pour qu'aucune balise ne puisse fermer le script.
@@ -29,13 +30,12 @@ export function OrganizationJsonLd() {
           inLanguage: "fr-FR",
           offers: [
             { "@type": "Offer", name: "Gratuit", price: "0", priceCurrency: "EUR" },
-            {
+            ...Object.values(OFFERS).map((o) => ({
               "@type": "Offer",
-              name: "Premium",
-              price: PREMIUM_PRICE_EUR,
+              name: o.name,
+              price: centsToDecimal(o.cents),
               priceCurrency: "EUR",
-              priceSpecification: { "@type": "UnitPriceSpecification", price: PREMIUM_PRICE_EUR, priceCurrency: "EUR", unitCode: "MON" },
-            },
+            })),
           ],
         }}
       />

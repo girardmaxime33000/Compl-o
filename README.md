@@ -78,13 +78,13 @@ Paiement par Stripe Checkout (acceptation des CGU/CGV et renonciation à la rét
 
 ## Offres
 
-| | Gratuit | Premium |
-|---|---|---|
-| Prix | 0 € | 6,99 € / mois |
-| Diagnostic et recommandations | Oui | Oui |
-| Annonces IA | 2 par mois | Illimitées |
-| Simulateur | Oui | Oui |
-| Devis et factures PDF | Oui | Oui |
+| | Gratuit | Pack ponctuel | Pack mensuel | Annuel |
+|---|---|---|---|---|
+| Prix | 0 € | 4,99 € (une fois) | 6,99 € / mois | 69,99 € / an |
+| Annonces IA | 2 par mois | 4 annonces créditées | 10 par jour | Illimitées |
+| Diagnostic, simulateur, devis et factures PDF | Oui | Oui | Oui | Oui |
+
+Le quota du plan est consommé d'abord, puis les crédits du pack ponctuel. Les quotas sont appliqués côté serveur (`src/lib/quota.ts`, `/api/generate-listing`). Le quota journalier suit l'heure de Paris.
 
 ## Stack technique
 
@@ -149,7 +149,7 @@ Principes :
 
 Quatre tables, toutes protégées par Row Level Security (chaque utilisateur n'accède qu'à ses propres lignes) :
 
-- `profiles` : identité, `stripe_customer_id`, `subscription_status` (`free`, `active`, `canceled`), SIRET et adresse de l'émetteur. Créé automatiquement à l'inscription par un trigger.
+- `profiles` : identité, `stripe_customer_id`, `subscription_status` (`free`, `active`, `canceled`), `subscription_plan` (`monthly`, `annual`), `listing_credits` (crédits du pack ponctuel), SIRET et adresse de l'émetteur. Créé automatiquement à l'inscription par un trigger.
 - `user_skills` : catégorie d'activité, matériel disponible, heures hebdomadaires.
 - `listings` : annonces générées (titre, plateforme, texte, tarif suggéré).
 - `invoices` : devis et factures (client, montant, statut, date, description, type).
@@ -181,7 +181,9 @@ Elles se renseignent uniquement dans `.env.local` (ignoré par git) et dans les 
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé publique (publishable) Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | Clé secrète Supabase : serveur uniquement, contourne la RLS |
 | `STRIPE_SECRET_KEY` | Clé secrète Stripe |
-| `STRIPE_PREMIUM_PRICE_ID` | Identifiant du prix Premium (`price_...`) |
+| `STRIPE_PACK_PRICE_ID` | Prix du pack ponctuel (paiement unique, 4 annonces) |
+| `STRIPE_MONTHLY_PRICE_ID` | Prix du pack mensuel (abonnement, 10 annonces/jour) |
+| `STRIPE_ANNUAL_PRICE_ID` | Prix de l'abonnement annuel (annonces illimitées) |
 | `STRIPE_WEBHOOK_SECRET` | Secret de signature du webhook (`whsec_...`) |
 | `AI_PROVIDER` | `openai-compatible` (défaut), `openai` ou `anthropic` |
 | `AI_BASE_URL`, `AI_MODEL`, `AI_API_KEY` | Fournisseur compatible OpenAI (Ollama, Groq, OpenRouter) |
@@ -198,7 +200,7 @@ Elles se renseignent uniquement dans `.env.local` (ignoré par git) et dans les 
 
 ### Stripe (mode test)
 
-1. Créer un produit « Compléo Premium » avec un prix récurrent de 6,99 € par mois ; reporter le `price_...` dans `STRIPE_PREMIUM_PRICE_ID`.
+1. Créer trois prix Stripe et reporter leurs `price_...` dans les variables ci-dessus : pack ponctuel (4,99 €, paiement unique), pack mensuel (6,99 € par mois), abonnement annuel (69,99 € par an). Les montants affichés sont dans `src/lib/offers.ts` et doivent rester identiques à Stripe. Appliquer la migration `supabase/migrations/0003_offers_credits.sql`. Dans le webhook Stripe, activer `checkout.session.completed`, `checkout.session.async_payment_succeeded` et `customer.subscription.*`.
 2. Activer et enregistrer le portail client : `Settings` > `Billing` > `Customer portal`.
 3. En local, rediriger les webhooks avec la CLI Stripe :
    ```bash
@@ -229,7 +231,7 @@ Ollama ne fonctionne pas sur un hébergement type Vercel : en production, utilis
 ## Sécurité
 
 - Row Level Security sur toutes les tables.
-- Les colonnes `subscription_status` et `stripe_customer_id` ne sont modifiables que via le service role (webhook Stripe) : un utilisateur ne peut pas s'attribuer le statut Premium.
+- Les colonnes `subscription_status`, `subscription_plan`, `listing_credits` et `stripe_customer_id` ne sont modifiables que via le service role (webhook Stripe) : un utilisateur ne peut pas s'attribuer le statut Premium.
 - Signature des webhooks Stripe vérifiée.
 - Quotas et droits contrôlés côté serveur.
 - Redirections après connexion limitées aux chemins internes.

@@ -12,3 +12,8 @@ export const PLATFORMS: Record<Platform, { label: string; hint: string }> = {
 export const GENERATOR_PLATFORMS: Platform[] = ["leboncoin", "allovoisins", "gensdeconfiance"];
 
 export const FREE_MONTHLY_LISTINGS = 2;
+
+/** Plan mensuel : plafond d'annonces par jour (heure de Paris). L'annuel est illimité. */
+export const MONTHLY_PLAN_DAILY_LISTINGS = 10;
+/** Pack ponctuel : annonces créditées à l'achat. */
+export const PACK_LISTING_CREDITS = 4;

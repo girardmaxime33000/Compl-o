@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { Quota } from "@/lib/quota";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -58,25 +59,25 @@ function ListingCard({ listing }: { listing: Listing }) {
 export function ListingGenerator({
   initialService,
   initialListings,
-  usedThisMonth,
-  limit,
+  quota,
 }: {
   initialService: string;
   initialListings: Listing[];
-  usedThisMonth: number;
-  /** null = illimité (Premium) */
-  limit: number | null;
+  quota: Quota;
 }) {
+  const { limit, period } = quota;
   const [service, setService] = useState(initialService);
   const [city, setCity] = useState("");
   const [platform, setPlatform] = useState<Platform>("leboncoin");
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState(initialListings);
-  const [used, setUsed] = useState(usedThisMonth);
+  const [used, setUsed] = useState(quota.used);
+  const [credits, setCredits] = useState(quota.credits);
   const [fresh, setFresh] = useState<Listing | null>(null);
   const { toast } = useToast();
 
   const limitReached = limit !== null && used >= limit;
+  const blocked = limitReached && credits <= 0;
 
   async function generate(e: React.FormEvent) {
     e.preventDefault();
@@ -87,14 +88,18 @@ export function ListingGenerator({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ service, city, platform }),
       });
-      const data = (await res.json()) as { listing?: Listing; error?: string; code?: string };
+      const data = (await res.json()) as { listing?: Listing; error?: string; code?: string; credits?: number };
       if (!res.ok || !data.listing) {
-        if (data.code === "LIMIT_REACHED") setUsed(limit ?? used);
+        if (data.code === "LIMIT_REACHED") {
+          setUsed(limit ?? used);
+          setCredits(0);
+        }
         throw new Error(data.error ?? "La génération a échoué.");
       }
       setFresh(data.listing);
       setListings((prev) => [data.listing!, ...prev]);
       setUsed((n) => n + 1);
+      if (typeof data.credits === "number") setCredits(data.credits);
     } catch (err) {
       toast(err instanceof Error ? err.message : "La génération a échoué.", "error");
     } finally {
@@ -108,13 +113,14 @@ export function ListingGenerator({
         <Card>
           <CardContent className="space-y-2 pt-5 sm:pt-6">
             <div className="flex justify-between text-sm">
-              <span>Annonces générées ce mois-ci</span>
+              <span>{period === "day" ? "Annonces générées aujourd'hui" : "Annonces générées ce mois-ci"}</span>
               <span className="font-medium">{Math.min(used, limit)}/{limit}</span>
             </div>
             <Progress value={(Math.min(used, limit) / limit) * 100} indicatorClassName={limitReached ? "bg-destructive" : undefined} />
-            {limitReached && (
+            {credits > 0 && <p className="text-sm text-muted-foreground">Crédits d'annonces restants : {credits}</p>}
+            {blocked && (
               <p className="text-sm">
-                Limite atteinte. <Link href="/pricing" className="font-medium text-primary underline">Passez Premium</Link> pour des annonces illimitées.
+                Limite atteinte. <Link href="/pricing" className="font-medium text-primary underline">Voir les packs et abonnements</Link> pour générer d'autres annonces.
               </p>
             )}
           </CardContent>
@@ -147,7 +153,7 @@ export function ListingGenerator({
                 </Select>
               </div>
             </div>
-            <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={loading || limitReached}>
+            <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={loading || blocked}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
               {loading ? "Rédaction en cours…" : "Générer l'annonce"}
             </Button>

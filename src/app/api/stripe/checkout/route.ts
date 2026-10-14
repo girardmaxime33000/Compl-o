@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe, siteUrl } from "@/lib/stripe/server";
 import { LEGAL } from "@/lib/legal";
+import { isOfferId, OFFERS } from "@/lib/offers";
 
 export async function POST(request: Request) {
   const supabase = createClient();
@@ -11,16 +12,21 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Connexion requise." }, { status: 401 });
 
-  const body = (await request.json().catch(() => null)) as { acceptTerms?: unknown; waiveWithdrawal?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as
+    | { offer?: unknown; acceptTerms?: unknown; waiveWithdrawal?: unknown }
+    | null;
   if (body?.acceptTerms !== true || body?.waiveWithdrawal !== true) {
     return NextResponse.json(
       { error: "Acceptez les CGU/CGV et la demande d'accès immédiat pour continuer." },
       { status: 400 },
     );
   }
+  if (!isOfferId(body.offer)) return NextResponse.json({ error: "Offre inconnue." }, { status: 400 });
+  const offerId = body.offer;
+  const offer = OFFERS[offerId];
 
-  const priceId = process.env.STRIPE_PREMIUM_PRICE_ID;
-  if (!priceId) return NextResponse.json({ error: "Offre Premium non configurée." }, { status: 500 });
+  const priceId = process.env[offer.priceEnv];
+  if (!priceId) return NextResponse.json({ error: "Offre non configurée." }, { status: 500 });
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -28,8 +34,11 @@ export async function POST(request: Request) {
     .eq("id", user.id)
     .single();
   if (!profile) return NextResponse.json({ error: "Profil introuvable." }, { status: 404 });
-  if (profile.subscription_status === "active") {
-    return NextResponse.json({ error: "Vous êtes déjà Premium." }, { status: 409 });
+  if (offer.mode === "subscription" && profile.subscription_status === "active") {
+    return NextResponse.json(
+      { error: "Vous avez déjà un abonnement actif : modifiez-le depuis la gestion de l'abonnement." },
+      { status: 409 },
+    );
   }
 
   const stripe = getStripe();
@@ -44,16 +53,24 @@ export async function POST(request: Request) {
     await createAdminClient().from("profiles").update({ stripe_customer_id: customerId }).eq("id", user.id);
   }
 
+  const metadata = {
+    user_id: user.id,
+    offer: offerId,
+    terms_version: LEGAL.termsVersion,
+    terms_accepted_at: new Date().toISOString(),
+    withdrawal_waiver: "true",
+  };
+
   const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
+    mode: offer.mode,
     customer: customerId,
     client_reference_id: user.id,
     line_items: [{ price: priceId, quantity: 1 }],
     allow_promotion_codes: true,
-    success_url: `${siteUrl()}/dashboard?checkout=success`,
+    success_url: `${siteUrl()}/dashboard?checkout=success&offer=${offerId}`,
     cancel_url: `${siteUrl()}/pricing?checkout=canceled`,
-    metadata: { terms_version: LEGAL.termsVersion, terms_accepted_at: new Date().toISOString(), withdrawal_waiver: "true" },
-    subscription_data: { metadata: { user_id: user.id, terms_version: LEGAL.termsVersion } },
+    metadata,
+    ...(offer.mode === "subscription" ? { subscription_data: { metadata } } : {}),
   });
 
   return NextResponse.json({ url: session.url });

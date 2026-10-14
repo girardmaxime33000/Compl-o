@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { LEGAL } from "@/lib/legal";
 
-/** Prix Premium affiché dans le JSON-LD : à garder aligné avec la page /pricing et Stripe. */
-export const PREMIUM_PRICE_EUR = "6.99";
-
 /** Pages publiques indexables (sitemap + fil d'Ariane). */
 export const PUBLIC_PAGES = [
   { path: "/", name: "Accueil", priority: 1 },

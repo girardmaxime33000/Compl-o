@@ -3,7 +3,9 @@ import Link from "next/link";
 import { ArrowRight, Calculator, FileText, Megaphone, Sparkles } from "lucide-react";
 import { requireUser, isPremium } from "@/lib/auth";
 import { recommend, formatRate, categoryLabel } from "@/lib/activities";
-import { PLATFORMS, FREE_MONTHLY_LISTINGS } from "@/lib/platforms";
+import { PLATFORMS } from "@/lib/platforms";
+import { getQuota } from "@/lib/quota";
+import { formatCents, OFFERS } from "@/lib/offers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,17 +16,9 @@ export const metadata = { title: "Tableau de bord | Compléo" };
 export default async function DashboardPage({ searchParams }: { searchParams: { checkout?: string } }) {
   const { supabase, user, profile } = await requireUser();
 
-  const monthStart = new Date();
-  monthStart.setUTCDate(1);
-  monthStart.setUTCHours(0, 0, 0, 0);
-
-  const [{ data: skills }, { count: listingsCount }] = await Promise.all([
+  const [{ data: skills }, quota] = await Promise.all([
     supabase.from("user_skills").select("category, equipment_available, weekly_availability_hours").eq("user_id", user.id),
-    supabase
-      .from("listings")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .gte("created_at", monthStart.toISOString()),
+    getQuota(supabase, user.id, profile),
   ]);
 
   const recommendations = skills?.length
@@ -46,7 +40,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
 
       {searchParams.checkout === "success" && (
         <div className="rounded-md border border-success/40 bg-success/10 p-4 text-sm text-success" role="status">
-          Merci ! Votre abonnement Premium est en cours d'activation.
+          Merci ! Votre achat est en cours d'activation : vos annonces seront disponibles dans un instant.
         </div>
       )}
 
@@ -92,7 +86,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
             <Megaphone className="h-5 w-5 text-primary" />
             <CardTitle>Annonces IA</CardTitle>
             <CardDescription>
-              {premium ? "Illimitées" : `${listingsCount ?? 0}/${FREE_MONTHLY_LISTINGS} ce mois-ci`}
+              {quota.limit === null
+                ? "Illimitées"
+                : `${Math.min(quota.used, quota.limit)}/${quota.limit} ${quota.period === "day" ? "aujourd'hui" : "ce mois-ci"}`}
+              {quota.credits > 0 ? ` · ${quota.credits} crédit${quota.credits > 1 ? "s" : ""}` : ""}
             </CardDescription>
           </CardHeader>
           <CardContent><Button asChild variant="secondary" size="sm"><Link href="/dashboard/listings">Ouvrir</Link></Button></CardContent>
@@ -120,10 +117,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
       ) : (
         <Card className="border-primary/30 bg-accent">
           <CardHeader>
-            <CardTitle>Passez Premium à 6,99 €/mois</CardTitle>
-            <CardDescription>Annonces IA illimitées pour toutes vos plateformes ({Object.values(PLATFORMS).length} supportées).</CardDescription>
+            <CardTitle>Plus d'annonces dès {formatCents(OFFERS.pack.cents)} €</CardTitle>
+            <CardDescription>Pack ponctuel, pack mensuel ou abonnement annuel pour {Object.values(PLATFORMS).length} plateformes supportées.</CardDescription>
           </CardHeader>
-          <CardContent><Button asChild><Link href="/pricing">Voir l'offre</Link></Button></CardContent>
+          <CardContent><Button asChild><Link href="/pricing">Voir les offres</Link></Button></CardContent>
         </Card>
       )}
     </div>

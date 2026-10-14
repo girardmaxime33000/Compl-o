@@ -1,4 +1,5 @@
 export type SubscriptionStatus = "free" | "active" | "canceled";
+export type SubscriptionPlan = "monthly" | "annual";
 export type Platform = "leboncoin" | "allovoisins" | "gensdeconfiance" | "vinted" | "taskrabbit";
 export type InvoiceStatus = "draft" | "sent" | "paid";
 export type DocumentType = "devis" | "facture";
@@ -11,6 +12,8 @@ export interface Profile {
   siret: string | null;
   address: string | null;
   subscription_status: SubscriptionStatus;
+  subscription_plan: SubscriptionPlan | null;
+  listing_credits: number;
   created_at: string;
 }
 

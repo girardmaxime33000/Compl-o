@@ -25,7 +25,7 @@ export function ManageSubscription() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Abonnement Premium</CardTitle>
+        <CardTitle>Votre abonnement</CardTitle>
         <CardDescription>Modifier votre moyen de paiement, télécharger vos reçus ou résilier.</CardDescription>
       </CardHeader>
       <CardContent>
