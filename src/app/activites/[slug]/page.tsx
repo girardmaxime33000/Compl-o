@@ -4,6 +4,7 @@ import { Info, Rocket } from "lucide-react";
 import {
   ACTIVITIES, activitySlug, equipmentLabel, findActivityBySlug, formatRate, monthlyIncomeRange, regimeOf, relatedActivities,
 } from "@/lib/activities";
+import { citiesForActivity, cityActivityPath } from "@/lib/cities";
 import { demoListing } from "@/lib/demo-listings";
 import { PLATFORMS } from "@/lib/platforms";
 import { LEGAL } from "@/lib/legal";
@@ -41,6 +42,7 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
   const ideal = monthlyIncomeRange(activity, activity.idealHours);
   const simulatedRevenue = Math.round((ideal.monthlyMin + ideal.monthlyMax) / 2 / 10) * 10;
   const related = relatedActivities(activity);
+  const cities = citiesForActivity(activity);
   const approxUnit = activity.unit !== "h";
 
   return (
@@ -152,6 +154,21 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
           </p>
           <Button asChild size="lg"><Link href="/onboarding">Faire mon diagnostic gratuit</Link></Button>
         </section>
+
+        {cities.length > 0 && (
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold">{activity.title} dans les grandes villes</h2>
+            <ul className="grid gap-3 sm:grid-cols-3">
+              {cities.map((c) => (
+                <li key={c.slug}>
+                  <Link href={cityActivityPath(c, activity)} className="block rounded-md border p-3 text-sm hover:bg-accent/50">
+                    <p className="font-medium">{c.name}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold">Activités proches</h2>

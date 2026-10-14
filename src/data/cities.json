@@ -1,0 +1,4947 @@
+{
+  "generatedBy": "scripts/build-city-data.py",
+  "sources": {
+    "population": {
+      "label": "INSEE, populations légales des communes (en vigueur au 1er janvier 2023)",
+      "url": "https://www.insee.fr/fr/statistiques/6683035",
+      "file": "data/raw/insee_populations_legales_communes.csv",
+      "note": "Paris, Lyon et Marseille : somme des arrondissements."
+    },
+    "bmo": {
+      "label": "France Travail, enquête Besoins en main-d'œuvre (BMO), données ouvertes 2024 et 2025",
+      "url": "https://statistiques.francetravail.org/bmo",
+      "files": [
+        "Base_open_data_BMO_2024.xlsx",
+        "Base_open_data_BMO_2025.xlsx"
+      ],
+      "note": "Projets de recrutement de salariés déclarés par les établissements, par bassin d'emploi. Indicateur d'activité locale du secteur, pas de demande de services."
+    }
+  },
+  "downloadedOn": "2026-10-14",
+  "years": [
+    2024,
+    2025
+  ],
+  "groups": {
+    "bricolage": {
+      "label": "Entretien et second œuvre du bâtiment",
+      "metiers": [
+        {
+          "code": "G0A43",
+          "name": "Ouvriers polyvalents d'entretien du bâtiment"
+        },
+        {
+          "code": "B2X32",
+          "name": "Ouvriers en électricité du bâtiment"
+        },
+        {
+          "code": "B2X33",
+          "name": "Plombiers chauffagistes"
+        },
+        {
+          "code": "B2X36",
+          "name": "Ouvriers en peinture en bâtiment"
+        },
+        {
+          "code": "B2X38",
+          "name": "Ouvriers qualifiés en menuiserie et en agencement du BTP"
+        }
+      ]
+    },
+    "montage_meubles": {
+      "label": "Ameublement, agencement et déménagement",
+      "metiers": [
+        {
+          "code": "R1X61",
+          "name": "Vendeurs en ameublement, équipement du foyer, bricolage"
+        },
+        {
+          "code": "B2X38",
+          "name": "Ouvriers qualifiés en menuiserie et en agencement du BTP"
+        },
+        {
+          "code": "J0X30",
+          "name": "Manutentionnaires et déménageurs peu qualifiés"
+        },
+        {
+          "code": "J0X31",
+          "name": "Manutentionnaires et déménageurs qualifiés"
+        }
+      ]
+    },
+    "soutien_scolaire": {
+      "label": "Enseignement et accompagnement des élèves",
+      "metiers": [
+        {
+          "code": "W0X80",
+          "name": "Professeurs des écoles"
+        },
+        {
+          "code": "W0X90",
+          "name": "Professeurs du secondaire"
+        },
+        {
+          "code": "V5X84",
+          "name": "Surveillants d'établissements scolaires et accompagnateurs des élèves en situation de handicap"
+        }
+      ]
+    },
+    "cours_langue": {
+      "label": "Formation, interprétariat et enseignement",
+      "metiers": [
+        {
+          "code": "W1X80",
+          "name": "Formateurs"
+        },
+        {
+          "code": "U0X81",
+          "name": "Interprètes"
+        },
+        {
+          "code": "W0X90",
+          "name": "Professeurs du secondaire"
+        }
+      ]
+    },
+    "coursier": {
+      "label": "Livraison et conduite de véhicules légers",
+      "metiers": [
+        {
+          "code": "J3X42",
+          "name": "Conducteurs et livreurs sur courte distance (hors distribution de documents)"
+        },
+        {
+          "code": "J3X40",
+          "name": "Conducteurs de véhicules légers"
+        }
+      ]
+    },
+    "garde_animaux": {
+      "label": "Soins aux animaux (vétérinaires)",
+      "metiers": [
+        {
+          "code": "V2X92",
+          "name": "Vétérinaires"
+        }
+      ]
+    },
+    "menage": {
+      "label": "Ménage et aide à domicile",
+      "metiers": [
+        {
+          "code": "T1X60",
+          "name": "Personnels de ménage chez des particuliers"
+        },
+        {
+          "code": "T4X60",
+          "name": "Agents d'entretien de locaux"
+        },
+        {
+          "code": "T2A60",
+          "name": "Aides à domicile et auxiliaires de vie"
+        }
+      ]
+    },
+    "jardinage": {
+      "label": "Jardins, espaces verts et horticulture",
+      "metiers": [
+        {
+          "code": "A1X41",
+          "name": "Jardiniers des espaces verts et naturels"
+        },
+        {
+          "code": "A1X40",
+          "name": "Maraîchers et horticulteurs"
+        }
+      ]
+    },
+    "aide_informatique": {
+      "label": "Support et services aux utilisateurs informatiques",
+      "metiers": [
+        {
+          "code": "M1X81",
+          "name": "Techniciens de production, d'exploitation, d'installation, et de maintenance, support et services aux utilisateurs en informatique"
+        },
+        {
+          "code": "M1X80",
+          "name": "Techniciens d'étude et de développement en informatique"
+        }
+      ]
+    },
+    "depot_vente": {
+      "label": "Vente d'habillement, d'équipement du foyer et de loisirs",
+      "metiers": [
+        {
+          "code": "R1X62",
+          "name": "Vendeurs en habillement et accessoires, articles de luxe, de sport, de loisirs et culturels"
+        },
+        {
+          "code": "R1X61",
+          "name": "Vendeurs en ameublement, équipement du foyer, bricolage"
+        }
+      ]
+    }
+  },
+  "cities": [
+    {
+      "slug": "paris",
+      "name": "Paris",
+      "inseeCode": "75056",
+      "region": "Île-de-France",
+      "rank": 1,
+      "population": {
+        "total": 2162598,
+        "municipal": 2145906
+      },
+      "bassin": "T1 Paris",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 2554,
+            "xmet": 1386,
+            "smet": 322,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 1864,
+            "xmet": 897,
+            "smet": 418,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 1386,
+            "xmet": 550,
+            "smet": 278,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 1631,
+            "xmet": 607,
+            "smet": 505,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 933,
+            "xmet": 603,
+            "smet": 192,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 111,
+            "xmet": 55,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 4856,
+            "xmet": 2822,
+            "smet": 554,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 172,
+            "xmet": 50,
+            "smet": 67,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 5269,
+            "xmet": 3358,
+            "smet": 96,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 2888,
+            "xmet": 1171,
+            "smet": 842,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 1981,
+            "xmet": 805,
+            "smet": 132,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 1604,
+            "xmet": 773,
+            "smet": 287,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 944,
+            "xmet": 311,
+            "smet": 80,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 1370,
+            "xmet": 543,
+            "smet": 135,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 857,
+            "xmet": 477,
+            "smet": 90,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 5236,
+            "xmet": 1906,
+            "smet": 597,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 273,
+            "xmet": 77,
+            "smet": 21,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 4716,
+            "xmet": 2096,
+            "smet": 195,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 3333,
+            "xmet": 1340,
+            "smet": 858,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "marseille",
+      "name": "Marseille",
+      "inseeCode": "13055",
+      "region": "Provence-Alpes-Côte d'Azur",
+      "rank": 2,
+      "population": {
+        "total": 876602,
+        "municipal": 870321
+      },
+      "bassin": "MARSEILLE",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 880,
+            "xmet": 642,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 463,
+            "xmet": 319,
+            "smet": 36,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 771,
+            "xmet": 494,
+            "smet": 19,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 517,
+            "xmet": 381,
+            "smet": 72,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 523,
+            "xmet": 287,
+            "smet": 163,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 21,
+            "xmet": 21,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 2524,
+            "xmet": 2078,
+            "smet": 302,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 392,
+            "xmet": 117,
+            "smet": 254,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 298,
+            "xmet": 236,
+            "smet": 8,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 488,
+            "xmet": 217,
+            "smet": 161,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 480,
+            "xmet": 252,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 391,
+            "xmet": 216,
+            "smet": 83,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 649,
+            "xmet": 149,
+            "smet": 203,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 711,
+            "xmet": 225,
+            "smet": 113,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 576,
+            "xmet": 306,
+            "smet": 108,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 2500,
+            "xmet": 1911,
+            "smet": 154,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 140,
+            "xmet": 16,
+            "smet": 18,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 360,
+            "xmet": 159,
+            "smet": 24,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 384,
+            "xmet": 195,
+            "smet": 92,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "lyon",
+      "name": "Lyon",
+      "inseeCode": "69123",
+      "region": "Auvergne-Rhône-Alpes",
+      "rank": 3,
+      "population": {
+        "total": 528633,
+        "municipal": 522228
+      },
+      "bassin": "LYON CENTRE",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 311,
+            "xmet": 211,
+            "smet": 18,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 149,
+            "xmet": 97,
+            "smet": 18,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "soutien_scolaire": {
+            "met": 399,
+            "xmet": 143,
+            "smet": 33,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 475,
+            "xmet": 272,
+            "smet": 106,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 97,
+            "xmet": 42,
+            "smet": 10,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 1
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 1295,
+            "xmet": 903,
+            "smet": 165,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 50,
+            "xmet": 33,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "aide_informatique": {
+            "met": 1045,
+            "xmet": 675,
+            "smet": 11,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 366,
+            "xmet": 156,
+            "smet": 65,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 289,
+            "xmet": 96,
+            "smet": 12,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 221,
+            "xmet": 70,
+            "smet": 60,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 130,
+            "xmet": 45,
+            "smet": 7,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 595,
+            "xmet": 238,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 120,
+            "xmet": 75,
+            "smet": 19,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 1593,
+            "xmet": 960,
+            "smet": 229,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 30,
+            "xmet": 20,
+            "smet": 0,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 795,
+            "xmet": 552,
+            "smet": 13,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 362,
+            "xmet": 200,
+            "smet": 138,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "toulouse",
+      "name": "Toulouse",
+      "inseeCode": "31555",
+      "region": "Occitanie",
+      "rank": 4,
+      "population": {
+        "total": 503020,
+        "municipal": 498003
+      },
+      "bassin": "TOULOUSE",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 1267,
+            "xmet": 915,
+            "smet": 101,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 838,
+            "xmet": 482,
+            "smet": 133,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 413,
+            "xmet": 155,
+            "smet": 21,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 549,
+            "xmet": 381,
+            "smet": 58,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 827,
+            "xmet": 503,
+            "smet": 75,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 63,
+            "xmet": 60,
+            "smet": 15,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 5150,
+            "xmet": 3283,
+            "smet": 578,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 515,
+            "xmet": 189,
+            "smet": 138,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 1833,
+            "xmet": 1357,
+            "smet": 181,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 832,
+            "xmet": 416,
+            "smet": 139,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 1016,
+            "xmet": 618,
+            "smet": 52,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 588,
+            "xmet": 192,
+            "smet": 74,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 153,
+            "xmet": 19,
+            "smet": 37,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 357,
+            "xmet": 177,
+            "smet": 48,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 441,
+            "xmet": 157,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 5150,
+            "xmet": 2600,
+            "smet": 857,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 412,
+            "xmet": 300,
+            "smet": 107,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 1014,
+            "xmet": 578,
+            "smet": 14,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 1012,
+            "xmet": 358,
+            "smet": 327,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "nice",
+      "name": "Nice",
+      "inseeCode": "06088",
+      "region": "Provence-Alpes-Côte d'Azur",
+      "rank": 5,
+      "population": {
+        "total": 346376,
+        "municipal": 343477
+      },
+      "bassin": "NICE",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 879,
+            "xmet": 631,
+            "smet": 104,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 862,
+            "xmet": 373,
+            "smet": 384,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 217,
+            "xmet": 95,
+            "smet": 9,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 274,
+            "xmet": 191,
+            "smet": 9,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 403,
+            "xmet": 342,
+            "smet": 121,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 1762,
+            "xmet": 1490,
+            "smet": 186,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 301,
+            "xmet": 199,
+            "smet": 132,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 141,
+            "xmet": 110,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 721,
+            "xmet": 291,
+            "smet": 333,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 737,
+            "xmet": 470,
+            "smet": 94,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 849,
+            "xmet": 591,
+            "smet": 273,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 290,
+            "xmet": 44,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 463,
+            "xmet": 301,
+            "smet": 14,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 615,
+            "xmet": 263,
+            "smet": 303,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 35,
+            "xmet": 7,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 2532,
+            "xmet": 1499,
+            "smet": 267,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 321,
+            "xmet": 187,
+            "smet": 92,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 1
+          },
+          "aide_informatique": {
+            "met": 184,
+            "xmet": 123,
+            "smet": 5,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 789,
+            "xmet": 467,
+            "smet": 394,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "nantes",
+      "name": "Nantes",
+      "inseeCode": "44109",
+      "region": "Pays de la Loire",
+      "rank": 6,
+      "population": {
+        "total": 325857,
+        "municipal": 320732
+      },
+      "bassin": "NANTES",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 1049,
+            "xmet": 805,
+            "smet": 28,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 722,
+            "xmet": 495,
+            "smet": 70,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 841,
+            "xmet": 534,
+            "smet": 103,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 625,
+            "xmet": 413,
+            "smet": 71,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 409,
+            "xmet": 261,
+            "smet": 26,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 35,
+            "xmet": 35,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 2324,
+            "xmet": 1739,
+            "smet": 371,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 1215,
+            "xmet": 990,
+            "smet": 876,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 1758,
+            "xmet": 1250,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 502,
+            "xmet": 209,
+            "smet": 178,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 715,
+            "xmet": 482,
+            "smet": 89,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 1074,
+            "xmet": 825,
+            "smet": 529,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 435,
+            "xmet": 227,
+            "smet": 57,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 867,
+            "xmet": 623,
+            "smet": 97,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 610,
+            "xmet": 390,
+            "smet": 56,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 4226,
+            "xmet": 3106,
+            "smet": 534,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 726,
+            "xmet": 590,
+            "smet": 410,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 1186,
+            "xmet": 550,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 564,
+            "xmet": 245,
+            "smet": 138,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "montpellier",
+      "name": "Montpellier",
+      "inseeCode": "34172",
+      "region": "Occitanie",
+      "rank": 7,
+      "population": {
+        "total": 302425,
+        "municipal": 299096
+      },
+      "bassin": "MONTPELLIER",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 834,
+            "xmet": 580,
+            "smet": 124,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 438,
+            "xmet": 301,
+            "smet": 57,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 64,
+            "xmet": 10,
+            "smet": 7,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 263,
+            "xmet": 194,
+            "smet": 18,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 433,
+            "xmet": 143,
+            "smet": 63,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 10,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 2102,
+            "xmet": 1140,
+            "smet": 249,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 337,
+            "xmet": 120,
+            "smet": 54,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 562,
+            "xmet": 373,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 507,
+            "xmet": 172,
+            "smet": 201,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 419,
+            "xmet": 247,
+            "smet": 12,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 387,
+            "xmet": 215,
+            "smet": 170,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 68,
+            "xmet": 0,
+            "smet": 11,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 275,
+            "xmet": 191,
+            "smet": 63,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 200,
+            "xmet": 43,
+            "smet": 35,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 1939,
+            "xmet": 1252,
+            "smet": 296,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 231,
+            "xmet": 98,
+            "smet": 136,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 515,
+            "xmet": 171,
+            "smet": 29,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 315,
+            "xmet": 59,
+            "smet": 132,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "strasbourg",
+      "name": "Strasbourg",
+      "inseeCode": "67482",
+      "region": "Grand Est",
+      "rank": 8,
+      "population": {
+        "total": 293538,
+        "municipal": 290576
+      },
+      "bassin": "STRASBOURG",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 886,
+            "xmet": 674,
+            "smet": 107,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 529,
+            "xmet": 242,
+            "smet": 138,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 188,
+            "xmet": 29,
+            "smet": 24,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 210,
+            "xmet": 95,
+            "smet": 15,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 378,
+            "xmet": 269,
+            "smet": 19,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 8,
+            "xmet": 8,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 2027,
+            "xmet": 1128,
+            "smet": 279,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 265,
+            "xmet": 145,
+            "smet": 63,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 1
+          },
+          "aide_informatique": {
+            "met": 783,
+            "xmet": 462,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 459,
+            "xmet": 150,
+            "smet": 195,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 562,
+            "xmet": 325,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 488,
+            "xmet": 180,
+            "smet": 162,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 241,
+            "xmet": 84,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 398,
+            "xmet": 121,
+            "smet": 113,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 277,
+            "xmet": 160,
+            "smet": 32,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 1572,
+            "xmet": 839,
+            "smet": 281,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 372,
+            "xmet": 208,
+            "smet": 171,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 378,
+            "xmet": 220,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 496,
+            "xmet": 255,
+            "smet": 129,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "bordeaux",
+      "name": "Bordeaux",
+      "inseeCode": "33063",
+      "region": "Nouvelle-Aquitaine",
+      "rank": 9,
+      "population": {
+        "total": 263247,
+        "municipal": 259809
+      },
+      "bassin": "BORDEAUX",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 1250,
+            "xmet": 1027,
+            "smet": 56,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 1322,
+            "xmet": 789,
+            "smet": 208,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 382,
+            "xmet": 96,
+            "smet": 13,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 499,
+            "xmet": 305,
+            "smet": 113,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 645,
+            "xmet": 411,
+            "smet": 77,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 20,
+            "xmet": 11,
+            "smet": 9,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 5941,
+            "xmet": 4964,
+            "smet": 588,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 627,
+            "xmet": 389,
+            "smet": 116,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 949,
+            "xmet": 775,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 587,
+            "xmet": 358,
+            "smet": 242,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 1120,
+            "xmet": 643,
+            "smet": 139,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 1854,
+            "xmet": 377,
+            "smet": 294,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 525,
+            "xmet": 232,
+            "smet": 157,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 582,
+            "xmet": 453,
+            "smet": 86,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 634,
+            "xmet": 478,
+            "smet": 106,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 17,
+            "xmet": 17,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 5207,
+            "xmet": 3660,
+            "smet": 461,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 508,
+            "xmet": 320,
+            "smet": 104,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 466,
+            "xmet": 228,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 492,
+            "xmet": 246,
+            "smet": 117,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "lille",
+      "name": "Lille",
+      "inseeCode": "59350",
+      "region": "Hauts-de-France",
+      "rank": 10,
+      "population": {
+        "total": 238104,
+        "municipal": 236234
+      },
+      "bassin": "LILLE",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 520,
+            "xmet": 324,
+            "smet": 8,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 775,
+            "xmet": 256,
+            "smet": 108,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 289,
+            "xmet": 33,
+            "smet": 39,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 444,
+            "xmet": 220,
+            "smet": 160,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 485,
+            "xmet": 251,
+            "smet": 49,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 21,
+            "xmet": 21,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 3028,
+            "xmet": 2040,
+            "smet": 506,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 374,
+            "xmet": 156,
+            "smet": 122,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 1029,
+            "xmet": 562,
+            "smet": 24,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 437,
+            "xmet": 119,
+            "smet": 39,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 726,
+            "xmet": 418,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 933,
+            "xmet": 312,
+            "smet": 532,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 339,
+            "xmet": 0,
+            "smet": 132,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 165,
+            "xmet": 138,
+            "smet": 11,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 557,
+            "xmet": 414,
+            "smet": 178,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 26,
+            "xmet": 26,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 3377,
+            "xmet": 2034,
+            "smet": 1188,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 385,
+            "xmet": 216,
+            "smet": 230,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 1067,
+            "xmet": 357,
+            "smet": 27,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 824,
+            "xmet": 295,
+            "smet": 359,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "rennes",
+      "name": "Rennes",
+      "inseeCode": "35238",
+      "region": "Bretagne",
+      "rank": 11,
+      "population": {
+        "total": 226654,
+        "municipal": 222485
+      },
+      "bassin": "RENNES",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 927,
+            "xmet": 774,
+            "smet": 67,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 729,
+            "xmet": 477,
+            "smet": 149,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 196,
+            "xmet": 55,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 451,
+            "xmet": 324,
+            "smet": 56,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 421,
+            "xmet": 327,
+            "smet": 62,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 28,
+            "xmet": 28,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 3153,
+            "xmet": 2454,
+            "smet": 504,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 787,
+            "xmet": 310,
+            "smet": 477,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 838,
+            "xmet": 553,
+            "smet": 31,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 339,
+            "xmet": 226,
+            "smet": 91,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 546,
+            "xmet": 382,
+            "smet": 15,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 661,
+            "xmet": 336,
+            "smet": 134,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 428,
+            "xmet": 224,
+            "smet": 69,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 412,
+            "xmet": 260,
+            "smet": 86,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 329,
+            "xmet": 233,
+            "smet": 30,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 2891,
+            "xmet": 2059,
+            "smet": 425,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 440,
+            "xmet": 216,
+            "smet": 226,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 694,
+            "xmet": 521,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 416,
+            "xmet": 146,
+            "smet": 97,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "reims",
+      "name": "Reims",
+      "inseeCode": "51454",
+      "region": "Grand Est",
+      "rank": 12,
+      "population": {
+        "total": 183287,
+        "municipal": 180318
+      },
+      "bassin": "REIMS",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 269,
+            "xmet": 147,
+            "smet": 37,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 294,
+            "xmet": 101,
+            "smet": 105,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 111,
+            "xmet": 0,
+            "smet": 10,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 226,
+            "xmet": 89,
+            "smet": 74,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 305,
+            "xmet": 141,
+            "smet": 62,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 749,
+            "xmet": 440,
+            "smet": 266,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 160,
+            "xmet": 61,
+            "smet": 75,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 101,
+            "xmet": 54,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 189,
+            "xmet": 66,
+            "smet": 79,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 142,
+            "xmet": 95,
+            "smet": 38,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "montage_meubles": {
+            "met": 113,
+            "xmet": 35,
+            "smet": 44,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 86,
+            "xmet": 8,
+            "smet": 12,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 122,
+            "xmet": 86,
+            "smet": 12,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 111,
+            "xmet": 43,
+            "smet": 20,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 539,
+            "xmet": 302,
+            "smet": 64,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 228,
+            "xmet": 62,
+            "smet": 141,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 35,
+            "xmet": 23,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 125,
+            "xmet": 35,
+            "smet": 35,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "toulon",
+      "name": "Toulon",
+      "inseeCode": "83137",
+      "region": "Provence-Alpes-Côte d'Azur",
+      "rank": 13,
+      "population": {
+        "total": 181506,
+        "municipal": 179659
+      },
+      "bassin": "TOULON",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 791,
+            "xmet": 532,
+            "smet": 38,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 487,
+            "xmet": 328,
+            "smet": 76,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 247,
+            "xmet": 78,
+            "smet": 101,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 197,
+            "xmet": 116,
+            "smet": 18,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 236,
+            "xmet": 122,
+            "smet": 96,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 30,
+            "xmet": 26,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 2041,
+            "xmet": 1711,
+            "smet": 231,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 535,
+            "xmet": 350,
+            "smet": 361,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 101,
+            "xmet": 63,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 451,
+            "xmet": 163,
+            "smet": 192,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 600,
+            "xmet": 344,
+            "smet": 26,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 528,
+            "xmet": 180,
+            "smet": 133,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": true
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 66,
+            "xmet": 11,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 189,
+            "xmet": 51,
+            "smet": 63,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 386,
+            "xmet": 174,
+            "smet": 197,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 1730,
+            "xmet": 1138,
+            "smet": 308,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 535,
+            "xmet": 246,
+            "smet": 397,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 122,
+            "xmet": 101,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 462,
+            "xmet": 245,
+            "smet": 334,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "saint-etienne",
+      "name": "Saint-Étienne",
+      "inseeCode": "42218",
+      "region": "Auvergne-Rhône-Alpes",
+      "rank": 14,
+      "population": {
+        "total": 176016,
+        "municipal": 174082
+      },
+      "bassin": "SAINT ETIENNE",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 287,
+            "xmet": 189,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 179,
+            "xmet": 101,
+            "smet": 46,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 108,
+            "xmet": 32,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 242,
+            "xmet": 121,
+            "smet": 34,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 44,
+            "xmet": 31,
+            "smet": 7,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 21,
+            "xmet": 21,
+            "smet": 8,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 710,
+            "xmet": 394,
+            "smet": 107,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 38,
+            "xmet": 25,
+            "smet": 5,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 156,
+            "xmet": 131,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 166,
+            "xmet": 69,
+            "smet": 14,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 127,
+            "xmet": 89,
+            "smet": 7,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 226,
+            "xmet": 51,
+            "smet": 26,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "soutien_scolaire": {
+            "met": 83,
+            "xmet": 25,
+            "smet": 19,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 130,
+            "xmet": 98,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 93,
+            "xmet": 30,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 13,
+            "xmet": 13,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 473,
+            "xmet": 303,
+            "smet": 45,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 27,
+            "xmet": 17,
+            "smet": 5,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 1
+          },
+          "aide_informatique": {
+            "met": 99,
+            "xmet": 59,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 213,
+            "xmet": 26,
+            "smet": 17,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "le-havre",
+      "name": "Le Havre",
+      "inseeCode": "76351",
+      "region": "Normandie",
+      "rank": 15,
+      "population": {
+        "total": 167658,
+        "municipal": 165830
+      },
+      "bassin": "LE HAVRE",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 295,
+            "xmet": 284,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 254,
+            "xmet": 85,
+            "smet": 83,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 112,
+            "xmet": 46,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 84,
+            "xmet": 78,
+            "smet": 24,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 118,
+            "xmet": 71,
+            "smet": 20,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 882,
+            "xmet": 539,
+            "smet": 210,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 190,
+            "xmet": 125,
+            "smet": 97,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 75,
+            "xmet": 49,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 85,
+            "xmet": 54,
+            "smet": 33,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 140,
+            "xmet": 132,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "montage_meubles": {
+            "met": 339,
+            "xmet": 48,
+            "smet": 139,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "cours_langue": {
+            "met": 44,
+            "xmet": 25,
+            "smet": 7,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 178,
+            "xmet": 36,
+            "smet": 20,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 921,
+            "xmet": 599,
+            "smet": 135,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 153,
+            "xmet": 43,
+            "smet": 105,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 1
+          },
+          "aide_informatique": {
+            "met": 30,
+            "xmet": 15,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 41,
+            "xmet": 5,
+            "smet": 5,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "dijon",
+      "name": "Dijon",
+      "inseeCode": "21231",
+      "region": "Bourgogne-Franche-Comté",
+      "rank": 16,
+      "population": {
+        "total": 162454,
+        "municipal": 159106
+      },
+      "bassin": "DIJON",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 400,
+            "xmet": 250,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 259,
+            "xmet": 171,
+            "smet": 32,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 155,
+            "xmet": 20,
+            "smet": 71,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 320,
+            "xmet": 148,
+            "smet": 87,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 175,
+            "xmet": 132,
+            "smet": 15,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 18,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 1548,
+            "xmet": 745,
+            "smet": 356,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 138,
+            "xmet": 62,
+            "smet": 87,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 102,
+            "xmet": 78,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 196,
+            "xmet": 97,
+            "smet": 41,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 407,
+            "xmet": 278,
+            "smet": 29,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 255,
+            "xmet": 111,
+            "smet": 9,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "soutien_scolaire": {
+            "met": 96,
+            "xmet": 47,
+            "smet": 50,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 246,
+            "xmet": 81,
+            "smet": 50,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 139,
+            "xmet": 66,
+            "smet": 47,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 1298,
+            "xmet": 1031,
+            "smet": 163,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 216,
+            "xmet": 134,
+            "smet": 20,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 76,
+            "xmet": 40,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 119,
+            "xmet": 42,
+            "smet": 54,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "grenoble",
+      "name": "Grenoble",
+      "inseeCode": "38185",
+      "region": "Auvergne-Rhône-Alpes",
+      "rank": 17,
+      "population": {
+        "total": 160483,
+        "municipal": 158240
+      },
+      "bassin": "GRENOBLE",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 629,
+            "xmet": 475,
+            "smet": 64,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 369,
+            "xmet": 221,
+            "smet": 47,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 169,
+            "xmet": 50,
+            "smet": 43,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 372,
+            "xmet": 268,
+            "smet": 19,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 387,
+            "xmet": 300,
+            "smet": 29,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 18,
+            "xmet": 18,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 1715,
+            "xmet": 935,
+            "smet": 283,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 381,
+            "xmet": 205,
+            "smet": 122,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 487,
+            "xmet": 239,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 373,
+            "xmet": 217,
+            "smet": 182,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 833,
+            "xmet": 717,
+            "smet": 74,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 402,
+            "xmet": 256,
+            "smet": 43,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 407,
+            "xmet": 264,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 446,
+            "xmet": 255,
+            "smet": 22,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 211,
+            "xmet": 184,
+            "smet": 42,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 8,
+            "xmet": 8,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 1432,
+            "xmet": 1027,
+            "smet": 276,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 227,
+            "xmet": 177,
+            "smet": 87,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 257,
+            "xmet": 172,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 496,
+            "xmet": 211,
+            "smet": 210,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "angers",
+      "name": "Angers",
+      "inseeCode": "49007",
+      "region": "Pays de la Loire",
+      "rank": 18,
+      "population": {
+        "total": 159103,
+        "municipal": 155876
+      },
+      "bassin": "ANGERS",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 431,
+            "xmet": 355,
+            "smet": 20,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 282,
+            "xmet": 140,
+            "smet": 70,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 271,
+            "xmet": 225,
+            "smet": 120,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 216,
+            "xmet": 170,
+            "smet": 8,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 307,
+            "xmet": 93,
+            "smet": 51,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 1169,
+            "xmet": 893,
+            "smet": 250,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 801,
+            "xmet": 462,
+            "smet": 458,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 90,
+            "xmet": 77,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 103,
+            "xmet": 40,
+            "smet": 55,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 353,
+            "xmet": 267,
+            "smet": 36,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 154,
+            "xmet": 67,
+            "smet": 24,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 137,
+            "xmet": 52,
+            "smet": 9,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 499,
+            "xmet": 209,
+            "smet": 16,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "coursier": {
+            "met": 247,
+            "xmet": 61,
+            "smet": 37,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 1775,
+            "xmet": 802,
+            "smet": 70,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 936,
+            "xmet": 531,
+            "smet": 671,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 107,
+            "xmet": 25,
+            "smet": 8,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 250,
+            "xmet": 30,
+            "smet": 106,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "villeurbanne",
+      "name": "Villeurbanne",
+      "inseeCode": "69266",
+      "region": "Auvergne-Rhône-Alpes",
+      "rank": 19,
+      "population": {
+        "total": 155858,
+        "municipal": 154781
+      },
+      "bassin": "VILLEURBANNE",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 168,
+            "xmet": 142,
+            "smet": 10,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 165,
+            "xmet": 34,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "soutien_scolaire": {
+            "met": 52,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 50,
+            "xmet": 47,
+            "smet": 23,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 1
+          },
+          "coursier": {
+            "met": 159,
+            "xmet": 21,
+            "smet": 7,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 474,
+            "xmet": 149,
+            "smet": 7,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 40,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "aide_informatique": {
+            "met": 245,
+            "xmet": 116,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 32,
+            "xmet": 31,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 54,
+            "xmet": 40,
+            "smet": 7,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "montage_meubles": {
+            "met": 41,
+            "xmet": 14,
+            "smet": 23,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 19,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "cours_langue": {
+            "met": 61,
+            "xmet": 60,
+            "smet": 8,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 1
+          },
+          "coursier": {
+            "met": 17,
+            "xmet": 5,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 520,
+            "xmet": 179,
+            "smet": 68,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 14,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "aide_informatique": {
+            "met": 128,
+            "xmet": 112,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 32,
+            "xmet": 9,
+            "smet": 19,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    },
+    {
+      "slug": "saint-denis-reunion",
+      "name": "Saint-Denis",
+      "inseeCode": "974411",
+      "region": "La Réunion",
+      "rank": 20,
+      "population": {
+        "total": 154459,
+        "municipal": 153001
+      },
+      "bassin": "REUNION NORD",
+      "bmo": {
+        "2024": {
+          "bricolage": {
+            "met": 344,
+            "xmet": 183,
+            "smet": 76,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 192,
+            "xmet": 63,
+            "smet": 12,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 129,
+            "xmet": 27,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "cours_langue": {
+            "met": 122,
+            "xmet": 79,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 121,
+            "xmet": 60,
+            "smet": 9,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": false,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 1
+          },
+          "menage": {
+            "met": 1614,
+            "xmet": 704,
+            "smet": 7,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 753,
+            "xmet": 72,
+            "smet": 45,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": true
+            },
+            "metiersFound": 2
+          },
+          "aide_informatique": {
+            "met": 96,
+            "xmet": 38,
+            "smet": 16,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 232,
+            "xmet": 97,
+            "smet": 117,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 2
+          }
+        },
+        "2025": {
+          "bricolage": {
+            "met": 283,
+            "xmet": 169,
+            "smet": 25,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 5
+          },
+          "montage_meubles": {
+            "met": 246,
+            "xmet": 77,
+            "smet": 7,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 4
+          },
+          "soutien_scolaire": {
+            "met": 248,
+            "xmet": 15,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": false,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "cours_langue": {
+            "met": 178,
+            "xmet": 68,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "coursier": {
+            "met": 148,
+            "xmet": 79,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "garde_animaux": {
+            "met": 0,
+            "xmet": 0,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 0
+          },
+          "menage": {
+            "met": 1649,
+            "xmet": 669,
+            "smet": 11,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 3
+          },
+          "jardinage": {
+            "met": 658,
+            "xmet": 354,
+            "smet": 40,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": true
+            },
+            "metiersFound": 1
+          },
+          "aide_informatique": {
+            "met": 61,
+            "xmet": 30,
+            "smet": 0,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          },
+          "depot_vente": {
+            "met": 263,
+            "xmet": 84,
+            "smet": 29,
+            "complete": {
+              "met": true,
+              "xmet": true,
+              "smet": false
+            },
+            "metiersFound": 2
+          }
+        }
+      }
+    }
+  ]
+}

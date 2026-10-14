@@ -114,6 +114,7 @@ src/
 │   ├── generateur-annonce/       Démo publique d'annonces pré-rédigées (aucun appel IA anonyme)
 │   ├── sitemap.ts robots.ts opengraph-image.tsx  SEO : sitemap, robots, image Open Graph
 │   ├── activites/ activites/[slug]/  Pages activité publiques (une par activité du catalogue)
+│   ├── activites/[slug]/[ville]/ Pages activité × ville (20 villes, SSG, seulement avec donnée locale)
 │   ├── mentions-legales/         Mentions légales
 │   ├── cgu/ cgv/ confidentialite/ CGU, CGV, politique de confidentialité (brouillons à faire relire)
 │   ├── dashboard/                Espace connecté
@@ -228,6 +229,10 @@ Ollama ne fonctionne pas sur un hébergement type Vercel : en production, utilis
 | `npm run start` | Serveur de production |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | Vérification TypeScript |
+
+## Données locales (pages activité × ville)
+
+`src/data/cities.json` est généré par `python3 scripts/build-city-data.py` (nécessite `openpyxl`) à partir de `data/raw/` : populations légales INSEE (20 plus grandes communes, Paris, Lyon et Marseille agrégées par arrondissements) et enquête BMO de France Travail (2024 et 2025, par bassin d'emploi). Ne pas éditer le JSON à la main. Une page `/activites/[slug]/[ville]` n'est générée que si la ville a au moins un projet de recrutement dans les métiers rattachés à l'activité (voir `GROUPS` dans le script). Le millésime BMO 2026 et la base des équipements par commune ne sont pas utilisés (voir `TASKS.md`, T11).
 
 ## Mesure d'audience
 

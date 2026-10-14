@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LEGAL } from "@/lib/legal";
 import { ACTIVITIES, activitySlug } from "@/lib/activities";
+import { CITY_ACTIVITY_PAIRS, cityActivityPath } from "@/lib/cities";
 
 /** Pages publiques indexables (sitemap + fil d'Ariane). */
 export const PUBLIC_PAGES = [
@@ -18,6 +19,9 @@ export const PUBLIC_PAGES = [
 
 /** Pages activité, une par entrée du catalogue `activities.ts` (source unique). */
 export const ACTIVITY_PAGES = ACTIVITIES.map((a) => ({ path: `/activites/${activitySlug(a)}`, name: a.title, priority: 0.8 }));
+
+/** Pages activité × ville : seulement les couples avec une donnée locale vérifiable. */
+export const CITY_ACTIVITY_SITEMAP = CITY_ACTIVITY_PAIRS.map(({ city, activity }) => ({ path: cityActivityPath(city, activity), name: `${activity.title} à ${city.name}`, priority: 0.6 }));
 
 export const absoluteUrl = (path: string) => `${LEGAL.siteUrl.replace(/\/$/, "")}${path === "/" ? "" : path}`;
 
