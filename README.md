@@ -115,6 +115,7 @@ src/
 │   ├── sitemap.ts robots.ts opengraph-image.tsx  SEO : sitemap, robots, image Open Graph
 │   ├── activites/ activites/[slug]/  Pages activité publiques (une par activité du catalogue)
 │   ├── activites/[slug]/[ville]/ Pages activité × ville (20 villes, SSG, seulement avec donnée locale)
+│   ├── dashboard/account/        Mon compte : export JSON et suppression du compte (RGPD)
 │   ├── mentions-legales/         Mentions légales
 │   ├── cgu/ cgv/ confidentialite/ CGU, CGV, politique de confidentialité (brouillons à faire relire)
 │   ├── dashboard/                Espace connecté

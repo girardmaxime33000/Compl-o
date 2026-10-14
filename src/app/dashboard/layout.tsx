@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LogOut, Rocket } from "lucide-react";
+import { LogOut, Rocket, UserCog } from "lucide-react";
 import { requireUser, isPremium } from "@/lib/auth";
 import { signOut } from "@/app/actions/auth";
 import { DashboardNav } from "@/components/dashboard/nav";
@@ -25,6 +25,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
             ) : (
               <Link href="/pricing"><Badge>Gratuit</Badge></Link>
             )}
+            <Button asChild variant="ghost" size="icon" aria-label="Mon compte">
+              <Link href="/dashboard/account"><UserCog className="h-4 w-4" /></Link>
+            </Button>
             <form action={signOut}>
               <Button type="submit" variant="ghost" size="icon" aria-label="Se déconnecter">
                 <LogOut className="h-4 w-4" />

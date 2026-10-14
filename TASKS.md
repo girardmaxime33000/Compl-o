@@ -115,11 +115,13 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - vérifications faites / non faites:
 
 ### T15 RGPD
-- statut: todo
+- statut: blocked
 - dépend de: -
-- branche:
+- branche: claude/new-session-og6dhq
 - critères d'acceptation: suppression de compte et export des données.
-- vérifications faites / non faites:
+- vérifications faites / non faites: typecheck, lint, build OK (2026-10-14). `next start` : `GET /api/account/export` sans session 401 ; `/dashboard/account` sans session redirige (307). NON fait : export réel (contenu du JSON), suppression réelle d'un compte de test (Stripe client supprimé, utilisateur Supabase supprimé, cascade profil/annonces/factures/compétences), refus de la suppression sans le mot de confirmation côté serveur (code écrit, non exécuté).
+- notes: `/dashboard/account` (lien dans l'en-tête du dashboard) ; `GET /api/account/export` (JSON : compte, profil, compétences, annonces, factures, via la session de l'utilisateur donc sous RLS) ; action serveur `deleteAccount` : confirmation « SUPPRIMER », suppression du client Stripe (résilie les abonnements ; en cas d'échec on s'arrête), puis `auth.admin.deleteUser` (cascade). Les crédits d'annonces non utilisés sont perdus (affiché). Les événements d'audience sont anonymes et non rattachés au compte. Politique de confidentialité mise à jour (texte en brouillon). Les factures émises par l'utilisateur sont supprimées avec le compte : si l'utilisateur doit les conserver légalement, l'export est son recours (à signaler dans les CGU si besoin).
+- bloqué / à faire par le propriétaire : tester avec un compte de test (achat de pack puis suppression, vérifier dans Stripe et dans Supabase Auth).
 
 ### T16 Tests
 - statut: todo

@@ -43,7 +43,7 @@ export default function PrivacyPage() {
       <LegalSection title="5. Vos droits">
         <p>
           Vous disposez des droits d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité.
-          Pour les exercer, écrivez à l'adresse de contact ci-dessus. Vous pouvez introduire une réclamation auprès de la
+          Depuis la page « Mon compte » de votre tableau de bord, vous pouvez exporter vos données (JSON) et supprimer votre compte. Pour tout autre exercice de vos droits, écrivez à l'adresse de contact ci-dessus. Vous pouvez introduire une réclamation auprès de la
           CNIL (<a className="text-primary underline" href="https://www.cnil.fr" rel="noopener noreferrer">cnil.fr</a>).
         </p>
       </LegalSection>
