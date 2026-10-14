@@ -124,8 +124,9 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - bloqué / à faire par le propriétaire : tester avec un compte de test (achat de pack puis suppression, vérifier dans Stripe et dans Supabase Auth).
 
 ### T16 Tests
-- statut: todo
+- statut: done
 - dépend de: -
-- branche:
+- branche: claude/new-session-og6dhq
 - critères d'acceptation: tests `tax.ts`, `activities.ts`, quota annonces, webhook Stripe.
-- vérifications faites / non faites:
+- vérifications faites / non faites: `npm test` : 5 fichiers, 33 tests verts ; typecheck, lint, build OK (2026-10-14). Tests qui échouent quand le code est cassé (vérifié par mutation : suppression du test de doublon du webhook, désactivation du contrôle de quota). Non fait : tests contre une vraie base Supabase ou le vrai Stripe (Supabase, Stripe et l'IA sont simulés), tests d'interface, intégration continue (aucun workflow GitHub Actions).
+- notes: Vitest. `tax.test.ts` (cotisations, alertes TVA et plafond, ARE, plafonnement), `activities.test.ts` (catalogue, revenus, recommandations, slugs), `quota.test.ts` (plan effectif, quotas gratuit/mensuel/annuel), `route.test.ts` du webhook (signature absente et invalide, idempotence par `event.id`, crédit du pack une seule fois, paiement non confirmé, libération de la réservation et rejeu après échec, plan annuel, résiliation) et de `generate-listing` (connexion, 3e annonce bloquée, crédit consommé, remboursement si échec, plafond quotidien, annuel illimité). Les tests de `tax.ts` lisent `TAX_PARAMS` : ils vérifient la logique, pas l'exactitude des taux.

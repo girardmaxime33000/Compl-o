@@ -230,6 +230,7 @@ Ollama ne fonctionne pas sur un hébergement type Vercel : en production, utilis
 | `npm run start` | Serveur de production |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | Vérification TypeScript |
+| `npm test` | Tests unitaires (Vitest) : `tax.ts`, catalogue d'activités, quotas d'annonces, webhook Stripe |
 
 ## Données locales (pages activité × ville)
 
