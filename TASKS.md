@@ -7,9 +7,7 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - dépend de: -
 - branche: claude/new-session-og6dhq
 - critères d'acceptation: aucun champ vide ou placeholder visible sur `/mentions-legales`.
-- notes: BLOQUÉ, champs manquants dans `src/lib/legal.ts` : legalForm, address, email, phone, siret, vat, mediatorName, mediatorUrl. Valeurs à fournir par le propriétaire.
-- vérifications faites / non faites:
-
+- notes: 2026-10-15 : le propriétaire indique : forme juridique « société en cours d'immatriculation », TVA non applicable. Intégré dans `src/lib/legal.ts` : `legalForm`, `vat` (« TVA non applicable, art. 293 B du CGI », à faire confirmer par un comptable : la franchise en base dépend du chiffre d'affaires et de la société), `siret` (« en cours d'immatriculation, numéro SIRET et RCS à venir »). Champs ajoutés : `companyName` (dénomination sociale) et `capital`, affichés sur `/mentions-legales`. Restent vides (le texte « [À compléter] » reste visible) : `companyName`, `capital`, `address` (siège social), `email`, `phone` (optionnel), `mediatorName`, `mediatorUrl`. Points d'attention juridiques à valider avec un professionnel : vendre à des consommateurs avant l'immatriculation, ouverture du compte Stripe live (exige l'identité de l'entité), nom du vendeur dans les CGV (aujourd'hui « Maxime Girard », à remplacer par la dénomination sociale une fois connue). Statut maintenu : `blocked`.
 ### T02 CGU / CGV / confidentialité
 - statut: done
 - dépend de: -

@@ -36,10 +36,12 @@ export default function LegalNoticePage() {
             Le site {LEGAL.siteName} (<span>{LEGAL.siteUrl}</span>) est édité par :
           </p>
           <ul className="list-disc space-y-1 pl-5">
-            <li>Nom : {LEGAL.publisherName}</li>
-            <li>Statut : <Field value={LEGAL.legalForm} /></li>
-            <li>Adresse : <Field value={LEGAL.address} /></li>
-            <li>SIRET : <Field value={LEGAL.siret} /></li>
+            <li>Dénomination sociale : <Field value={LEGAL.companyName} /></li>
+            <li>Forme juridique : <Field value={LEGAL.legalForm} /></li>
+            <li>Capital social : <Field value={LEGAL.capital} /></li>
+            <li>Représentant légal : {LEGAL.publisherName}</li>
+            <li>Siège social : <Field value={LEGAL.address} /></li>
+            <li>Immatriculation (SIRET, RCS) : <Field value={LEGAL.siret} /></li>
             <li>TVA : <Field value={LEGAL.vat} /></li>
             <li>E-mail : <Field value={LEGAL.email} /></li>
             <li>Téléphone : <Field value={LEGAL.phone} /></li>
