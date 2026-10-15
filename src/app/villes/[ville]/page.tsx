@@ -8,6 +8,7 @@ import {
 import { pageMetadata } from "@/lib/seo";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { PublicCtas } from "@/components/marketing/ctas";
+import { ActivityVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
 export const dynamicParams = false;
@@ -58,12 +59,15 @@ export default function CityHubPage({ params }: { params: { ville: string } }) {
               const figures = bmoFor(city, a)!;
               return (
                 <li key={a.id}>
-                  <Link href={cityActivityPath(city, a)} className="block h-full rounded-md border p-3 text-sm hover:bg-accent/50">
-                    <p className="font-medium">{a.title} à {city.name}</p>
-                    <p className="text-muted-foreground">Tarif moyen : {formatRate(a)}</p>
-                    <p className="text-muted-foreground">
-                      {figures.complete.met ? "" : "Au moins "}{nf.format(figures.met)} projets de recrutement dans le secteur en {BMO_YEAR}
-                    </p>
+                  <Link href={cityActivityPath(city, a)} className="flex h-full gap-3 rounded-md border p-3 text-sm hover:bg-accent/50">
+                    <ActivityVisual activityId={a.id} size="tile" />
+                    <span className="block">
+                      <span className="block font-medium">{a.title} à {city.name}</span>
+                      <span className="block text-muted-foreground">Tarif moyen : {formatRate(a)}</span>
+                      <span className="block text-muted-foreground">
+                        {figures.complete.met ? "" : "Au moins "}{nf.format(figures.met)} projets de recrutement dans le secteur en {BMO_YEAR}
+                      </span>
+                    </span>
                   </Link>
                 </li>
               );

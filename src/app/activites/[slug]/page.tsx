@@ -15,6 +15,7 @@ import { FaqSection } from "@/components/marketing/faq";
 import { PublicCtas } from "@/components/marketing/ctas";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ActivityVisual } from "@/components/marketing/visuals";
 import { Simulator } from "@/components/simulator/simulator";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
@@ -57,6 +58,8 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
       />
       <main className="container max-w-4xl space-y-10 py-10">
         <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
+
+        <ActivityVisual activityId={activity.id} size="hero" />
 
         <div>
           <p className="text-sm text-muted-foreground"><Link href="/activites" className="underline">Activités</Link> / {activity.title}</p>

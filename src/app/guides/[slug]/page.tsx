@@ -6,6 +6,7 @@ import { pageMetadata } from "@/lib/seo";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { FaqSection } from "@/components/marketing/faq";
 import { Button } from "@/components/ui/button";
+import { GuideVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
 export const dynamicParams = false;
@@ -31,7 +32,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
   return (
     <>
       <BreadcrumbJsonLd path={guidePath(guide)} items={[{ name: "Guides", path: "/guides" }, { name: guide.title, path: guidePath(guide) }]} />
-      <ArticleJsonLd title={guide.title} description={guide.description} path={guidePath(guide)} published={guide.published} updated={guide.updated} />
+      <ArticleJsonLd title={guide.title} description={guide.description} path={guidePath(guide)} published={guide.published} updated={guide.updated} imagePath={`${guidePath(guide)}/opengraph-image`} />
       <main className="container max-w-3xl space-y-8 py-10">
         <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>
@@ -39,6 +40,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
           <h1 className="mt-1 text-3xl font-bold">{guide.title}</h1>
           <p className="mt-2 text-sm text-muted-foreground">Mis à jour le {fmt(guide.updated)}</p>
         </div>
+        <GuideVisual slug={guide.slug} size="hero" />
         <Content />
         {guide.faq && <FaqSection items={guide.faq} />}
         <section className="space-y-3 rounded-lg border border-primary/40 p-5">

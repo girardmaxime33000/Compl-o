@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaqSection } from "@/components/marketing/faq";
 import { PublicCtas } from "@/components/marketing/ctas";
+import { ActivityVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { ACTIVITIES, activitySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
 import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityPath } from "@/lib/cities";
@@ -133,7 +134,8 @@ export default function HomePage() {
         <div className="grid gap-4 md:grid-cols-3">
           {TOP_ACTIVITIES.map(({ activity, monthlyMin, monthlyMax }) => (
             <Link key={activity.id} href={`/activites/${activitySlug(activity)}`} className="block">
-              <Card className="h-full transition-colors hover:bg-accent/50">
+              <Card className="h-full overflow-hidden transition-colors hover:bg-accent/50">
+                <ActivityVisual activityId={activity.id} />
                 <CardHeader>
                   <CardTitle>{activity.title}</CardTitle>
                   <CardDescription>Tarif moyen : {formatRate(activity)}</CardDescription>

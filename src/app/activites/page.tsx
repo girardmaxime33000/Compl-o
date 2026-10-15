@@ -4,6 +4,7 @@ import { ACTIVITIES, activitySlug, formatRate } from "@/lib/activities";
 import { pageMetadata } from "@/lib/seo";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ActivityVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
 export const metadata = pageMetadata({
@@ -29,9 +30,10 @@ export default function ActivitiesIndexPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           {ACTIVITIES.map((a) => (
             <Link key={a.id} href={`/activites/${activitySlug(a)}`} className="block">
-              <Card className="h-full transition-colors hover:bg-accent/50">
+              <Card className="h-full overflow-hidden transition-colors hover:bg-accent/50">
+                <ActivityVisual activityId={a.id} />
                 <CardHeader>
-                  <CardTitle className="text-lg">{a.title}</CardTitle>
+                  <CardTitle as="h2" className="text-lg">{a.title}</CardTitle>
                   <CardDescription>{a.pitch}</CardDescription>
                   <p className="pt-1 text-sm font-medium">{formatRate(a)}</p>
                 </CardHeader>

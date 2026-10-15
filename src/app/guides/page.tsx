@@ -4,6 +4,7 @@ import { GUIDES, guidePath } from "@/lib/guides";
 import { pageMetadata } from "@/lib/seo";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { GuideVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
 export const metadata = pageMetadata({
@@ -25,9 +26,10 @@ export default function GuidesIndexPage() {
         <div className="grid gap-4">
           {GUIDES.map((g) => (
             <Link key={g.slug} href={guidePath(g)} className="block">
-              <Card className="transition-colors hover:bg-accent/50">
+              <Card className="overflow-hidden transition-colors hover:bg-accent/50 sm:flex">
+                <GuideVisual slug={g.slug} size="tile" className="m-5 mb-0 sm:mb-5 sm:mr-0" />
                 <CardHeader>
-                  <CardTitle className="text-lg">{g.title}</CardTitle>
+                  <CardTitle as="h2" className="text-lg">{g.title}</CardTitle>
                   <CardDescription>{g.description}</CardDescription>
                 </CardHeader>
               </Card>
