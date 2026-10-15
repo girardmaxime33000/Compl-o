@@ -3,7 +3,7 @@ import {
   Tag, Landmark, Percent, GraduationCap, type LucideIcon,
 } from "lucide-react";
 import { Photo } from "@/components/marketing/photo";
-import type { PhotoRatio, UnsplashPhoto } from "@/lib/city-images";
+import type { PhotoRatio, UnsplashPhoto } from "@/lib/unsplash";
 import { activityPhoto, guidePhoto } from "@/lib/site-images";
 import { cn } from "@/lib/utils";
 

@@ -1,5 +1,5 @@
 import raw from "@/data/site-images.json";
-import type { UnsplashPhoto } from "@/lib/city-images";
+import type { UnsplashPhoto } from "@/lib/unsplash";
 
 /**
  * Clés des photos Unsplash hors villes : `hero:home`, `cta:final`, `login`, `activity:<id du catalogue>`,

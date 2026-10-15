@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { PHOTO_RATIOS, photoSrcSet, UNSPLASH_URL, unsplashSrc, withUtm, type PhotoRatio, type UnsplashPhoto } from "@/lib/city-images";
+import { PHOTO_RATIOS, photoSrcSet, UNSPLASH_URL, unsplashSrc, withUtm, type PhotoRatio, type UnsplashPhoto } from "@/lib/unsplash";
 import { cn } from "@/lib/utils";
 
 /** Largeur maximale demandée au CDN pour l'attribut `src` (repli des navigateurs sans `srcset`). */

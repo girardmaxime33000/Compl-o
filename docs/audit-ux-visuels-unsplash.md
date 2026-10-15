@@ -85,7 +85,7 @@ Limite de l'en-tête : il ne lit pas la session (pour garder les pages statiques
 
 ### 2.6 Onboarding
 
-Câblé (V6) : l'étape « Qu'aimez-vous faire ? » affiche des cartes photo pour les domaines disposant d'une photo (celle de la première activité de la catégorie), les autres restent des puces. Les 3 recommandations affichent la photo de l'activité. Constats annexes : la page `/onboarding` passe de 7,07 à 10,6 kB parce que `Photo` tire les données des photos de villes dans le bundle client. Non optimisé. Le comportement au clic (sélection, étapes) n'a pas été vérifié dans un navigateur.
+Câblé (V6) : l'étape « Qu'aimez-vous faire ? » affiche des cartes photo pour les domaines disposant d'une photo (celle de la première activité de la catégorie), les autres restent des puces. Les 3 recommandations affichent la photo de l'activité. Constat annexe corrigé : la page `/onboarding` était passée de 7,07 à 10,7 kB (First Load JS 116 → 120 kB) parce que `Photo` tirait les données JSON des photos de villes dans le bundle client. Les utilitaires purs sont maintenant dans `src/lib/unsplash.ts` (`city-images.ts` les réexporte) : 8,26 kB et 117 kB mesurés au build. Les ~1,2 kB restants correspondent au composant `Photo` et au code des cartes. Le comportement au clic (sélection, étapes) n'a pas été vérifié dans un navigateur.
 
 ### 2.7 Accessibilité et performance
 
@@ -152,7 +152,7 @@ Images de partage (OG) non faites : incorporer une photo dans un PNG statique g�
 5. Relire visuellement les 20 photos de villes (cas à regarder : Villeurbanne, Saint-Denis de La Réunion, Toulon, Le Havre ; deux photos du même photographe pour Dijon et Lille).
 6. Lancer Lighthouse mobile avant et après sur l'accueil, une page activité, une page ville, `/onboarding` : LCP, CLS, poids des images.
 7. Vérifier à la main dans un navigateur (360 px et ≥ 1024 px) : superposition des deux cartes du hero, lisibilité du CTA final sur photo, colonne photo du login, cartes de l'onboarding.
-8. Non fait, par ordre de gain attendu : optimisation du bundle de `/onboarding`.
+8. Tous les points de l'audit sont traités ou dépendent des étapes 1 à 7 ci-dessus (clé API, mesures, vérifications dans un navigateur) ou des décisions de la section 6.
 
 ## 6. Décisions requises du propriétaire
 

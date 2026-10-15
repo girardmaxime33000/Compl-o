@@ -1,7 +1,7 @@
 import { Megaphone, Wallet } from "lucide-react";
 import { Photo } from "@/components/marketing/photo";
 import { formatRate, type Activity } from "@/lib/activities";
-import type { UnsplashPhoto } from "@/lib/city-images";
+import type { UnsplashPhoto } from "@/lib/unsplash";
 import { cn } from "@/lib/utils";
 
 const eur0 = (n: number) => new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);

@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Photo } from "@/components/marketing/photo";
-import type { UnsplashPhoto } from "@/lib/city-images";
+import type { UnsplashPhoto } from "@/lib/unsplash";
 import { track } from "@/lib/analytics";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";

@@ -1,4 +1,4 @@
-import { UNSPLASH_URL, withUtm, type UnsplashPhoto } from "@/lib/city-images";
+import { UNSPLASH_URL, withUtm, type UnsplashPhoto } from "@/lib/unsplash";
 
 export interface PhotoCreditEntry {
   /** Intitulé de l'emplacement (ville, activité, guide). */
