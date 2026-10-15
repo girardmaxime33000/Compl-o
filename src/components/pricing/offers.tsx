@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Check, Loader2 } from "lucide-react";
+import { Check, CreditCard, Loader2, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -92,6 +92,11 @@ export function Offers({ subscribed }: { subscribed: boolean }) {
           );
         })}
       </div>
+
+      <ul className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground" aria-label="Paiement">
+        <li className="flex items-center gap-1.5"><CreditCard className="h-4 w-4" aria-hidden="true" /> Paiement géré par Stripe</li>
+        <li className="flex items-center gap-1.5"><RotateCcw className="h-4 w-4" aria-hidden="true" /> Abonnements résiliables à tout moment</li>
+      </ul>
 
       <div className="space-y-2 rounded-md border p-4">
         <label className="flex items-start gap-2 text-xs text-muted-foreground">

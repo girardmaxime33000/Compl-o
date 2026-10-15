@@ -4,7 +4,7 @@ import {
 } from "lucide-react";
 import { Photo } from "@/components/marketing/photo";
 import type { PhotoRatio, UnsplashPhoto } from "@/lib/city-images";
-import { activityPhoto } from "@/lib/site-images";
+import { activityPhoto, guidePhoto } from "@/lib/site-images";
 import { cn } from "@/lib/utils";
 
 /**
@@ -84,6 +84,7 @@ export function ActivityVisual({ activityId, size = "card", className, photo }: 
   return <Visual theme={ACTIVITY_THEMES[activityId] ?? FALLBACK} size={size} className={className} photo={photo ?? activityPhoto(activityId)} />;
 }
 
-export function GuideVisual({ slug, size = "card", className }: { slug: string; size?: keyof typeof SIZES; className?: string }) {
-  return <Visual theme={GUIDE_THEMES[slug] ?? FALLBACK} size={size} className={className} />;
+/** Photo Unsplash du guide si elle a été sélectionnée (`guide:<slug>`), sinon dégradé et pictogramme. `photo` force une photo. */
+export function GuideVisual({ slug, size = "card", className, photo }: { slug: string; size?: keyof typeof SIZES; className?: string; photo?: UnsplashPhoto }) {
+  return <Visual theme={GUIDE_THEMES[slug] ?? FALLBACK} size={size} className={className} photo={photo ?? guidePhoto(slug)} />;
 }

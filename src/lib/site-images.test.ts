@@ -1,17 +1,20 @@
 import { describe, expect, it } from "vitest";
 import { ACTIVITIES } from "@/lib/activities";
-import { activityPhoto, sitePhotoEntries, urbanPhoto } from "@/lib/site-images";
+import { GUIDES } from "@/lib/guides";
+import { activityPhoto, guidePhoto, sitePhotoEntries, urbanPhoto } from "@/lib/site-images";
 import { URBAN_ACTIVITIES } from "@/lib/urban-activities";
 
 describe("photos du site (hors villes)", () => {
   it("chaque clé déclarée désigne un emplacement existant", () => {
     const activityIds = new Set(ACTIVITIES.map((a) => a.id));
     const urbanSlugs = new Set(URBAN_ACTIVITIES.map((a) => a.slug));
+    const guideSlugs = new Set(GUIDES.map((g) => g.slug));
     for (const [key] of sitePhotoEntries()) {
       const [kind, id = ""] = key.split(":");
       if (kind === "activity") expect(activityIds.has(id), key).toBe(true);
       else if (kind === "urban") expect(urbanSlugs.has(id), key).toBe(true);
-      else expect(key).toBe("hero:home");
+      else if (kind === "guide") expect(guideSlugs.has(id), key).toBe(true);
+      else expect(["hero:home", "cta:final", "login"], key).toContain(key);
     }
   });
 
@@ -26,5 +29,6 @@ describe("photos du site (hors villes)", () => {
   it("emplacement sans photo : undefined (le composant utilise son repli)", () => {
     expect(activityPhoto("inexistante")).toBeUndefined();
     expect(urbanPhoto("inexistante")).toBeUndefined();
+    expect(guidePhoto("inexistant")).toBeUndefined();
   });
 });

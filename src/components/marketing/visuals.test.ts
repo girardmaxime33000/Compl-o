@@ -40,3 +40,14 @@ describe("<ActivityVisual>", () => {
     expect(html).not.toContain("Alex Roux");
   });
 });
+
+describe("<GuideVisual>", () => {
+  it("sans photo : dégradé ; avec photo : image 16:9 et crédit lié en bandeau", async () => {
+    const { GuideVisual } = await import("@/components/marketing/visuals");
+    const plain = renderToStaticMarkup(createElement(GuideVisual, { slug: "annonces-efficaces" }));
+    expect(plain).toContain("linear-gradient");
+    const hero = renderToStaticMarkup(createElement(GuideVisual, { slug: "annonces-efficaces", size: "hero", photo }));
+    expect(hero).toContain("<img");
+    expect(hero).toContain("<figcaption");
+  });
+});

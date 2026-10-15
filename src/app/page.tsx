@@ -11,6 +11,7 @@ import { ActivityVisual } from "@/components/marketing/visuals";
 import { HeroShowcase } from "@/components/marketing/hero-showcase";
 import { Photo } from "@/components/marketing/photo";
 import { cityPhoto } from "@/lib/city-images";
+import { PhotoBanner } from "@/components/marketing/photo-banner";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { ACTIVITIES, activitySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
@@ -258,11 +259,13 @@ export default function HomePage() {
       </div>
 
       <section className="container pb-16" aria-labelledby="cta-final">
-        <div className="space-y-4 rounded-lg border border-primary/40 p-6 text-center">
-          <h2 id="cta-final" className="text-2xl font-bold">Et si vous rendiez service près de chez vous ?</h2>
-          <p className="text-sm text-muted-foreground">Trouvez l'activité qui vous correspond en trois questions, sans inscription.</p>
-          <PublicCtas className="flex flex-col justify-center gap-3 sm:flex-row" />
-        </div>
+        <PhotoBanner photo={sitePhoto("cta:final")}>
+          <div className="relative space-y-4 text-center">
+            <h2 id="cta-final" className="text-2xl font-bold">Et si vous rendiez service près de chez vous ?</h2>
+            <p className="text-sm text-muted-foreground">Trouvez l'activité qui vous correspond en trois questions, sans inscription.</p>
+            <PublicCtas className="flex flex-col justify-center gap-3 sm:flex-row" />
+          </div>
+        </PhotoBanner>
       </section>
       <SiteFooter />
       </main>
