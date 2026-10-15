@@ -1,8 +1,8 @@
-import { pageMetadata } from "@/lib/seo";
+import { legalMetadata } from "@/lib/seo";
 import { LEGAL } from "@/lib/legal";
 import { LegalPage, LegalSection } from "@/components/marketing/legal-page";
 
-export const metadata = pageMetadata({ title: "Conditions générales d'utilisation", description: "Conditions d'utilisation du service Compléo : compte, usage autorisé, contenus générés et responsabilités.", path: "/cgu" });
+export const metadata = legalMetadata({ title: "Conditions générales d'utilisation", description: "Conditions d'utilisation du service Compléo : compte, usage autorisé, contenus générés et responsabilités.", path: "/cgu" });
 
 export default function TermsOfUsePage() {
   return (

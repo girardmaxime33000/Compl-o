@@ -134,3 +134,6 @@ export function inseeRows(city: City, activity: Activity) {
     average: mean(key),
   }));
 }
+
+/** Page hub d'une ville : liste les activités pour lesquelles une donnée locale existe. */
+export const cityPath = (city: City) => `/villes/${city.slug}`;

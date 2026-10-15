@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
-import { absoluteUrl, ACTIVITY_PAGES, CITY_ACTIVITY_SITEMAP, GUIDE_PAGES, PUBLIC_PAGES } from "@/lib/seo";
+import { absoluteUrl, sitemapEntries } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [...PUBLIC_PAGES, ...ACTIVITY_PAGES, ...GUIDE_PAGES, ...CITY_ACTIVITY_SITEMAP].map((p) => ({ url: absoluteUrl(p.path), priority: p.priority }));
+  return sitemapEntries().map((e) => ({ url: absoluteUrl(e.path), lastModified: e.lastModified }));
 }

@@ -1,11 +1,11 @@
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
-import { pageMetadata } from "@/lib/seo";
+import { legalMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Rocket } from "lucide-react";
 import { LEGAL } from "@/lib/legal";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
-export const metadata = pageMetadata({ title: "Mentions légales", description: "Mentions légales du site Compléo : éditeur, hébergement, données personnelles et médiation.", path: "/mentions-legales" });
+export const metadata = legalMetadata({ title: "Mentions légales", description: "Mentions légales du site Compléo : éditeur, hébergement, données personnelles et médiation.", path: "/mentions-legales" });
 
 function Field({ value }: { value: string }) {
   return value ? <>{value}</> : <mark className="rounded bg-amber-100 px-1 text-amber-900">[À compléter]</mark>;

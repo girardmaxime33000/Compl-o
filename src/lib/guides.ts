@@ -10,8 +10,12 @@ export interface Guide {
   slug: string;
   title: string;
   description: string;
+  /** Date de première publication (ISO). */
+  published: string;
   /** Date de dernière mise à jour du contenu (ISO). */
   updated: string;
+  /** FAQ visible en fin de guide, reprise en `FAQPage` JSON-LD. Absente si le guide n'a pas de FAQ. */
+  faq?: { question: string; answer: string }[];
   Content: ComponentType;
   /** Appel à l'action de fin de guide. Par défaut : simulateur public. */
   cta?: { title: string; text: string; label: string; href: string };
@@ -33,6 +37,7 @@ export const GUIDES: Guide[] = [
     title: "Rédiger une annonce de services efficace",
     description:
       "Titre, contenu, tarif, photos, réactivité : les points qui rendent une annonce de services claire et crédible sur LeBonCoin, AlloVoisins ou GensDeConfiance.",
+    published: "2026-10-15",
     updated: "2026-10-15",
     Content: AnnoncesEfficaces,
     cta: {
@@ -47,6 +52,7 @@ export const GUIDES: Guide[] = [
     title: "Cumuler chômage et micro-entreprise : ARE ou Arce",
     description:
       "Comment l'ARE est réduite quand vous créez une micro-entreprise, abattements, plafond de 60 % des droits et alternative Arce.",
+    published: "2026-10-15",
     updated: "2026-10-15",
     Content: CumulChomageMicroEntreprise,
   },
@@ -55,6 +61,7 @@ export const GUIDES: Guide[] = [
     title: "Franchise de TVA : seuils 2026 et mention obligatoire",
     description:
       "Seuils de la franchise en base de TVA en 2026, mention 293 B, dépassement et prorata la première année.",
+    published: "2026-10-15",
     updated: "2026-10-15",
     Content: FranchiseTva,
   },
@@ -63,6 +70,7 @@ export const GUIDES: Guide[] = [
     title: "Plafonds et taux micro-entrepreneur 2026",
     description:
       "Plafonds de chiffre d'affaires et taux de cotisations du régime micro-social en 2026, selon l'activité.",
+    published: "2026-10-15",
     updated: "2026-10-15",
     Content: PlafondsMicro2026,
   },
@@ -71,6 +79,7 @@ export const GUIDES: Guide[] = [
     title: "Établir son premier devis : obligations et mentions",
     description:
       "Quand le devis est obligatoire, mentions à faire figurer, acompte ou arrhes, sanctions.",
+    published: "2026-10-15",
     updated: "2026-10-15",
     Content: PremierDevis,
   },
@@ -79,6 +88,7 @@ export const GUIDES: Guide[] = [
     title: "Micro-entreprise et retraite : conditions et cumul",
     description:
       "Conditions pour cumuler pension de retraite et micro-entreprise, plafonds, démarches auprès de la caisse de retraite.",
+    published: "2026-10-15",
     updated: "2026-10-15",
     Content: MicroEntrepriseRetraite,
   },

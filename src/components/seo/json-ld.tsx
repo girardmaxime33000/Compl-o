@@ -1,81 +1,37 @@
-import { LEGAL } from "@/lib/legal";
-import { absoluteUrl, PUBLIC_PAGES } from "@/lib/seo";
-import { centsToDecimal, OFFERS } from "@/lib/offers";
+import { PUBLIC_PAGES } from "@/lib/seo";
+import {
+  articleJsonLd, breadcrumbJsonLd, faqPageJsonLd, organizationJsonLd, serializeJsonLd, softwareApplicationJsonLd,
+  webApplicationJsonLd, type BreadcrumbItem, type FaqItem, type JsonLdObject,
+} from "@/lib/seo/jsonld";
 
-function JsonLd({ data }: { data: object }) {
-  // Échappe "<" pour qu'aucune balise ne puisse fermer le script.
-  const json = JSON.stringify(data).replace(/</g, "\\u003c");
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />;
+function JsonLd({ data }: { data: JsonLdObject }) {
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }} />;
 }
 
 export function OrganizationJsonLd() {
   return (
     <>
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: LEGAL.siteName,
-          url: absoluteUrl("/"),
-        }}
-      />
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "SoftwareApplication",
-          name: LEGAL.siteName,
-          applicationCategory: "BusinessApplication",
-          operatingSystem: "Web",
-          url: absoluteUrl("/"),
-          inLanguage: "fr-FR",
-          offers: [
-            { "@type": "Offer", name: "Gratuit", price: "0", priceCurrency: "EUR" },
-            ...Object.values(OFFERS).map((o) => ({
-              "@type": "Offer",
-              name: o.name,
-              price: centsToDecimal(o.cents),
-              priceCurrency: "EUR",
-            })),
-          ],
-        }}
-      />
+      <JsonLd data={organizationJsonLd()} />
+      <JsonLd data={softwareApplicationJsonLd()} />
     </>
   );
 }
 
-export function BreadcrumbJsonLd({ path, items }: { path: string; items?: { name: string; path: string }[] }) {
+export function BreadcrumbJsonLd({ path, items }: { path: string; items?: BreadcrumbItem[] }) {
   const page = PUBLIC_PAGES.find((p) => p.path === path);
   const trail = items ?? (page && path !== "/" ? [{ name: page.name, path }] : null);
   if (!trail) return null;
-  return (
-    <JsonLd
-      data={{
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: [{ name: "Accueil", path: "/" }, ...trail].map((it, i) => ({
-          "@type": "ListItem",
-          position: i + 1,
-          name: it.name,
-          item: absoluteUrl(it.path),
-        })),
-      }}
-    />
-  );
+  return <JsonLd data={breadcrumbJsonLd(trail)} />;
 }
 
-export function ArticleJsonLd({ title, description, path, updated }: { title: string; description: string; path: string; updated: string }) {
-  return (
-    <JsonLd
-      data={{
-        "@context": "https://schema.org",
-        "@type": "Article",
-        headline: title,
-        description,
-        inLanguage: "fr-FR",
-        dateModified: updated,
-        mainEntityOfPage: absoluteUrl(path),
-        publisher: { "@type": "Organization", name: LEGAL.siteName, url: absoluteUrl("/") },
-      }}
-    />
-  );
+export function ArticleJsonLd(props: Parameters<typeof articleJsonLd>[0]) {
+  return <JsonLd data={articleJsonLd(props)} />;
+}
+
+export function FaqJsonLd({ items }: { items: FaqItem[] }) {
+  return items.length > 0 ? <JsonLd data={faqPageJsonLd(items)} /> : null;
+}
+
+export function WebApplicationJsonLd(props: Parameters<typeof webApplicationJsonLd>[0]) {
+  return <JsonLd data={webApplicationJsonLd(props)} />;
 }
