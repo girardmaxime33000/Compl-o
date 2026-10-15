@@ -1,237 +1,178 @@
-# Audit UI/UX et plan d'implémentation des visuels (Unsplash) : Compléo
+# Audit UI/UX et visuels Unsplash : Compléo (état final)
 
-Date : 2026-10-15 (mise à jour après intégration des photos de villes, commits `b3ec49a` et `8c4a480`). Objectif : site B2C à conversion maximale (diagnostic gratuit → inscription → paywall).
+Date : 2026-10-15. Branche `claude/new-session-og6dhq`. Objectif : site B2C à conversion maximale (diagnostic gratuit → inscription → paywall).
 
-Changements pris en compte depuis la première version : 20 photos Unsplash de villes sélectionnées (`src/data/city-images.json`, `selectedOn` 2026-10-15), bandeau recadré avec `srcset`, réécriture du texte du hero et des titres SEO (« complément de salaire près de chez vous »), nouvelles fiches « activités urbaines ». Les constats sur ces points sont corrigés ci-dessous.
+Ce document remplace les versions précédentes. Il reprend les constats de l'audit, l'état de chaque lot (V1 à V9) après implémentation, ce qui reste à faire et les décisions attendues du propriétaire.
 
-## 0. Périmètre et limites de l'audit
+## 0. Périmètre et limites
 
-- Le site https://compleo.work n'est pas joignable depuis l'environnement d'exécution (échec DNS `ENOTFOUND`). Aucune capture, aucun Lighthouse, aucune mesure réelle.
-- L'audit porte sur le code source du dépôt, branche `claude/new-session-og6dhq` : `src/app/**`, `src/components/marketing/**`, `public/images/*.svg`, `scripts/fetch-unsplash-images.py`.
-- Non vérifié : rendu réel, performances réelles (LCP, CLS), comportement mobile réel, état de déploiement (la prod peut différer du dépôt), analytics existants (entonnoir).
-- Aucune donnée d'audience : les priorités ci-dessous sont des hypothèses à valider par mesure (section 8).
+- https://compleo.work n'est pas joignable depuis l'environnement d'exécution (échec DNS `ENOTFOUND`). L'audit porte sur le code source du dépôt. Aucune capture, aucun Lighthouse, aucune mesure réelle.
+- Non vérifié : rendu visuel dans un navigateur (y compris à 360 px de large), performances réelles (LCP, CLS, poids des images), état de la production (elle peut différer du dépôt), contenu réel de la base d'événements.
+- Aucune photo d'activité, de guide, du hero, du CTA final ou du login n'est sélectionnée : cela exige la clé `UNSPLASH_ACCESS_KEY` du propriétaire. Seules les 20 photos de villes existent.
+- Les comportements « avec photo » ont été vérifiés avec des enregistrements factices temporaires (retirés), des tests de rendu et des builds. Jamais avec de vraies photos.
 
-## 1. État actuel des visuels
+## 1. Synthèse de l'état final
 
-| Zone | Fichier | Visuel actuel | Constat |
+| Lot | Sujet | État | Dépend de |
 |---|---|---|---|
-| Hero accueil | `src/app/page.tsx` | `public/images/hero-compleo.svg` (illustration vectorielle abstraite) | Aucune présence humaine, aucun aperçu produit. Faible charge émotionnelle pour un produit B2C « complément de revenu ». |
-| Comment ça marche | `page.tsx` | `parcours-compleo.svg` masqué sous 640 px + icônes Lucide | Visuel absent sur mobile, redondant avec les cartes. |
-| Aperçu activités | `visuals.tsx` (`ActivityVisual`) | Dégradé + pictogramme Lucide | Générique, interchangeable d'une activité à l'autre. |
-| Guides | `GuideVisual` | Idem | Idem. Absent des cartes de l'accueil (texte seul). |
-| Pages activité | `activites/[slug]/page.tsx` | Bandeau dégradé `hero` | Pas de contexte réel (lieu, geste, client). |
-| Pages ville | `city-photo.tsx` | 20 photos Unsplash réelles, bandeau 2,5:1 | Fait (voir 1.1). Affichées uniquement sur `/villes/[ville]` et `/activites/[slug]/[ville]`. Absentes de l'accueil (liens texte), de `/activites/[slug]`, de l'OG et des cartes. |
-| Login | `login/page.tsx` | Aucun | Écran nu, pas de réassurance. |
-| Pricing | `pricing/page.tsx` | Aucun | Tableau et cartes sans élément de réassurance visuelle. |
-| Onboarding | `components/onboarding/wizard.tsx` | À vérifier (250 lignes, non audité en détail) | Étape cruciale de l'entonnoir : voir 3.6. |
-| OG | `opengraph-image.tsx` | Texte statique | Partages sociaux sans visuel d'activité. |
+| V1 | Pipeline de sélection | Fait (script, catalogue de 23 emplacements, tests hors ligne). Jamais exécuté contre l'API réelle | Clé API |
+| V2 | Composant `Photo`, crédits | Fait | |
+| V3 | En-tête partagé, CTA diagnostic | Fait. Barre d'action mobile fixe non faite | |
+| V4 | Hero de l'accueil | Fait (cartes exemple, pastilles). Pas de photo : panneau coloré | V1 |
+| V5 | Activités | Câblé, repli sur dégradé. Aucune photo | V1 |
+| V6 | Onboarding | Câblé, repli sur puces texte. Aucune photo | V1 |
+| V7 | Villes | Fait : 20 photos, tuiles sur l'accueil. Couleur moyenne des 20 photos non récupérée | Clé API |
+| V8 | Pages secondaires | Câblé (guides, CTA final, login), mentions de réassurance pricing. Images de partage écartées | V1 |
+| V9 | Mesure | Fait (`home_view`, `cta_click`). Pas d'A/B | |
 
-Acquis réutilisables : pipeline Unsplash conforme (`scripts/fetch-unsplash-images.py` : recherche, planche de contact, déclaration de téléchargement, JSON versionné, hotlink, crédit avec UTM), `src/lib/city-images.ts`, `CityPhoto`, repli sur dégradés. Il faut généraliser, pas réécrire.
+Conclusion : le code est prêt à recevoir les photos. Tant que V1 n'est pas exécuté, le site ne gagne visuellement que les 20 photos de villes, le nouvel en-tête, le hero avec cartes exemple et les pastilles. La conversion attendue des photos ne peut pas être évaluée avant leur mise en ligne.
 
-### 1.1 Photos de villes : état après intégration
+Vérifications à la dernière mise à jour : `npm run typecheck`, `npm run lint`, `npm run build` passent ; 146 tests Vitest et 10 tests Python passent.
 
-Constaté dans le dépôt (lecture du code et du JSON) :
-
-- 20 villes couvertes sur 20 : angers, bordeaux, dijon, grenoble, le-havre, lille, lyon, marseille, montpellier, nantes, nice, paris, reims, rennes, saint-denis-reunion, saint-etienne, strasbourg, toulon, toulouse, villeurbanne. Chaque entrée porte `id`, `raw`, dimensions, `author`, `authorUrl`, `pageUrl`, `alt`. Sélection reproductible via `scripts/city-images-selection.json`.
-- Images d'origine entre 3 024 et 6 000 px de large, sans recadrage dans le dépôt : recadrage et redimensionnement côté CDN.
-- `CityPhoto` : balise `<img>` (et non `next/image`) avec `srcSet` 480/720/960/1280 px, recadrage serveur `h=w/2.5`, WebP, qualité 60, `sizes` fixés, dimensions déclarées, ratio CSS `aspect-[2.5/1]` (pas de CLS), `fetchPriority="high"` et `preconnect` quand `priority`, `loading="lazy"` sinon. Crédit photographe + Unsplash avec UTM sous chaque photo.
-- Conformité : hotlink respecté, crédit présent, UTM présents. Déclaration de téléchargement faite par le script `build` (non revérifiable sans clé API).
-
-Points à corriger ou à décider :
-
-- `alt` : le composant n'utilise pas l'`alt` du JSON mais `Vue de {ville}`. Acceptable (le texte Unsplash est en anglais et descriptif d'un détail, p. ex. « aerial photography of lighted concrete buildings at night time »). À conserver, mais le champ `alt` du JSON est inutilisé.
-- Qualité éditoriale non vérifiée : je n'ai pas visualisé les 20 photos. La sélection initiale est issue d'un brouillon « première photo de chaque ville » corrigé à la main ; une relecture visuelle reste à faire (pertinence de la ville, absence de personnes identifiables, cohérence de tonalité). Cas à regarder en priorité : Villeurbanne, Saint-Denis (La Réunion), Toulon, Le Havre, dont les requêtes ont des surcharges.
-- Deux photos du même photographe (Zhu Yunxiao : Dijon, Lille) : voir la cohérence visuelle.
-- Pas de couleur moyenne ni de placeholder : le fond `bg-muted` gris apparaît avant chargement. Ajouter `color` (fourni par l'API) dans le JSON pour un fond proche de l'image.
-- Valeur peu exploitée : 20 photos de villes mais aucune sur l'accueil, alors que la section « Activité complémentaire près de chez vous » liste ces villes en texte. Tuiles photo de villes à ajouter (priorité 2, section 3).
-- Charge : une page ville charge une seule image (≈ 40–90 Ko estimés à 1280 px, qualité 60, non mesuré). À mesurer avec Lighthouse.
-- Le hero est repositionné sur « complément de salaire près de chez vous » : la photo de ville y devient un candidat naturel (géolocalisation de l'accueil non prévue, ne pas la supposer ; une photo générique de quartier français suffit).
-
-## 2. Audit UX/UI et conversion
+## 2. Constats initiaux et suite donnée
 
 Gravité : B bloquant conversion, M majeur, m mineur.
 
-### 2.1 Structure et navigation
+### 2.1 Navigation
 
-- B. Pas d'en-tête partagé. L'accueil a son propre `<header>` (logo texte + Simulateur, Tarifs, Connexion). Les pages `/pricing`, `/activites/[slug]`, `/login` n'affichent que le logo : aucune navigation, aucun CTA. Impasses de parcours sur les pages d'atterrissage SEO, qui sont l'entrée principale du trafic.
-- B. Bouton « Connexion » en style primaire dans l'en-tête : il concurrence le CTA « Faire mon diagnostic gratuit » (le seul que l'on veut maximiser). Passer « Connexion » en `ghost`, ajouter le CTA diagnostic en primaire.
-- M. Pas de CTA collant sur mobile (barre basse « Diagnostic gratuit ») sur les pages longues (activité, ville, guides).
-- m. Logo = icône `Rocket` + texte. Pas de marque visuelle distinctive ni de favicon à vérifier.
+| Gravité | Constat | État |
+|---|---|---|
+| B | Pas d'en-tête partagé : `/pricing`, `/activites/[slug]`, `/login` sans navigation ni CTA | Fait (V3, 13 fichiers). `/login`, `/onboarding` et le tableau de bord gardent volontairement leur écran dédié |
+| B | « Connexion » en style primaire concurrençait le CTA diagnostic | Fait : « Connexion » en discret, « Diagnostic gratuit » seul bouton principal |
+| M | Pas de CTA fixe sur mobile pour les pages longues | Non fait (`StickyCta`) |
+| m | Logo = icône `Rocket` + texte | Non fait (décision propriétaire) |
 
-### 2.2 Hero (accueil)
+Limite de l'en-tête : il ne lit pas la session (pour garder les pages statiques). Un utilisateur connecté voit toujours « Connexion » et « Diagnostic gratuit ».
 
-- Hero réécrit depuis la première version : titre « Complément de salaire : activités et services près de chez vous », sous-titre en trois questions. La promesse chiffrée « 200 € à 1 000 € » et sa ligne d'avertissement ont été retirées ensemble, ce qui reste cohérent avec les garde-fous de `CLAUDE.md`. Le bénéfice financier n'est plus quantifié au-dessus de la ligne de flottaison : à arbitrer par mesure (A/B), pas par principe.
-- B. Visuel abstrait, sans humain ni preuve produit : le visiteur ne voit ni le résultat ni quelqu'un qui lui ressemble.
-- M. Deux CTA de poids visuel proche (diagnostic en plein, simulateur en contour : acceptable) mais le micro-texte de réassurance est sous les boutons, en `text-sm` grisé. Remonter « gratuit, sans inscription, sans carte bancaire » en pastilles à côté du CTA.
-- M. Aucun élément de confiance visuel (source des données, URSSAF/INSEE/France Travail en logos textuels serait légitime : ces sources sont déjà citées en pied de page).
+### 2.2 Hero
 
-### 2.3 Corps de page
+| Gravité | Constat | État |
+|---|---|---|
+| B | Illustration abstraite, sans humain ni preuve produit | Partiel (V4) : panneau coloré avec deux cartes « Exemple d'annonce » et « Exemple de calcul » (chiffres issus de `simulate()`, mention IA et « estimation indicative »). La photo humaine dépend de V1 |
+| M | Réassurance grisée sous les boutons | Fait : pastilles « Diagnostic gratuit », « Sans inscription », « Sans carte bancaire » |
+| M | Aucun élément de confiance visuel | Non fait |
+| — | Hero réécrit par ailleurs (« Complément de salaire… près de chez vous »), promesse « 200 € à 1 000 € » retirée avec son avertissement | À arbitrer par la mesure, pas par principe |
 
-- M. « Un aperçu de ce que vous obtenez » : cartes à dégradé + pictogramme, peu désirables. C'est la section la plus propice à la photo.
-- M. Section « Activité complémentaire près de chez vous » (ex-« Activités et villes à explorer ») : listes de liens soulignés (activités, villes, 12 couples « activité à ville »). Zone à fort potentiel SEO et d'exploration, sans attrait visuel ni hiérarchie, alors que les 20 photos de villes existent désormais. Première application : tuiles photo pour les 6 à 8 villes les mieux classées, liste texte conservée en dessous pour le maillage.
-- M. Section « Des repères issus de données publiques » : les compteurs (activités du catalogue, villes couvertes, pages avec donnée locale, guides) décrivent le contenu du site, pas un bénéfice pour l'utilisateur. Compteurs réels, donc conformes, mais faible valeur persuasive. Remplacer par des bénéfices chiffrés issus de `tax.ts` / `activities.ts` ou les replacer en pied de page.
-- m. Guides de l'accueil : cartes texte seul.
-- B. Le simulateur d'accueil est un bloc de texte. Un mini-aperçu visuel (jauge brut → cotisations → net) convertirait mieux qu'un paragraphe.
-- m. CTA final : cadre à bordure sans visuel ni contraste. Section de clôture à renforcer (fond photo + voile, ou fond couleur de marque).
+`public/images/hero-compleo.svg` n'est plus utilisé (non supprimé).
 
-### 2.4 Pages de contenu SEO (activité, ville, guide)
+### 2.3 Corps de l'accueil
 
-- M. Bandeau `hero` dégradé en tête : consomme de la hauteur sans information. Remplacer par photo contextuelle à ratio fixe (pas de CLS).
-- M. Pas de CTA au-dessus de la ligne de flottaison sur ces pages : le premier CTA apparaît plus bas. Ajouter un encart « Faire mon diagnostic » dans la colonne latérale (desktop) ou barre collante (mobile).
-- m. Tableaux (revenu par heures) : bon contenu, mais sans visualisation. Une barre horizontale par palier (CSS, pas de lib) rendrait la progression lisible.
+| Gravité | Constat | État |
+|---|---|---|
+| M | Cartes d'aperçu à dégradé | Câblé (V5) : photo `activity:<id>` si présente |
+| M | Villes en liste de liens | Fait (V7) : 8 tuiles photo, liste texte pour le reste |
+| M | Compteurs décrivant le contenu du site, pas un bénéfice | Non fait |
+| B | Simulateur d'accueil en paragraphe | Non fait (mini-graphique brut → cotisations → net). Le calcul est maintenant illustré dans le hero seulement |
+| m | Guides de l'accueil en texte seul | Non fait (les cartes de `/guides` sont câblées) |
+| m | CTA final sans contraste | Câblé (V8) : `PhotoBanner`, repli sur le cadre d'origine |
+| m | `parcours-compleo.svg` masqué sous 640 px | Non fait |
+
+### 2.4 Pages de contenu (activité, ville, guide)
+
+| Gravité | Constat | État |
+|---|---|---|
+| M | Bandeau dégradé sans information | Câblé (V5, V8) : photo d'activité ou de guide, ratio fixe, hauteur plafonnée |
+| M | Pas de CTA au-dessus de la ligne de flottaison | Partiel : l'en-tête partagé porte le CTA. Pas d'encart latéral ni de barre fixe |
+| m | Tableaux de revenu sans visualisation | Non fait |
 
 ### 2.5 Pricing et login
 
-- M. Pricing : aucune réassurance visuelle (paiement sécurisé Stripe, rétractation 14 jours, résiliation en un clic : à n'afficher que si vrai et vérifié dans les CGV). Offre recommandée à surligner (badge), à décider avec le propriétaire (prix et positionnement = décision propriétaire, cf. CLAUDE.md).
-- M. Login : écran minimal sans rappel de la promesse. Écran partagé desktop (formulaire + photo/aperçu produit), mobile : formulaire seul.
+| Gravité | Constat | État |
+|---|---|---|
+| M | Aucune réassurance visuelle | Partiel (V8) : « Paiement géré par Stripe », « Abonnements résiliables à tout moment », reprises de ce que la page affirme déjà. Rien sur la rétractation (l'achat impose d'y renoncer) |
+| M | Offre recommandée à surligner | Non fait (décision propriétaire) |
+| M | Login sans rappel de la promesse | Câblé (V8) : colonne photo à partir de 1024 px, rien sur mobile. Sans photo, page inchangée. Pas de puces de promesse |
 
-### 2.6 Onboarding (diagnostic)
+### 2.6 Onboarding
 
-- À examiner avec `wizard.tsx`. Recommandation de principe : cartes de choix des « domaines qui vous plaisent » avec photo (ratio 4:3, texte en surimpression lisible) plutôt que cases à cocher texte ; barre de progression ; résultat (3 recommandations) illustré par les photos d'activité. C'est l'écran où la photo a le meilleur ratio gain/effort après le hero.
+Câblé (V6) : l'étape « Qu'aimez-vous faire ? » affiche des cartes photo pour les domaines disposant d'une photo (celle de la première activité de la catégorie), les autres restent des puces. Les 3 recommandations affichent la photo de l'activité. Constats annexes : la page `/onboarding` passe de 7,07 à 10,6 kB parce que `Photo` tire les données des photos de villes dans le bundle client. Non optimisé. Le comportement au clic (sélection, étapes) n'a pas été vérifié dans un navigateur.
 
-### 2.7 Accessibilité et performance (à vérifier après implémentation)
+### 2.7 Accessibilité et performance
 
-- Contraste texte sur photo : voile dégradé obligatoire, ratio ≥ 4,5:1 mesuré.
-- Visuels décoratifs `aria-hidden` et `alt=""` ; photos porteuses de sens avec `alt` descriptif en français.
-- `next/image` avec `unoptimized` (cas actuel de `CityPhoto`) supprime le `srcset` : un mobile télécharge 1200 px. Corriger via un `loader` personnalisé (section 4.3).
-- Hero : `priority`, ratio fixé, `sizes` correct. Les autres images : `loading="lazy"`.
-- `prefers-reduced-motion` respecté pour tout effet (zoom au survol, parallaxe : à éviter).
-
-## 3. Recommandations visuelles par page
-
-Règle générale : photos réelles, lumineuses, personnes en situation de travail ou de service, cadrage serré, palette compatible avec le bleu primaire (`hsl(221 83% 53%)`). Ne jamais légender une photo comme un utilisateur, un témoignage ou un revenu réel (CLAUDE.md : aucun faux avis, aucune fausse preuve).
-
-| Page | Emplacement | Visuel | Format / ratio | Priorité |
-|---|---|---|---|---|
-| `/` | Hero | Photo humaine (personne à son ordinateur à domicile ou en activité de service) + 2 cartes UI flottantes rendues en HTML (« Annonce prête », « Net estimé ») alimentées par `simulate()` | 4:3 desktop, 16:10 mobile ; `priority` | 1 |
-| `/` | Aperçu activités (3 cartes) | Photo d'activité + badge revenu estimé | 3:2 | 1 |
-| `/` | Activités et villes | Mosaïque de tuiles photo : villes (photos déjà disponibles, aucun nouveau besoin Unsplash) et 6 activités, avec voile ; liens texte conservés dessous | 1:1 / 4:3 | 1 (villes), 2 (activités) |
-| `/` | Guides | Couverture photo par guide | 16:9 | 3 |
-| `/` | Simulateur | Mini-graphique CSS brut → cotisations → net, sans photo | composant | 2 |
-| `/` | CTA final | Fond photo + voile bleu foncé | pleine largeur | 3 |
-| `/activites` | Cartes | Photo d'activité | 3:2 | 1 |
-| `/activites/[slug]` | En-tête | Photo d'activité à la place du dégradé + crédit | 21:9 desktop, 16:9 mobile | 1 |
-| `/activites/[slug]/[ville]` | En-tête | Photo de la ville : fait (bandeau 2,5:1, 20 villes) ; repli sur photo d'activité à ajouter | idem | fait / 2 |
-| `/villes/[ville]` | En-tête, tuiles activité | Photo ville : fait ; tuiles activité en photo à ajouter | 2,5:1 / 1:1 | fait / 2 |
-| `/activites/[slug]` (fiches « urbaines » : `UrbanSheet`) et `/activites` (cartes « Activités urbaines ») | En-tête et cartes | Aucun visuel actuellement (nouvelles fiches texte) : photo d'activité à ajouter | 3:2 | 1 |
-| OG ville (à créer) | Fond | Photo de la ville sous voile + titre (aucune image OG par ville aujourd'hui) | 1200×630 | 3 |
-| `/guides`, `/guides/[slug]` | Cartes et en-tête | Couverture photo par guide | 16:9 | 3 |
-| `/onboarding` | Choix de domaines, résultat | Photos d'activité | 4:3 | 1 |
-| `/login` | Colonne latérale (≥ lg) | Photo + promesse + 3 puces de réassurance | 4:5 | 3 |
-| `/pricing` | Aucun visuel photo | Badges, icônes de réassurance (vrai uniquement) | icônes | 2 |
-| OG (`opengraph-image.tsx`, `activites/[slug]/opengraph-image.tsx`) | Fond | Photo d'activité sous voile + titre | 1200×630 | 3 |
-| `/modele-facture-auto-entrepreneur`, `/generateur-annonce` | Aperçu | Capture/rendu HTML du PDF et de l'annonce plutôt que photo | composant | 2 |
-
-### 3.1 Requêtes Unsplash suggérées (à valider sur planche de contact)
-
-Anglais pour la pertinence des résultats, `orientation=landscape` (portrait pour le login).
-
-Les 20 clés `city:*` sont déjà sélectionnées : ne pas les rechercher à nouveau (économie de quota). Les activités urbaines publiées (`publishedUrbanActivities()` dans `src/lib/urban-activities.ts`) sont à ajouter au catalogue de requêtes.
-
-| Clé | Requête |
+| Point | État |
 |---|---|
-| `hero` | `woman working laptop home bright`, `freelancer smiling laptop kitchen` |
-| `bricolage` | `handyman repairing home` |
-| `montage_meubles` | `assembling furniture` |
-| `soutien_scolaire` | `tutor teaching student` |
-| `cours_langue` | `language lesson teacher` |
-| `coursier` | `bicycle courier city` |
-| `garde_animaux` | `dog walker park` |
-| `menage` | `home cleaning service` |
-| `jardinage` | `gardening hands plants` |
-| `aide_informatique` | `helping senior with computer` |
-| `depot_vente` | `second hand selling items` |
-| Guides (6) | `calculator paperwork desk`, `unemployment job center`, `invoice quote desk`, `senior working laptop`, `writing advertisement`, `tax documents` |
-| `login` | `person smiling smartphone` (portrait) |
+| Contraste du texte sur photo | Voile sombre sur le CTA final ; à mesurer sur une vraie photo (ratio ≥ 4,5:1) |
+| Visuels décoratifs `alt=""`, photos de villes avec `alt` « Vue de {ville} » | Fait |
+| `srcset` sans copie de l'image | Fait : `<img>` + `srcSet` 320 à 1280 px, recadrage par le CDN, WebP, qualité 60 (le chargeur `next/image` proposé initialement n'est plus nécessaire) |
+| Ratio réservé (pas de CLS), `priority` pour l'image du haut, `loading="lazy"` ailleurs | Fait |
+| Fond avant chargement | Prévu (`color`), absent des 20 photos de villes tant que `colors` n'a pas été exécuté |
+| Budgets (hero ≤ 120 Ko mobile, LCP ≤ 2,5 s, CLS ≤ 0,1, Lighthouse accessibilité ≥ 95) | Non mesurés |
+| `prefers-reduced-motion` | Aucun effet animé ajouté |
 
-## 4. Intégration technique de l'API Unsplash
+## 3. Ce qui a été livré, par lot
 
-### 4.1 Principe : sélection à la construction, pas d'appel à l'exécution
+### V1 : pipeline de sélection
+`scripts/fetch-unsplash-images.py` (remplace `fetch-city-images.py`) : périmètres `cities` et `site`, commandes `search`, `build`, `colors`, `check`. Catalogue de requêtes `scripts/site-images-catalogue.json` : `hero:home`, `cta:final`, `login`, 10 activités, 4 activités urbaines publiées, 6 guides (23 emplacements). Un test Vitest vérifie que le catalogue couvre exactement les activités, activités urbaines publiées et guides du code. Le build lit les métadonnées dans les candidats (une requête par photo) et reprend après un arrêt de quota. Tests Python hors ligne avec API simulée : `python3 -B -m unittest scripts/test_fetch_unsplash_images.py`. Fichier compilé `.pyc` retiré du dépôt, `__pycache__/` ignoré.
 
-Conserver l'architecture existante, déjà éprouvée sur les 20 villes : le script sélectionne et déclare, un JSON versionné est lu par les pages, les images sont servies par `images.unsplash.com`. Avantages : aucun quota consommé par les visiteurs, aucune clé côté site, aucune latence supplémentaire, rendu statique (SSG/ISR) intact.
+### V2 : fondations
+`Photo` (`src/components/marketing/photo.tsx`) : ratio, `srcset`, `sizes`, `priority`, voile, contenu superposé, crédit `caption`, `overlay`, `text` (sans lien, pour une photo dans un lien) ou `page`, repli, option `phrasing` pour un bouton ou un lien. Ratios : bandeau 2,5, hero 4:3, carte 3:2, tuile 1:1, large 16:9, portrait 4:5. `PhotoCredits` et page `/credits-photos` (noindex, hors sitemap, liée au pied de page).
 
-Ne pas appeler l'API depuis le navigateur ni depuis les Server Components à chaque requête (limite de 50 req/h en mode demo, clé exposée, latence).
+### V3 : navigation
+`SiteHeader` partagé sur 13 fichiers, composant statique.
 
-### 4.2 Conformité aux directives de l'API (à respecter)
+### V4 : hero
+`HeroShowcase`, emplacement `hero:home` dans `src/data/site-images.json`.
 
-1. Hotlink des URL `images.unsplash.com` (ne pas copier les fichiers dans `public/` ni les proxifier).
-2. Déclarer chaque photo retenue via `download_location` (déjà fait par `build`).
-3. Crédit visible : photographe + Unsplash, liens avec `?utm_source=compleo&utm_medium=referral` (déjà dans `withUtm`). Un crédit par photo affichée, y compris dans les mosaïques : légende en infobulle ou ligne `text-xs` discrète ; pour les fonds décoratifs, crédit regroupé en pied de page (page « Crédits photos » liée au footer).
-4. Mode demo limité à 50 requêtes/heure : le script s'arrête avant épuisement (déjà géré). Avant mise en ligne publique, demander le passage en mode production sur https://unsplash.com/developers (à vérifier dans les conditions en vigueur : décision propriétaire).
-5. Ne pas suggérer un parrainage ou une approbation par Unsplash ou le photographe. Ne pas utiliser une photo de personne dans un contexte sensible ou diffamatoire (licence Unsplash : pas d'autorisation de modèle garantie).
-6. Clé `UNSPLASH_ACCESS_KEY` : variable d'environnement locale du propriétaire, jamais dans le dépôt (déjà documenté dans `.env.example`).
+### V5 : activités
+`ActivityVisual` et photos `activity:<id>` (accueil, `/activites`, `/activites/[slug]`, tuiles de `/villes/[ville]`), photos `urban:<slug>` sur les cartes et fiches urbaines.
 
-### 4.3 Modifications de code
+### V6 : onboarding
+Voir 2.6.
 
-Données : généraliser `src/data/city-images.json` en `src/data/images.json` (ou ajouter un second fichier `visual-images.json`) :
+### V7 : villes
+Tuiles de villes sur l'accueil (8), champ `color` géré (type, fond avant chargement, script).
 
-```json
-{
-  "source": "Unsplash",
-  "selectedOn": "2026-10-15",
-  "photos": {
-    "hero:home":            { "id": "...", "raw": "https://images.unsplash.com/photo-...", "width": 0, "height": 0, "color": "#xxxxxx", "blurHash": "...", "author": "...", "authorUrl": "...", "pageUrl": "...", "alt": "..." },
-    "activity:bricolage":   { "...": "..." },
-    "guide:annonces-efficaces": { "...": "..." },
-    "city:paris":           { "...": "..." }
-  }
-}
-```
+### V8 : pages secondaires
+Guides (`guide:<slug>`), `PhotoBanner` (`cta:final`), colonne du login (`login`), deux mentions de réassurance sur `/pricing`.
 
-- Ajouter `color` (couleur moyenne, fournie par l'API) pour le fond de remplacement avant chargement : zéro CLS, zéro flash blanc.
-- Script : ajouter un catalogue de clés → requête (table 3.1) à côté de `QUERY_OVERRIDES`, mêmes commandes `search` / `build`, sélection dans `scripts/visual-images-selection.json`. Budget : environ 25 clés × (1 recherche + 1 déclaration) ≈ 50 requêtes (hors villes, déjà faites), soit 2 passes à une heure d'intervalle en mode demo.
-- `src/lib/city-images.ts` : le `srcSet` recadré est déjà en place pour le bandeau de ville (`unsplashSrc`, `bannerSrcSet`, `BANNER_RATIO`, `BANNER_WIDTHS`) via une balise `<img>`. Ne pas le refaire : généraliser en paramétrant le ratio (`bannerSrcSet(photo, ratio, widths)`), ce qui couvre 3:2 (cartes), 1:1 (tuiles), 16:9 (guides) et 4:5 (login). Les composants futurs réutilisent la même approche `<img>` + `srcSet` + `sizes` ; le loader `next/image` proposé initialement n'est plus nécessaire.
-- Composants (dans `src/components/marketing/`) :
-  - `Photo` (générique : `photoKey`, `ratio`, `sizes`, `priority`, `overlay`, `credit`) avec repli automatique sur le dégradé existant de `visuals.tsx` quand la clé est absente. Aucune page ne casse si une photo manque.
-  - `ActivityVisual` et `GuideVisual` : utiliser `Photo` si disponible, sinon comportement actuel (migration non destructive).
-  - `PhotoCredits` : liste des crédits pour une page « Crédits photos ».
-  - `SiteHeader` partagé (logo, Simulateur, Tarifs, Connexion en `ghost`, CTA diagnostic en primaire) et `StickyCta` mobile.
-  - `HeroShowcase` : photo + cartes UI flottantes calculées par `simulate()` (pas de chiffres inventés).
-- CSP : si une CSP est ajoutée (T03), autoriser `img-src https://images.unsplash.com`. Aucune CSP n'est configurée dans `next.config.mjs` ni `vercel.json` à ce jour.
-- Tests : étendre `src/lib/city-images.test.ts` (loader, repli quand clé absente, UTM sur chaque lien de crédit).
-- README : documenter les nouvelles clés et la commande, section « Photos de villes (Unsplash) » à renommer « Photos (Unsplash) ».
+### V9 : mesure
+Événements `home_view` (propriété `visual` : `photo` ou `none`) et `cta_click` (`source` : header, hero, final, page ; `target` : diagnostic, simulateur, login). `TrackedLink`, `HomeViewTracker`. Les signaux « Do Not Track » et « Global Privacy Control » désactivent toujours l'envoi. Le README décrit les événements et une requête SQL de comparaison avec et sans photo. Seules les vues de l'accueil sont comptées. Un clic n'est pas rattaché à une visite : le rapport clics sur vues est approximatif.
 
-### 4.4 Budget de performance
+## 4. Conformité aux directives de l'API Unsplash
 
-- Hero : 1 image WebP ≤ 120 Ko mobile (`w=800,q=70`), `priority`, ratio déclaré.
-- Pages à cartes : `loading="lazy"`, `sizes="(min-width:768px) 33vw, 100vw"`.
-- Total images au-dessus de la ligne de flottaison ≤ 150 Ko mobile.
-- Objectifs à mesurer avant/après : LCP ≤ 2,5 s, CLS ≤ 0,1, Lighthouse Accessibilité ≥ 95 (non mesurés à ce jour).
+| Exigence | État |
+|---|---|
+| Hotlink `images.unsplash.com`, aucune copie dans le dépôt | Respecté (balise `<img>`) |
+| Déclaration du téléchargement par photo retenue | Dans `build` ; jamais exécuté pour le périmètre `site` ; fait pour les villes |
+| Crédit photographe + Unsplash avec `utm_source=compleo&utm_medium=referral` | Légende liée sous le bandeau ; texte sans lien sur les cartes et tuiles (la carte est déjà un lien), crédit lié sur `/credits-photos` ; test automatisé de présence des UTM |
+| Mode demo limité à 50 requêtes par heure | Géré par le script (arrêt avant épuisement, reprise). `search site` et `build site` demandent chacun 23 requêtes : à lancer à une heure d'intervalle |
+| Passage en mode production avant lancement public | À demander par le propriétaire |
+| Pas de suggestion de parrainage, pas de photo de personne en contexte sensible | Critères de sélection dans le README |
 
-## 5. Plan de mise en œuvre (ordre recommandé)
+Écart assumé : les crédits sans lien sur les cartes, les tuiles de 56 px (aucun crédit en ligne) et les fonds décoratifs renvoient à `/credits-photos`. À trancher si une lecture stricte exige un crédit lié partout.
 
-| # | Lot | Contenu | Dépendance |
-|---|---|---|---|
-| V1 | Pipeline | Script généralisé `scripts/fetch-unsplash-images.py` (périmètres `cities` et `site`, commandes `search`, `build`, `colors`, `check`), catalogue de requêtes `scripts/site-images-catalogue.json` (23 emplacements), tests hors ligne : fait. Exécution réelle non faite (clé API du propriétaire) | Clé API (propriétaire) |
-| V2 | Fondations | `Photo` générique (`src/components/marketing/photo.tsx`), `photoSrcSet` et ratios (`city-images.ts`), `PhotoCredits` et page `/credits-photos` (noindex, liée au pied de page), tests : fait. `CityPhoto` migré sur `Photo`. Reste : clés non-villes (dépend de V1) | V1 |
-| V3 | Navigation | `SiteHeader` partagé, CTA primaire, application aux pages publiques : fait (`src/components/marketing/site-header.tsx`). Reste : `StickyCta` mobile | aucune (peut démarrer sans V1) |
-| V4 | Hero accueil | `HeroShowcase` (cartes exemple d'annonce et exemple de calcul alimentées par `simulate()`), pastilles de réassurance, emplacement `hero:home` (`src/data/site-images.json`) : fait. Photo non sélectionnée (dépend de V1, clé API) : panneau coloré en attendant | V2 |
-| V5 | Activités | `ActivityVisual` utilise la photo `activity:<id>` si elle existe (cartes accueil et /activites, bandeau /activites/[slug], tuiles /villes/[ville]), sinon dégradé ; photos `urban:<slug>` sur les cartes et fiches urbaines ; crédits listés sur /credits-photos : fait. Aucune photo d'activité sélectionnée (dépend de V1, clé API) | V2 |
-| V6 | Onboarding | Étape 1 : cartes photo par domaine (photo de la première activité de la catégorie) ; résultats : photo par activité recommandée ; repli sur les puces et cartes texte sans photo : fait. Aucune photo d'activité sélectionnée (dépend de V1) | V2 |
-| V7 | Villes | Pipeline villes exécuté (20/20). Fait : tuiles photo de villes sur l'accueil (8, liste texte pour les autres), champ `color` pris en charge (type, fond avant chargement, script `build` et commande `colors` pour les 20 entrées existantes). Reste : exécuter `colors` (clé API), relecture visuelle des 20 photos | fait |
-| V8 | Secondaires | Guides (cartes et bandeau, clé `guide:<slug>`), CTA final (`PhotoBanner`, clé `cta:final`), login (colonne photo ≥ lg, clé `login`), pricing (deux mentions : paiement géré par Stripe, abonnements résiliables) : câblés, repli sur l'existant sans photo. Images de partage (OG) non faites : incorporer la photo dans un PNG statique revient à la copier, contraire au hotlink exigé par l'API ; décision propriétaire | V2 |
-| V9 | Mesure | Événements `home_view` et `cta_click` (source : header, hero, final, page ; cible : diagnostic, simulateur, login ; version du visuel : photo ou none), `TrackedLink`, requêtes SQL de comparaison dans le README : fait. Pas de lien clic-visite (aucun identifiant) ; A/B 50/50 non implémenté | T12 |
+Images de partage (OG) non faites : incorporer une photo dans un PNG statique généré au build revient à la copier, contraire au hotlink. Les cartes OG actuelles (texte sur dégradé) sont inchangées. Décision propriétaire.
 
-Chaque lot : branche `claude/<id>-<slug>`, vérifications `npm run typecheck`, `npm run lint`, `npm run build`, test des pages touchées, mise à jour de `TASKS.md` et du README. Une PR par lot, sur demande explicite uniquement.
+## 5. Actions restantes, dans l'ordre
+
+1. Propriétaire : fournir `UNSPLASH_ACCESS_KEY` (variable locale, jamais dans le dépôt).
+2. `python3 scripts/fetch-unsplash-images.py search site`, ouvrir `data/unsplash/site-candidates.html`, corriger `scripts/site-images-selection.json`, `check site`.
+3. Une heure plus tard : `build site`, `check site`, commiter `src/data/site-images.json` et la sélection.
+4. `python3 scripts/fetch-unsplash-images.py colors` (périmètre des villes, environ 20 requêtes) pour le fond avant chargement.
+5. Relire visuellement les 20 photos de villes (cas à regarder : Villeurbanne, Saint-Denis de La Réunion, Toulon, Le Havre ; deux photos du même photographe pour Dijon et Lille).
+6. Lancer Lighthouse mobile avant et après sur l'accueil, une page activité, une page ville, `/onboarding` : LCP, CLS, poids des images.
+7. Vérifier à la main dans un navigateur (360 px et ≥ 1024 px) : superposition des deux cartes du hero, lisibilité du CTA final sur photo, colonne photo du login, cartes de l'onboarding.
+8. Non fait, par ordre de gain attendu : barre d'action fixe mobile, aperçu graphique du simulateur sur l'accueil, remplacement des compteurs « catalogue », encart de CTA sur les pages de contenu, barres de visualisation des tableaux de revenu, optimisation du bundle de `/onboarding`.
 
 ## 6. Décisions requises du propriétaire
 
-- Clé `UNSPLASH_ACCESS_KEY` et passage de l'application Unsplash en mode production avant lancement public.
-- Validation de la sélection de photos (planche de contact) : cohérence de marque, absence de personnes identifiables dans un contexte sensible.
-- Message de réassurance sur `/pricing` : n'afficher que des promesses vraies et couvertes par les CGV (rétractation, résiliation, paiement Stripe).
-- Offre à mettre en avant sur `/pricing` (positionnement tarifaire).
-- Éventuelle identité visuelle (logo) : aujourd'hui icône `Rocket` + texte.
+- Clé `UNSPLASH_ACCESS_KEY` et passage de l'application en mode production.
+- Validation des photos retenues (cohérence de marque, personnes identifiables).
+- Crédits : accepter les crédits sans lien sur les cartes et tuiles, ou exiger un crédit lié partout.
+- Images de partage avec photo : renoncer, ou accepter le risque lié à la copie.
+- Promesse de revenu dans le hero (retirée) : arbitrer par test A/B ou par période de comparaison.
+- Offre à mettre en avant sur `/pricing`, et logo (aujourd'hui icône `Rocket` + texte).
 
 ## 7. Risques
 
-- Image hotlinkée indisponible ou retirée par son auteur : le repli sur dégradé évite la page cassée ; contrôle périodique des URL (script `check` à prévoir).
-- Photos de stock perçues comme génériques : privilégier cadrages d'action et lieux français, éviter les poses de « bureau stock » ; la preuve produit (cartes UI réelles) compense.
-- Poids des images : tenir le budget 4.4, sinon la conversion mobile baisse malgré le gain visuel.
-- Crédit absent ou sans UTM = non-conformité Unsplash : test automatisé (4.3).
-- Aucun faux témoignage, aucun compteur d'utilisateurs, aucune photo présentée comme client réel.
+- Photo hotlinkée retirée ou indisponible : le repli sur dégradé évite la page cassée ; un contrôle périodique des URL reste à prévoir (la commande `check` vérifie le format, pas la disponibilité).
+- Photos de stock perçues comme génériques : la preuve produit (cartes du hero) compense, mais pas d'effet mesuré à ce jour.
+- Poids des images : à tenir sous les budgets du 2.7, sinon la conversion mobile baisse malgré le gain visuel.
+- Aucun faux témoignage, aucun compteur d'utilisateurs, aucune photo présentée comme client réel : règle de sélection à rappeler à chaque nouvelle photo.
+- Mesure : sans identifiant, pas de lien entre clic et visite ; sans volume de trafic connu, aucune conclusion statistique garantie.
 
 ## 8. Mesure du gain
 
-- Référence : relever avant modification taux de clic CTA hero, taux de démarrage et d'achèvement du diagnostic, taux d'inscription, LCP/CLS (mobile).
-- Déployer par lot, comparer sur des périodes équivalentes, ou en test A/B sur le hero (50/50) si le trafic le permet. Volume de trafic actuel inconnu : sans échantillon suffisant, aucune conclusion statistique.
-- Critère de conservation d'un lot : pas de dégradation du LCP mobile au-delà de 10 % et hausse (ou neutralité) du taux de clic CTA.
+- Référence à relever avant la mise en ligne des photos : taux de clic du CTA du hero (`cta_click` source `hero` sur `home_view`), taux de démarrage et d'achèvement du diagnostic, inscriptions, LCP et CLS mobiles.
+- Comparer sur des périodes de même durée et de trafic comparable, avec la propriété `visual` (`none` avant, `photo` après). Un A/B 50/50 n'est pas implémenté.
+- Critère de conservation d'un lot : pas de dégradation du LCP mobile au-delà de 10 % et taux de clic du CTA en hausse ou neutre.
