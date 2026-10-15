@@ -10,6 +10,9 @@ import { PLATFORMS } from "@/lib/platforms";
 import { LEGAL } from "@/lib/legal";
 import { pageMetadata } from "@/lib/seo";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
+import { activityFaq } from "@/lib/seo/faq";
+import { FaqSection } from "@/components/marketing/faq";
+import { PublicCtas } from "@/components/marketing/ctas";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Simulator } from "@/components/simulator/simulator";
@@ -44,6 +47,7 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
   const related = relatedActivities(activity);
   const cities = citiesForActivity(activity);
   const approxUnit = activity.unit !== "h";
+  const faq = activityFaq(activity);
 
   return (
     <>
@@ -62,6 +66,11 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
             Tarif moyen constaté en France : <strong>{formatRate(activity)}</strong> (repère indicatif, à adapter à votre
             situation).
           </p>
+          {cities.length > 0 && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Des repères locaux (France Travail, INSEE) sont disponibles pour {cities.length} villes, listées plus bas.
+            </p>
+          )}
         </div>
 
         <section className="space-y-3">
@@ -101,6 +110,20 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
               </li>
             ))}
           </ul>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-xl font-semibold">Comment trouver vos premiers clients</h2>
+          <ol className="list-decimal space-y-2 pl-5 text-sm leading-relaxed">
+            <li>Publiez une annonce précise sur {activity.platforms.map((p) => PLATFORMS[p].label).join(", ")} : service, zone d'intervention, tarif indicatif.</li>
+            <li>Répondez rapidement et clairement aux demandes, en confirmant la prestation et le prix avant de vous déplacer.</li>
+            <li>Établissez un devis puis une facture avec les mentions obligatoires, y compris pour une petite prestation.</li>
+            <li>Demandez un retour à vos clients satisfaits, uniquement des avis réels, pour rassurer les suivants.</li>
+          </ol>
+          <p className="text-sm">
+            Le <Link href="/guides/annonces-efficaces" className="underline">guide pour rédiger une annonce efficace</Link>{" "}
+            détaille chaque point.
+          </p>
         </section>
 
         <section className="space-y-3">
@@ -150,10 +173,13 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
         <section className="space-y-3 rounded-lg border border-primary/40 p-5">
           <h2 className="text-lg font-semibold">Passez à l'action</h2>
           <p className="text-sm text-muted-foreground">
-            Faites le diagnostic gratuit pour comparer cette activité à votre profil, sans inscription.
+            Faites le diagnostic gratuit pour comparer cette activité à votre profil, sans inscription, ou estimez votre net
+            après cotisations.
           </p>
-          <Button asChild size="lg"><Link href="/onboarding">Faire mon diagnostic gratuit</Link></Button>
+          <PublicCtas />
         </section>
+
+        <FaqSection items={faq} title={`Questions fréquentes : ${activity.title}`} />
 
         {cities.length > 0 && (
           <section className="space-y-3">

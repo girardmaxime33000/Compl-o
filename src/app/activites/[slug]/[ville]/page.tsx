@@ -4,12 +4,15 @@ import { Info, Rocket } from "lucide-react";
 import { activitySlug, findActivityBySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
 import {
   activitiesForCity, BMO_PREVIOUS_YEAR, BMO_YEAR, bmoEvolution, bmoFor, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA,
-  cityActivityPath, findCity, hasLocalData, inseeRows, neighbourCities,
+  cityActivityPath, cityPath, findCity, hasLocalData, inseeRows, neighbourCities,
 } from "@/lib/cities";
 import { LEGAL } from "@/lib/legal";
 import { PLATFORMS } from "@/lib/platforms";
 import { pageMetadata } from "@/lib/seo";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
+import { cityActivityFaq } from "@/lib/seo/faq";
+import { FaqSection } from "@/components/marketing/faq";
+import { PublicCtas } from "@/components/marketing/ctas";
 import { Button } from "@/components/ui/button";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
@@ -58,6 +61,7 @@ export default function CityActivityPage({ params }: { params: { slug: string; v
   const otherActivities = activitiesForCity(city).filter((a) => a.id !== activity.id).slice(0, 6);
   const activityPath = `/activites/${activitySlug(activity)}`;
   const path = cityActivityPath(city, activity);
+  const faq = cityActivityFaq(city, activity);
 
   return (
     <>
@@ -159,9 +163,20 @@ export default function CityActivityPage({ params }: { params: { slug: string; v
 
         <section className="space-y-3 rounded-lg border border-primary/40 p-5">
           <h2 className="text-lg font-semibold">Passez à l'action à {city.name}</h2>
-          <p className="text-sm text-muted-foreground">Faites le diagnostic gratuit, sans inscription, pour comparer cette activité à votre profil.</p>
-          <Button asChild size="lg"><Link href="/onboarding">Faire mon diagnostic gratuit</Link></Button>
+          <p className="text-sm text-muted-foreground">
+            Faites le diagnostic gratuit, sans inscription, pour comparer cette activité à votre profil, ou estimez votre
+            net après cotisations avec le simulateur.
+          </p>
+          <PublicCtas />
+          <p className="text-sm">
+            Aussi : <Link href={activityPath} className="underline">toutes les villes pour « {activity.title} »</Link>,{" "}
+            <Link href={cityPath(city)} className="underline">les activités à {city.name}</Link>,{" "}
+            <Link href="/generateur-annonce" className="underline">exemples d'annonces</Link> et{" "}
+            <Link href="/simulateur-micro-entrepreneur" className="underline">simulateur du net</Link>.
+          </p>
         </section>
+
+        <FaqSection items={faq} title={`Questions fréquentes : ${activity.title} à ${city.name}`} />
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold">{activity.title} dans d'autres villes</h2>
