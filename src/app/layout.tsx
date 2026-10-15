@@ -9,9 +9,9 @@ const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-int
 
 export const metadata: Metadata = {
   metadataBase: new URL(LEGAL.siteUrl),
-  title: "Complément de revenu : activités, annonces et factures | Compléo",
+  title: "Complément de salaire : activités, annonces et factures près de chez vous | Compléo",
   description:
-    "Générez un complément de revenu : choisissez une micro-activité, rédigez vos annonces par IA et calculez votre net.",
+    "Complément de salaire et complément de revenu : trouvez une activité complémentaire en micro-entreprise dans votre ville, rédigez votre annonce et estimez votre net après cotisations.",
   openGraph: { type: "website", locale: "fr_FR", siteName: "Compléo" },
 };
 

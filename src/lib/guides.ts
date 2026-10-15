@@ -34,9 +34,9 @@ export const DEFAULT_CTA = {
 export const GUIDES: Guide[] = [
   {
     slug: "annonces-efficaces",
-    title: "Rédiger une annonce de services efficace",
+    title: "Annonce de services efficace : trouver des clients près de chez vous",
     description:
-      "Titre, contenu, tarif, photos, réactivité : les points qui rendent une annonce de services claire et crédible sur LeBonCoin, AlloVoisins ou GensDeConfiance.",
+      "Pour votre complément de salaire : titre, contenu, tarif, photos, réactivité, les points qui rendent une annonce de services claire et crédible sur LeBonCoin, AlloVoisins ou GensDeConfiance.",
     published: "2026-10-15",
     updated: "2026-10-15",
     Content: AnnoncesEfficaces,
@@ -49,16 +49,16 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: "cumul-chomage-micro-entreprise",
-    title: "Cumuler chômage et micro-entreprise : ARE ou Arce",
+    title: "Complément de salaire et chômage : cumuler ARE et micro-entreprise (ARE ou Arce)",
     description:
-      "Comment l'ARE est réduite quand vous créez une micro-entreprise, abattements, plafond de 60 % des droits et alternative Arce.",
+      "Pour un complément de salaire pendant le chômage : comment l'ARE est réduite quand vous créez une micro-entreprise, abattements, plafond de 60 % des droits et alternative Arce.",
     published: "2026-10-15",
     updated: "2026-10-15",
     Content: CumulChomageMicroEntreprise,
   },
   {
     slug: "franchise-tva-micro-entrepreneur",
-    title: "Franchise de TVA : seuils 2026 et mention obligatoire",
+    title: "Franchise de TVA et complément de salaire : seuils 2026 et mention obligatoire",
     description:
       "Seuils de la franchise en base de TVA en 2026, mention 293 B, dépassement et prorata la première année.",
     published: "2026-10-15",
@@ -67,7 +67,7 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: "plafonds-micro-entreprise-2026",
-    title: "Plafonds et taux micro-entrepreneur 2026",
+    title: "Plafonds et taux micro-entrepreneur 2026 : jusqu'où aller en complément de salaire",
     description:
       "Plafonds de chiffre d'affaires et taux de cotisations du régime micro-social en 2026, selon l'activité.",
     published: "2026-10-15",
@@ -76,7 +76,7 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: "premier-devis-micro-entrepreneur",
-    title: "Établir son premier devis : obligations et mentions",
+    title: "Premier devis d'une activité complémentaire : obligations et mentions",
     description:
       "Quand le devis est obligatoire, mentions à faire figurer, acompte ou arrhes, sanctions.",
     published: "2026-10-15",
@@ -85,7 +85,7 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: "micro-entreprise-retraite",
-    title: "Micro-entreprise et retraite : conditions et cumul",
+    title: "Retraite : un complément de revenu en micro-entreprise, conditions et cumul",
     description:
       "Conditions pour cumuler pension de retraite et micro-entreprise, plafonds, démarches auprès de la caisse de retraite.",
     published: "2026-10-15",

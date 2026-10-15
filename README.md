@@ -1,8 +1,8 @@
 # Compléo
 
-**Votre complément de revenu, simplifié.**
+**Complément de salaire : activités et services près de chez vous.**
 
-Compléo est une application web (SaaS B2C) qui aide les particuliers en France à générer un complément de revenu de 200 € à 1 000 € par mois grâce à une micro-activité : choisir une activité adaptée à son profil, rédiger ses annonces avec une IA, estimer ce qu'il reste après cotisations et émettre ses devis et factures.
+Compléo est une application web (SaaS B2C) qui aide les particuliers urbains en France à rendre service près de chez eux et à en tirer un complément de revenu (estimation selon profil, ville et temps disponible, sans garantie) grâce à une micro-activité : choisir une activité adaptée à son profil, rédiger ses annonces avec une IA, estimer ce qu'il reste après cotisations et émettre ses devis et factures.
 
 > Statut : en production sur https://compleo.work (connexion, diagnostic, annonces IA, simulateur, facturation PDF, paiement Stripe, pages SEO activités et villes). Quatre offres : Gratuit, Pack ponctuel 4,99 €, Pack mensuel 6,99 € et Abonnement annuel 69,99 € (voir [Offres](#offres)).
 
