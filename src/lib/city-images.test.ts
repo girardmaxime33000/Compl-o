@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { CITIES } from "@/lib/cities";
-import { bannerSrcSet, cityPhoto, unsplashSrc, UNSPLASH_URL, withUtm } from "@/lib/city-images";
+import {
+  bannerSrcSet, BANNER_RATIO, BANNER_WIDTHS, cityPhoto, cityPhotoEntries, photoSrcSet, PHOTO_RATIOS, unsplashSrc, UNSPLASH_URL, withUtm,
+} from "@/lib/city-images";
 
 describe("photos de villes (Unsplash)", () => {
   it("construit une URL hotlink du CDN Unsplash avec taille et format", () => {
@@ -30,6 +32,29 @@ describe("photos de villes (Unsplash)", () => {
       expect(photo.author.length).toBeGreaterThan(0);
       expect(photo.raw.startsWith("https://images.unsplash.com/")).toBe(true);
       expect(photo.authorUrl.startsWith("https://unsplash.com/")).toBe(true);
+    }
+  });
+});
+
+describe("photoSrcSet / ratios", () => {
+  const raw = { raw: "https://images.unsplash.com/photo-123?ixid=abc" };
+
+  it("recadre chaque largeur au ratio demandé", () => {
+    const set = photoSrcSet(raw, PHOTO_RATIOS.tile);
+    expect(set.split(", ")).toHaveLength(5);
+    expect(set).toContain("w=320&h=320");
+    expect(set).toContain("w=1280&h=1280");
+    expect(photoSrcSet(raw, PHOTO_RATIOS.card, [720])).toContain("w=720&h=480");
+  });
+
+  it("le srcSet du bandeau reste celui de photoSrcSet au ratio bandeau", () => {
+    expect(bannerSrcSet(raw)).toBe(photoSrcSet(raw, BANNER_RATIO, BANNER_WIDTHS));
+  });
+
+  it("cityPhotoEntries expose les photos déclarées", () => {
+    for (const [slug, photo] of cityPhotoEntries()) {
+      expect(slug.length).toBeGreaterThan(0);
+      expect(photo.raw.startsWith("https://images.unsplash.com/")).toBe(true);
     }
   });
 });

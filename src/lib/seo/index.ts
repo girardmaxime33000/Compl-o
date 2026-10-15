@@ -18,6 +18,7 @@ export const PUBLIC_PAGES = [
   { path: "/cgu", name: "CGU", indexable: false },
   { path: "/cgv", name: "CGV", indexable: false },
   { path: "/confidentialite", name: "Confidentialité", indexable: false },
+  { path: "/credits-photos", name: "Crédits photos", indexable: false },
 ] as const;
 
 export interface SitemapEntry {

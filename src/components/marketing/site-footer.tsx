@@ -47,6 +47,7 @@ export function SiteFooter() {
             <li><Link href="/cgu" className={linkClass}>CGU</Link></li>
             <li><Link href="/cgv" className={linkClass}>CGV</Link></li>
             <li><Link href="/confidentialite" className={linkClass}>Confidentialité</Link></li>
+            <li><Link href="/credits-photos" className={linkClass}>Crédits photos</Link></li>
           </ul>
         </nav>
       </div>

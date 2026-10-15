@@ -274,6 +274,8 @@ Les pages `/villes/[ville]` et `/activites/[slug]/[ville]` affichent la photo Un
 3. Ouvrir la planche, corriger `scripts/city-images-selection.json` (`{"paris": "<id>"}`).
 4. `UNSPLASH_ACCESS_KEY=... python3 scripts/fetch-city-images.py build` : récupère les métadonnées, déclare le téléchargement à Unsplash (obligation des directives de l'API) et écrit `src/data/city-images.json`. Commiter ce JSON et la sélection.
 
+Composants : `<Photo>` (`src/components/marketing/photo.tsx`) affiche n'importe quelle photo sélectionnée (ratio, `srcset`, crédit en légende ou en pastille, repli) ; `CityPhoto` l'utilise pour les villes. Tous les crédits sont listés sur `/credits-photos`.
+
 Conformité aux directives de l'API : les images ne sont pas copiées dans le dépôt, elles sont servies par `images.unsplash.com` (hotlink), avec crédit du photographe et lien vers Unsplash portant `utm_source=compleo&utm_medium=referral`. Aucun appel à l'API à l'exécution, donc la limite de 50 requêtes par heure du mode demo ne concerne que le script. Vérifier les conditions Unsplash en vigueur avant la mise en ligne (passage en mode production si exigé).
 
 ## SEO

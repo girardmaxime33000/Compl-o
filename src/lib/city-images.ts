@@ -27,13 +27,37 @@ export function unsplashSrc(photo: Pick<CityPhoto, "raw">, width: number, qualit
   return `${photo.raw}${sep}w=${width}${height ? `&h=${height}` : ""}&q=${quality}&fm=webp&fit=crop&auto=format`;
 }
 
-/** Rapport largeur / hauteur du bandeau : l'image est recadrée côté CDN à ce format (poids bien plus faible). */
-export const BANNER_RATIO = 2.5;
-export const BANNER_WIDTHS = [480, 720, 960, 1280] as const;
+/** Alias : le type décrit n'importe quelle photo Unsplash sélectionnée, pas seulement une ville. */
+export type UnsplashPhoto = CityPhoto;
 
-/** `srcSet` du bandeau : une taille par largeur d'écran, recadrée au format du bandeau. */
-export const bannerSrcSet = (photo: Pick<CityPhoto, "raw">) =>
-  BANNER_WIDTHS.map((w) => `${unsplashSrc(photo, w, 60, Math.round(w / BANNER_RATIO))} ${w}w`).join(", ");
+/** Formats de recadrage (largeur / hauteur). L'image est recadrée côté CDN à ce format (poids bien plus faible). */
+export const PHOTO_RATIOS = {
+  /** Bandeau de page (ville, activité). */
+  banner: 2.5,
+  /** Carte. */
+  card: 3 / 2,
+  /** Tuile carrée. */
+  tile: 1,
+  /** Couverture de guide, vidéo. */
+  wide: 16 / 9,
+  /** Colonne latérale verticale. */
+  portrait: 4 / 5,
+} as const;
+export type PhotoRatio = keyof typeof PHOTO_RATIOS;
+
+export const BANNER_RATIO = PHOTO_RATIOS.banner;
+export const BANNER_WIDTHS = [480, 720, 960, 1280] as const;
+export const PHOTO_WIDTHS = [320, 480, 720, 960, 1280] as const;
+
+/** `srcSet` : une taille par largeur d'écran, recadrée au format demandé. */
+export const photoSrcSet = (photo: Pick<CityPhoto, "raw">, ratio: number, widths: readonly number[] = PHOTO_WIDTHS) =>
+  widths.map((w) => `${unsplashSrc(photo, w, 60, Math.round(w / ratio))} ${w}w`).join(", ");
+
+/** `srcSet` du bandeau (compatibilité). */
+export const bannerSrcSet = (photo: Pick<CityPhoto, "raw">) => photoSrcSet(photo, BANNER_RATIO, BANNER_WIDTHS);
+
+/** Photos de villes déclarées, avec leur clé (slug). */
+export const cityPhotoEntries = (): [string, CityPhoto][] => Object.entries(PHOTOS);
 
 export const withUtm = (url: string) => `${url}${url.includes("?") ? "&" : "?"}${UTM}`;
 
