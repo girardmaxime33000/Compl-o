@@ -31,9 +31,10 @@ function tipsFooter(userId: string) {
 
 export function invoiceEmail(p: { number: string; documentLabel: string; issuerName: string; clientName: string; amount: number }): Rendered {
   const subject = `${p.documentLabel} ${p.number} de ${p.issuerName}`;
-  const text = `Bonjour ${p.clientName},\n\nVeuillez trouver ci-joint ${p.documentLabel.toLowerCase()} ${p.number} d'un montant de ${eur(p.amount)}.\n\nCordialement,\n${p.issuerName}\n\nDocument envoyé via Compléo.`;
+  const doc = `${p.documentLabel === "Devis" ? "le devis" : "la facture"}`;
+  const text = `Bonjour ${p.clientName},\n\nVeuillez trouver ci-joint ${doc} ${p.number} d'un montant de ${eur(p.amount)}.\n\nCordialement,\n${p.issuerName}\n\nDocument envoyé via Compléo.`;
   const html = layout(
-    `<p>Bonjour ${esc(p.clientName)},</p><p>Veuillez trouver ci-joint ${esc(p.documentLabel.toLowerCase())} <strong>${esc(p.number)}</strong> d'un montant de <strong>${esc(eur(p.amount))}</strong>.</p><p>Cordialement,<br>${esc(p.issuerName)}</p>`,
+    `<p>Bonjour ${esc(p.clientName)},</p><p>Veuillez trouver ci-joint ${esc(doc)} <strong>${esc(p.number)}</strong> d'un montant de <strong>${esc(eur(p.amount))}</strong>.</p><p>Cordialement,<br>${esc(p.issuerName)}</p>`,
     "Document envoyé via Compléo. Répondez à ce message pour contacter l'émetteur.",
   );
   return { subject, html, text };
