@@ -35,7 +35,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Bonjour{profile.full_name ? ` ${profile.full_name}` : ""} 👋</h1>
-        <p className="text-muted-foreground">Votre complément de revenu, étape par étape.</p>
+        <p className="text-muted-foreground">Votre complément de salaire, étape par étape, près de chez vous.</p>
       </div>
 
       {searchParams.checkout === "success" && (
@@ -48,7 +48,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2"><Sparkles className="h-5 w-5 text-primary" /> Commencez par le diagnostic</CardTitle>
-            <CardDescription>3 questions pour découvrir les activités adaptées à votre profil.</CardDescription>
+            <CardDescription>3 questions pour découvrir les activités complémentaires adaptées à votre profil et à votre ville.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild><Link href="/onboarding">Faire le diagnostic <ArrowRight className="h-4 w-4" /></Link></Button>
@@ -57,7 +57,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
       ) : (
         <section className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Vos activités recommandées</h2>
+            <h2 className="text-lg font-semibold">Vos activités complémentaires recommandées</h2>
             <Button asChild variant="ghost" size="sm"><Link href="/onboarding">Refaire le diagnostic</Link></Button>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
@@ -69,7 +69,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
                   <CardDescription>{formatRate(activity)}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <p className="text-sm font-semibold text-success">≈ {monthlyMin} € à {monthlyMax} € / mois</p>
+                  <p className="text-sm font-semibold text-success">≈ {monthlyMin} € à {monthlyMax} € de chiffre d'affaires / mois</p>
                   <Button asChild size="sm" variant="outline" className="w-full">
                     <Link href={`/dashboard/listings?service=${encodeURIComponent(activity.title)}`}>Créer mon annonce</Link>
                   </Button>

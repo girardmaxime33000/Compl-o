@@ -1,8 +1,8 @@
 # Compléo
 
-**Votre complément de revenu, simplifié.**
+**Complément de salaire : activités et services près de chez vous.**
 
-Compléo est une application web (SaaS B2C) qui aide les particuliers en France à générer un complément de revenu de 200 € à 1 000 € par mois grâce à une micro-activité : choisir une activité adaptée à son profil, rédiger ses annonces avec une IA, estimer ce qu'il reste après cotisations et émettre ses devis et factures.
+Compléo est une application web (SaaS B2C) qui aide les particuliers urbains en France à rendre service près de chez eux et à en tirer un complément de revenu (estimation selon profil, ville et temps disponible, sans garantie) grâce à une micro-activité : choisir une activité adaptée à son profil, rédiger ses annonces avec une IA, estimer ce qu'il reste après cotisations et émettre ses devis et factures.
 
 > Statut : en production sur https://compleo.work (connexion, diagnostic, annonces IA, simulateur, facturation PDF, paiement Stripe, pages SEO activités et villes). Quatre offres : Gratuit, Pack ponctuel 4,99 €, Pack mensuel 6,99 € et Abonnement annuel 69,99 € (voir [Offres](#offres)).
 
@@ -238,6 +238,26 @@ Ollama ne fonctionne pas sur un hébergement type Vercel : en production, utilis
 | `npm run lint` | ESLint |
 | `npm run typecheck` | Vérification TypeScript |
 | `npm test` | Tests unitaires (Vitest) : `tax.ts`, catalogue d'activités, quotas d'annonces, webhook Stripe |
+
+## Catalogue des activités urbaines
+
+Segment `URBAN`, ajouté sans modifier le catalogue `src/lib/activities.ts` (les 10 fiches existantes n'ont aucun champ nouveau). Il n'existe pas de table d'activités en base : le catalogue est du code, donc aucune migration SQL n'est nécessaire et aucun schéma parallèle n'a été créé. Les 7 fiches (« seed ») sont dans `src/lib/urban-activities.ts` : 4 `PUBLISHED` (publiques) et 3 `EMERGING` (jamais exposées : pages, sitemap et llms.txt passent par `publishedUrbanActivities()`). Il n'y a pas d'écran d'administration : les pistes `EMERGING` se consultent dans le code (`emergingUrbanActivities()`).
+
+**Schéma** (`UrbanActivity`) : `slug`, `name`, `status`, `segment`, `pitch`, `painPoints`, `pricing` (`PriceLine`), `effectiveHourlyRate` et `monthlyOperatingCosts` par profil, `revenueOverride` (CA composite par profil), `taxCategory`, `taxCategoryToConfirm`, `cfpCategory`, `sapEligibility`, `equipment`, `entryBarrier`, `skills`, `certifications`, `regulatoryNotes`, `risks`, `acquisitionChannels`, `adTemplate`, `adTemplateVariables`, `adVariableDefaults` (valeur par défaut des variables tarifaires, lue dans `pricing`), `capacityNote`. Les champs absents des fiches `EMERGING` sont optionnels ; le calcul de revenu et le rendu d'annonce lèvent une erreur sur une fiche incomplète.
+
+**Règles** (`src/lib/urban-income.ts`) :
+- R1 `computeMonthlyNetIncome(activity, profile, { acre?, year? })` : heures facturées = heures par semaine du profil × 4,33 ; CA = heures × taux horaire effectif (ou `revenueOverride`) ; cotisations = CA × (taux social de la catégorie + taux de formation professionnelle) ; net = CA − cotisations − charges d'exploitation. Le résultat garde la précision (`netIncome`) et fournit l'arrondi à la dizaine (`netDisplay`). ACRE : le coefficient (50 % avant le 1er juillet 2026, 75 % à partir de cette date, selon la date de début d'activité) s'applique aux cotisations sociales, pas à la contribution formation.
+- R2 `vatAlert(selections)` : alerte quand le CA annuel de services (BIC services et BNC, cumulé sur toutes les activités choisies) atteint 90 % du seuil de franchise de TVA.
+- R3 `hasSapConflict(activities)` : une activité éligible SAP combinée à une non éligible affiche `SAP_CONFLICT_MESSAGE` et retire les segments `{{sap}}…{{/sap}}` des annonces.
+- R4 `cmaNotice(activity)` : message CMA, uniquement pour `reparation-velo-trottinette-domicile`.
+- R5 `renderAd(activity, { values, sapDeclared, selection })` : variables entre crochets ; `prix_net_sap` = `prix_horaire` × (1 − taux du crédit d'impôt) ; longueur cible 250 à 320 caractères (`AD_LENGTH`), vérifiée par les tests avec un quartier de 12 caractères.
+- R6 : statut `EMERGING`, voir ci-dessus.
+
+**Interface** : la fiche `/activites/<slug>` (`src/components/activities/urban-sheet.tsx`) affiche tarifs, net par profil, matériel, réglementation, risques, canaux et annonce, en listes empilées sous 640 px. Le bloc « Combiner plusieurs activités » (`urban-planner.tsx`) applique R1 à R5 sur la sélection. Il n'existe pas encore d'étape « immatriculation » dans le parcours : l'alerte R3 et le message R4 sont affichés sur la fiche et dans ce bloc.
+
+**Paramètres fiscaux** : `FISCAL_PARAMS_BY_YEAR` dans `src/lib/tax.ts`, une entrée par année ; les taux déjà présents dans `TAX_PARAMS` y sont repris, rien n'est dupliqué. Les valeurs de cotisation formation, d'ACRE et de crédit d'impôt SAP (taux, plafonds par sous-activité) viennent du propriétaire et ne sont pas encore rapprochées d'une fiche officielle.
+
+**Mise à jour annuelle** : (1) relire les fiches officielles listées en tête de `tax.ts` (urssaf.fr, service-public.fr) ; (2) mettre à jour `TAX_PARAMS` ; (3) ajouter une entrée `FISCAL_PARAMS_BY_YEAR[<année>]` sans modifier l'année précédente ; (4) changer `CURRENT_FISCAL_YEAR` ; (5) mettre à jour les dates de vérification en commentaire ; (6) `npm test` : les tests R1 comparent aux valeurs attendues à ± 15 € et signalent un décalage. Les tarifs, coûts et heures facturées des fiches sont des repères indicatifs du propriétaire, à réviser avec les paramètres.
 
 ## Données locales (pages activité × ville)
 

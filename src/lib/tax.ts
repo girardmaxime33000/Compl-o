@@ -41,6 +41,72 @@ export const TAX_PARAMS = {
   quoteFineCompany: 15_000,
 } as const;
 
+/**
+ * Paramètres fiscaux versionnés par année, utilisés par le catalogue d'activités urbaines (`urban-income.ts`).
+ * Les taux déjà présents dans `TAX_PARAMS` en sont repris (source unique). Les autres valeurs (cotisation formation
+ * professionnelle, ACRE, crédit d'impôt SAP, plafonds par sous-activité SAP) ont été fournies par le propriétaire
+ * le 15 octobre 2026 et NE SONT PAS encore rapprochées d'une fiche officielle : à vérifier sur urssaf.fr et
+ * service-public.fr avant toute mise en avant. Procédure annuelle : ajouter une entrée pour l'année suivante, ne
+ * jamais modifier l'année passée (voir README, section « Catalogue des activités urbaines »).
+ */
+export interface FiscalParams {
+  year: number;
+  socialContributionRates: { BIC_SERVICES: number; BIC_SALES: number; BNC_SSI: number };
+  trainingContributionRates: { COMMERCE: number; ARTISANAT: number; LIBERAL: number };
+  microRevenueCeilingServices: number;
+  vatFranchiseThresholdServices: number;
+  vatFranchiseThresholdServicesIncreased: number;
+  /** Part de l'alerte de TVA : avertissement dès que le CA annuel atteint cette part du seuil de franchise (règle R2). */
+  vatAlertShare: number;
+  /** ACRE : part du taux normal de cotisations restant due, selon la date de début d'activité. */
+  acre: { reducedRateShareBefore20260701: number; reducedRateShareFrom20260701: number; changeDate: string };
+  sapTaxCredit: {
+    rate: number;
+    subCeilings: {
+      SMALL_DIY: { annualCap: number; maxInterventionHours: number };
+      IT_ASSISTANCE: { annualCap: number };
+      SMALL_GARDENING: { annualCap: number };
+    };
+  };
+  weeksPerMonth: number;
+  profiles: { OCCASIONAL: { billedHoursPerWeek: number }; REGULAR: { billedHoursPerWeek: number } };
+}
+
+export const FISCAL_PARAMS_BY_YEAR: Record<number, FiscalParams> = {
+  2026: {
+    year: 2026,
+    socialContributionRates: {
+      BIC_SERVICES: TAX_PARAMS.urssafRate.bic,
+      BIC_SALES: TAX_PARAMS.urssafRateSales,
+      BNC_SSI: TAX_PARAMS.urssafRate.bnc,
+    },
+    trainingContributionRates: { COMMERCE: 0.001, ARTISANAT: 0.003, LIBERAL: 0.002 },
+    microRevenueCeilingServices: TAX_PARAMS.microCeilingServices,
+    vatFranchiseThresholdServices: TAX_PARAMS.vatThreshold,
+    vatFranchiseThresholdServicesIncreased: TAX_PARAMS.vatThresholdMajored,
+    vatAlertShare: 0.9,
+    acre: { reducedRateShareBefore20260701: 0.5, reducedRateShareFrom20260701: 0.75, changeDate: "2026-07-01" },
+    sapTaxCredit: {
+      rate: 0.5,
+      subCeilings: {
+        SMALL_DIY: { annualCap: 500, maxInterventionHours: 2 },
+        IT_ASSISTANCE: { annualCap: 3000 },
+        SMALL_GARDENING: { annualCap: 5000 },
+      },
+    },
+    weeksPerMonth: 4.33,
+    profiles: { OCCASIONAL: { billedHoursPerWeek: 4 }, REGULAR: { billedHoursPerWeek: 12 } },
+  },
+};
+
+export const CURRENT_FISCAL_YEAR = 2026;
+
+export function getFiscalParams(year: number = CURRENT_FISCAL_YEAR): FiscalParams {
+  const params = FISCAL_PARAMS_BY_YEAR[year];
+  if (!params) throw new Error(`Paramètres fiscaux ${year} absents de FISCAL_PARAMS_BY_YEAR`);
+  return params;
+}
+
 export type ActivityRegime = "bnc" | "bic";
 
 export interface SimulatorInput {

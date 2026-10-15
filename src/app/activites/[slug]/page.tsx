@@ -15,6 +15,8 @@ import { FaqSection } from "@/components/marketing/faq";
 import { PublicCtas } from "@/components/marketing/ctas";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { findPublishedUrbanActivity, publishedUrbanActivities } from "@/lib/urban-activities";
+import { UrbanSheet } from "@/components/activities/urban-sheet";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { Simulator } from "@/components/simulator/simulator";
 import { SiteFooter } from "@/components/marketing/site-footer";
@@ -22,22 +24,32 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return ACTIVITIES.map((a) => ({ slug: activitySlug(a) }));
+  return [...ACTIVITIES.map((a) => ({ slug: activitySlug(a) })), ...publishedUrbanActivities().map((a) => ({ slug: a.slug }))];
 }
 
 const HOURS = [2, 5, 8, 12, 20];
 
 export function generateMetadata({ params }: { params: { slug: string } }) {
+  const urban = findPublishedUrbanActivity(params.slug);
+  if (urban) {
+    return pageMetadata({
+      title: `${urban.name} : tarifs, matériel et revenu estimé`,
+      description: `${urban.pitch} Tarifs indicatifs, matériel, réglementation et revenu net estimé selon votre temps disponible.`,
+      path: `/activites/${urban.slug}`,
+    });
+  }
   const a = findActivityBySlug(params.slug);
   if (!a) return {};
   return pageMetadata({
-    title: `${a.title} : tarifs et revenu estimé`,
-    description: `${a.pitch} Tarif moyen : ${formatRate(a)}. Plateformes, revenu estimé selon votre temps disponible et simulation du net.`,
+    title: `${a.title} : activité complémentaire, tarifs et complément de salaire`,
+    description: `${a.pitch} Tarif moyen : ${formatRate(a)}. Plateformes, complément de salaire estimé selon votre temps disponible et simulation du net.`,
     path: `/activites/${activitySlug(a)}`,
   });
 }
 
 export default function ActivityPage({ params }: { params: { slug: string } }) {
+  const urban = findPublishedUrbanActivity(params.slug);
+  if (urban) return <UrbanSheet activity={urban} />;
   const activity = findActivityBySlug(params.slug);
   if (!activity) notFound();
 
@@ -63,7 +75,7 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
 
         <div>
           <p className="text-sm text-muted-foreground"><Link href="/activites" className="underline">Activités</Link> / {activity.title}</p>
-          <h1 className="mt-1 text-3xl font-bold">{activity.title} : tarifs, plateformes et revenu estimé</h1>
+          <h1 className="mt-1 text-3xl font-bold">{activity.title} : activité complémentaire et complément de salaire estimé</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">{activity.pitch}</p>
           <p className="mt-3 text-sm">
             Tarif moyen constaté en France : <strong>{formatRate(activity)}</strong> (repère indicatif, à adapter à votre
@@ -77,7 +89,7 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
         </div>
 
         <section className="space-y-3">
-          <h2 className="text-xl font-semibold">Revenu estimé selon votre temps disponible</h2>
+          <h2 className="text-xl font-semibold">Complément de salaire estimé selon votre temps disponible</h2>
           <div className="overflow-x-auto rounded-lg border">
             <table className="w-full text-sm">
               <thead className="bg-muted/50 text-left">
@@ -104,7 +116,7 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-xl font-semibold">Où trouver des clients</h2>
+          <h2 className="text-xl font-semibold">Où trouver des clients près de chez vous</h2>
           <ul className="grid gap-3 sm:grid-cols-2">
             {activity.platforms.map((p) => (
               <li key={p} className="rounded-md border p-3 text-sm">

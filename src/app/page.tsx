@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Calculator, FileText, Megaphone, Rocket, Sparkles } from "lucide-react";
@@ -9,13 +10,20 @@ import { PublicCtas } from "@/components/marketing/ctas";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { ACTIVITIES, activitySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
-import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityPath } from "@/lib/cities";
+import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityActivityPath, cityPath } from "@/lib/cities";
 import { GUIDES, guidePath } from "@/lib/guides";
 import { homeFaq } from "@/lib/seo/faq";
 import { eur, simulate, TAX_PARAMS } from "@/lib/tax";
 
-export const metadata = {
+const HOME_TITLE = "Complément de salaire : activité près de chez vous | Compléo";
+const HOME_DESCRIPTION =
+  "Trouvez une activité près de chez vous pour arrondir vos fins de mois : bricolage, ménage, cours, jardinage. Questionnaire gratuit, sans inscription.";
+
+export const metadata: Metadata = {
+  title: { absolute: HOME_TITLE },
+  description: HOME_DESCRIPTION,
   alternates: { canonical: "/" },
+  openGraph: { title: HOME_TITLE, description: HOME_DESCRIPTION, url: "/", type: "website", locale: "fr_FR", siteName: "Compléo" },
 };
 
 const STEPS = [
@@ -50,6 +58,12 @@ const MAIN_CITIES = CITIES.filter((c) => activitiesForCity(c).length > 0)
   .sort((a, b) => a.rank - b.rank)
   .slice(0, 10);
 
+/** Associations activité × ville avec donnée locale, pour les villes les mieux classées (une activité par ville, puis complétées). */
+const TOP_PAIRS = [...CITY_ACTIVITY_PAIRS]
+  .sort((a, b) => a.city.rank - b.city.rank)
+  .filter((p, i, all) => all.findIndex((q) => q.city.slug === p.city.slug) === i)
+  .slice(0, 12);
+
 const SIM_EXAMPLE_REVENUE = 500;
 const SIM_EXAMPLE_REGIME = "bic" as const;
 
@@ -78,12 +92,11 @@ export default function HomePage() {
       <section className="container grid items-center gap-10 py-12 md:grid-cols-2 md:py-20">
         <div className="text-center md:text-left">
           <h1 className="text-3xl font-bold leading-tight md:text-5xl">
-            Gagnez <span className="text-success">200 € à 1 000 € de plus</span> par mois, simplement.
+            Complément de salaire : <span className="text-success">activités et services près de chez vous</span>
           </h1>
           <p className="mt-4 text-muted-foreground md:text-lg">
-            Compléo vous guide dans le choix d'une micro-activité, rédige vos annonces et calcule ce qu'il vous reste vraiment.
+            Répondez à trois questions : nous vous proposons des activités simples à faire près de chez vous, puis nous vous aidons à écrire votre annonce.
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">Estimation selon profil et temps disponible, sans garantie de revenu.</p>
           <PublicCtas className="mt-8 flex flex-col justify-center gap-3 sm:flex-row md:justify-start" />
           <p className="mt-3 text-sm text-muted-foreground">
             Diagnostic gratuit, sans inscription ni carte bancaire. <Link href="/pricing" className="underline">Voir les tarifs</Link>
@@ -163,7 +176,7 @@ export default function HomePage() {
       </section>
 
       <section className="container space-y-6 pb-16" aria-labelledby="explorer">
-        <h2 id="explorer" className="text-2xl font-bold">Activités et villes à explorer</h2>
+        <h2 id="explorer" className="text-2xl font-bold">Activité complémentaire près de chez vous</h2>
         <div className="grid gap-8 md:grid-cols-2">
           <div>
             <h3 className="mb-2 font-semibold">Activités</h3>
@@ -175,10 +188,17 @@ export default function HomePage() {
             </ul>
           </div>
           <div>
-            <h3 className="mb-2 font-semibold">Villes</h3>
+            <h3 className="mb-2 font-semibold">Compléments de salaire par ville</h3>
             <ul className="grid grid-cols-2 gap-1 text-sm">
               {MAIN_CITIES.map((c) => (
                 <li key={c.slug}><Link href={cityPath(c)} className="underline">{c.name}</Link></li>
+              ))}
+            </ul>
+            <ul className="mt-4 space-y-1 text-sm">
+              {TOP_PAIRS.map(({ city, activity }) => (
+                <li key={`${city.slug}-${activity.id}`}>
+                  <Link href={cityActivityPath(city, activity)} className="underline">{activity.title} à {city.name}</Link>
+                </li>
               ))}
             </ul>
           </div>
@@ -221,8 +241,8 @@ export default function HomePage() {
 
       <section className="container pb-16" aria-labelledby="cta-final">
         <div className="space-y-4 rounded-lg border border-primary/40 p-6 text-center">
-          <h2 id="cta-final" className="text-2xl font-bold">Prêt à compléter vos revenus ?</h2>
-          <p className="text-sm text-muted-foreground">Trouvez votre activité en trois questions, sans inscription.</p>
+          <h2 id="cta-final" className="text-2xl font-bold">Et si vous rendiez service près de chez vous ?</h2>
+          <p className="text-sm text-muted-foreground">Trouvez l'activité qui vous correspond en trois questions, sans inscription.</p>
           <PublicCtas className="flex flex-col justify-center gap-3 sm:flex-row" />
         </div>
       </section>

@@ -25,8 +25,8 @@ export function generateMetadata({ params }: { params: { ville: string } }) {
   if (!city) return {};
   const count = activitiesForCity(city).length;
   return pageMetadata({
-    title: `Micro-activités à ${city.name} : tarifs et marché local`,
-    description: `${count} micro-activités de services avec repères locaux à ${city.name} (France Travail, INSEE) : tarif moyen, plateformes et revenu estimé.`,
+    title: `Complément de salaire à ${city.name} : activités complémentaires et marché local`,
+    description: `Complément de salaire à ${city.name} : ${count} activités complémentaires avec repères locaux (France Travail, INSEE), tarif moyen, plateformes et revenu estimé selon votre profil.`,
     path: cityPath(city),
   });
 }
@@ -47,7 +47,7 @@ export default function CityHubPage({ params }: { params: { ville: string } }) {
 
         <div>
           <p className="text-sm text-muted-foreground"><Link href="/activites" className="underline">Activités</Link> / {city.name}</p>
-          <h1 className="mt-1 text-3xl font-bold">Micro-activités de services à {city.name}</h1>
+          <h1 className="mt-1 text-3xl font-bold">Complément de salaire à {city.name} : activités complémentaires près de chez vous</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
             {city.name} ({city.region}) compte {nf.format(city.population.total)} habitants, {city.rank}e commune de France par la
             population. Pour {activities.length} activités, une donnée locale de France Travail est disponible pour le
@@ -56,7 +56,7 @@ export default function CityHubPage({ params }: { params: { ville: string } }) {
         </div>
 
         <section className="space-y-3">
-          <h2 className="text-xl font-semibold">Activités avec repères locaux à {city.name}</h2>
+          <h2 className="text-xl font-semibold">Activités complémentaires avec repères locaux à {city.name}</h2>
           <ul className="grid gap-3 sm:grid-cols-2">
             {activities.map((a) => {
               const figures = bmoFor(city, a)!;
@@ -84,7 +84,7 @@ export default function CityHubPage({ params }: { params: { ville: string } }) {
         </section>
 
         <section className="space-y-3 rounded-lg border border-primary/40 p-5">
-          <h2 className="text-lg font-semibold">Passez à l'action à {city.name}</h2>
+          <h2 className="text-lg font-semibold">Lancez votre complément de salaire à {city.name}</h2>
           <p className="text-sm text-muted-foreground">
             Comparez ces activités à votre profil avec le diagnostic gratuit, sans inscription, ou estimez votre net après
             cotisations (estimation indicative, ne constitue pas un conseil fiscal).

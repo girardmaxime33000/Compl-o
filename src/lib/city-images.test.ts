@@ -1,12 +1,20 @@
 import { describe, expect, it } from "vitest";
 import { CITIES } from "@/lib/cities";
-import { cityPhoto, unsplashSrc, UNSPLASH_URL, withUtm } from "@/lib/city-images";
+import { bannerSrcSet, cityPhoto, unsplashSrc, UNSPLASH_URL, withUtm } from "@/lib/city-images";
 
 describe("photos de villes (Unsplash)", () => {
   it("construit une URL hotlink du CDN Unsplash avec taille et format", () => {
     const src = unsplashSrc({ raw: "https://images.unsplash.com/photo-123?ixid=abc" }, 800);
-    expect(src.startsWith("https://images.unsplash.com/photo-123?ixid=abc&w=800&q=70")).toBe(true);
+    expect(src.startsWith("https://images.unsplash.com/photo-123?ixid=abc&w=800&q=65")).toBe(true);
     expect(unsplashSrc({ raw: "https://images.unsplash.com/photo-123" }, 400)).toContain("photo-123?w=400");
+  });
+
+  it("srcSet du bandeau : quatre largeurs recadrées au format du bandeau", () => {
+    const set = bannerSrcSet({ raw: "https://images.unsplash.com/photo-123?ixid=abc" });
+    expect(set.split(", ")).toHaveLength(4);
+    expect(set).toContain("w=480&h=192");
+    expect(set).toContain("w=1280&h=512");
+    expect(set).toContain("fit=crop");
   });
 
   it("ajoute les paramètres UTM exigés sur les liens de crédit", () => {
