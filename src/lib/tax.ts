@@ -1,19 +1,44 @@
 /**
- * Paramètres micro-entreprise utilisés par le simulateur.
- * Valeurs de référence du cahier des charges : à vérifier chaque année sur autoentrepreneur.urssaf.fr.
- * Sources : autoentrepreneur.urssaf.fr, service-public.fr. Date de vérification : AUCUNE (valeurs non revérifiées
- * à ce jour, à faire par le propriétaire avant mise en production).
+ * Paramètres micro-entrepreneur utilisés par le simulateur et les guides.
+ * Sources officielles (fiches Entreprendre Service Public), dates "Vérifié le" de chaque fiche :
+ * - Micro-social, taux et plafonds 2026 : https://entreprendre.service-public.gouv.fr/vosdroits/F37353 (vérifié le 21 février 2026)
+ * - Franchise en base de TVA 2026 : https://entreprendre.service-public.gouv.fr/vosdroits/F21746 (vérifié le 1er janvier 2026)
+ * - Cumul ARE et création d'entreprise : https://entreprendre.service-public.gouv.fr/vosdroits/F36613 (vérifié le 29 septembre 2026)
+ * - Arce : https://entreprendre.service-public.gouv.fr/vosdroits/F15252 (vérifié le 13 août 2026)
+ * - Retraité et micro-entrepreneur : https://entreprendre.service-public.gouv.fr/vosdroits/F36611 (vérifié le 1er janvier 2026)
+ * - Devis obligatoire : https://entreprendre.service-public.gouv.fr/vosdroits/F31144 (vérifié le 9 septembre 2022)
+ * Dernière relecture de ces valeurs dans le code : 15 octobre 2026. À revérifier chaque 1er janvier.
  */
 export const TAX_PARAMS = {
-  /** Taux de cotisations URSSAF sur le chiffre d'affaires. */
-  urssafRate: { bnc: 0.211, bic: 0.212 },
+  /** Taux de cotisations micro-social 2026 sur le chiffre d'affaires encaissé (services BIC, professions libérales non réglementées). */
+  urssafRate: { bnc: 0.256, bic: 0.212 },
+  /** Autres taux micro-social 2026. */
+  urssafRateSales: 0.123,
+  urssafRateCipav: 0.232,
   /** Abattement forfaitaire retenu par France Travail pour calculer le revenu d'activité. */
   areAbatement: { bnc: 0.34, bic: 0.5 },
+  areAbatementSales: 0.71,
   /** Part du revenu d'activité déduite de l'allocation ARE en cas de cumul. */
   areReductionRate: 0.7,
-  vatThreshold: 36_800,
-  microCeilingServices: 77_700,
-  microCeilingSales: 188_700,
+  /** Cumul ARE : plafond en part des droits ARE restants à la création. Arce : part versée en capital. */
+  areCumulCapShare: 0.6,
+  arceShare: 0.6,
+  /** Franchise en base de TVA 2026 : prestations de services et professions libérales (hors avocat). */
+  vatThreshold: 37_500,
+  vatThresholdMajored: 41_250,
+  /** Franchise en base de TVA 2026 : activités commerciales et hébergement. */
+  vatThresholdSales: 85_000,
+  vatThresholdSalesMajored: 93_500,
+  /** Plafonds de chiffre d'affaires du régime micro, année 2026. */
+  microCeilingServices: 83_600,
+  microCeilingSales: 203_100,
+  /** Cumul emploi-retraite plafonné : plafonds annuels pensions + revenus. */
+  retireeCapCnav: 24_030,
+  retireeCapCnavpl: 48_060,
+  /** Devis : seuil mensuel TTC au-delà duquel il est obligatoire pour les services à la personne, et amendes maximales. */
+  quoteHomeServicesThreshold: 100,
+  quoteFineIndividual: 3_000,
+  quoteFineCompany: 15_000,
 } as const;
 
 export type ActivityRegime = "bnc" | "bic";

@@ -1,6 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { simulate, TAX_PARAMS } from "@/lib/tax";
 
+describe("TAX_PARAMS 2026", () => {
+  it("reprend les valeurs des fiches officielles Entreprendre Service Public", () => {
+    expect(TAX_PARAMS.urssafRate).toEqual({ bnc: 0.256, bic: 0.212 });
+    expect(TAX_PARAMS.urssafRateSales).toBe(0.123);
+    expect(TAX_PARAMS.microCeilingServices).toBe(83_600);
+    expect(TAX_PARAMS.microCeilingSales).toBe(203_100);
+    expect(TAX_PARAMS.vatThreshold).toBe(37_500);
+    expect(TAX_PARAMS.vatThresholdMajored).toBe(41_250);
+  });
+});
+
 describe("simulate", () => {
   it("calcule cotisations et net en BNC et en BIC", () => {
     const bnc = simulate({ monthlyRevenue: 1000, regime: "bnc" });

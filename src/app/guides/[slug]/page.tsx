@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Rocket } from "lucide-react";
-import { findGuide, GUIDES, guidePath } from "@/lib/guides";
+import { DEFAULT_CTA, findGuide, GUIDES, guidePath } from "@/lib/guides";
 import { pageMetadata } from "@/lib/seo";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
   const guide = findGuide(params.slug);
   if (!guide) notFound();
   const { Content } = guide;
+  const cta = guide.cta ?? DEFAULT_CTA;
 
   return (
     <>
@@ -39,9 +40,9 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
         </div>
         <Content />
         <section className="space-y-3 rounded-lg border border-primary/40 p-5">
-          <h2 className="text-lg font-semibold">Rédigez votre annonce</h2>
-          <p className="text-sm text-muted-foreground">Créez un compte gratuit pour générer une annonce adaptée à votre service et à votre ville.</p>
-          <Button asChild size="lg"><Link href="/login?next=/dashboard/listings">Générer mon annonce</Link></Button>
+          <h2 className="text-lg font-semibold">{cta.title}</h2>
+          <p className="text-sm text-muted-foreground">{cta.text}</p>
+          <Button asChild size="lg"><Link href={cta.href}>{cta.label}</Link></Button>
         </section>
       </main>
       <SiteFooter />

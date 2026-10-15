@@ -64,8 +64,8 @@ L'offre gratuite est limitée à **2 annonces par mois** ; la limite est appliqu
 
 Calcul en temps réel pour une prestation de services en micro-entreprise :
 
-- cotisations URSSAF (BNC 21,1 %, BIC 21,2 %) et net avant impôts, mensuel et annuel ;
-- alertes visuelles sur le **seuil de franchise de TVA** (36 800 €) et le **plafond micro-entrepreneur** (77 700 € en prestations, 188 700 € en vente) ;
+- cotisations URSSAF (BNC non réglementé 25,6 %, services BIC 21,2 %, valeurs 2026) et net avant impôts, mensuel et annuel ;
+- alertes visuelles sur le **seuil de franchise de TVA** (37 500 € en services, valeur 2026) et le **plafond micro-entrepreneur** (83 600 € en prestations, 203 100 € en vente, valeurs 2026) ;
 - option de cumul avec le **chômage (ARE / France Travail)** : estimation de la réduction de l'allocation et du total mensuel.
 
 ### 4. Facturation simplifiée (`/dashboard/invoices`)
