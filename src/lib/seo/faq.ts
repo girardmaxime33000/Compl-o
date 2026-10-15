@@ -30,12 +30,12 @@ export function homeFaq(): FaqItem[] {
       answer: `Oui. Le diagnostic d'activité se fait sans inscription ni carte bancaire, et le simulateur « Net dans la poche » est accessible sans compte. Avec un compte gratuit, vous disposez de ${FREE_MONTHLY_LISTINGS} annonces rédigées par IA par mois et de devis et factures PDF sans TVA.`,
     },
     {
-      question: "Combien peut-on gagner avec une micro-activité ?",
-      answer: `Cela dépend de l'activité, de votre temps disponible et de votre clientèle. Compléo affiche pour chaque activité un tarif moyen et un chiffre d'affaires mensuel estimé selon vos heures par semaine (60 % du temps est considéré comme facturable). Ce sont des estimations selon profil et temps disponible, sans garantie de revenu.`,
+      question: "Quel complément de salaire peut-on espérer avec une activité complémentaire ?",
+      answer: `Cela dépend de l'activité, de votre ville, de votre temps disponible et de votre clientèle. Compléo affiche pour chaque activité un tarif moyen et un chiffre d'affaires mensuel estimé selon vos heures par semaine (60 % du temps est considéré comme facturable). Ce sont des estimations selon profil et temps disponible, sans garantie de revenu.`,
     },
     {
-      question: "Dois-je créer une micro-entreprise ?",
-      answer: "Une activité de services rémunérée, exercée de façon régulière, relève en principe d'une déclaration d'activité, et le régime de la micro-entreprise est l'option la plus courante pour un complément de revenu. Votre situation (statut, cumul avec un emploi, le chômage ou une retraite) peut changer la réponse : vérifiez-la sur entreprendre.service-public.fr et autoentrepreneur.urssaf.fr.",
+      question: "Faut-il créer une micro-entreprise pour un complément de salaire ?",
+      answer: "Une activité de services rémunérée, exercée de façon régulière, relève en principe d'une déclaration d'activité, et le régime de la micro-entreprise est l'option la plus courante pour un complément de salaire ou de revenu. Votre situation (statut, cumul avec un emploi, le chômage ou une retraite) peut changer la réponse : vérifiez-la sur entreprendre.service-public.fr et autoentrepreneur.urssaf.fr.",
     },
     {
       question: "Comment est calculé le net après cotisations ?",
@@ -124,16 +124,16 @@ export function activityFaq(activity: Activity): FaqItem[] {
       answer: `Le tarif moyen constaté en France est de ${formatRate(activity)}. C'est un repère indicatif : votre tarif dépend de votre expérience, de la prestation et de votre ville.`,
     },
     {
-      question: `Combien peut-on gagner avec « ${activity.title} » ?`,
+      question: `Quel complément de salaire avec « ${activity.title} » ?`,
       answer: `Avec ${activity.minHours} h par semaine, le chiffre d'affaires mensuel estimé est d'environ ${eurInt(minimal.monthlyMin)} à ${eurInt(minimal.monthlyMax)} ; avec ${activity.idealHours} h par semaine, d'environ ${eurInt(ideal.monthlyMin)} à ${eurInt(ideal.monthlyMax)}. Au milieu de cette dernière fourchette, il reste environ ${eurInt(net.netMonthly)} par mois après cotisations (${REGIME_LABEL[regime]}, ${pct(net.urssafRate)}), avant impôt sur le revenu. Estimation selon profil et temps disponible, sans garantie de revenu.`,
     },
     {
-      question: `Où trouver des clients pour « ${activity.title} » ?`,
+      question: `Où trouver des clients près de chez vous pour « ${activity.title} » ?`,
       answer: `Les plateformes adaptées à cette activité sont : ${platforms}. Une annonce claire, un tarif indicatif et une réponse rapide aux demandes font la différence.`,
     },
     {
       question: `Quel statut pour exercer « ${activity.title} » ?`,
-      answer: `Le régime de la micro-entreprise est le plus courant pour un complément de revenu. Cette activité relève indicativement des ${REGIME_LABEL[regime]} (cotisations de ${pct(TAX_PARAMS.urssafRate[regime])} du chiffre d'affaires en 2026) et la franchise en base de TVA s'applique jusqu'à ${eurInt(TAX_PARAMS.vatThreshold)} par an. Vérifiez le régime applicable à votre cas sur autoentrepreneur.urssaf.fr.`,
+      answer: `Le régime de la micro-entreprise est le plus courant pour un complément de salaire ou de revenu. Cette activité relève indicativement des ${REGIME_LABEL[regime]} (cotisations de ${pct(TAX_PARAMS.urssafRate[regime])} du chiffre d'affaires en 2026) et la franchise en base de TVA s'applique jusqu'à ${eurInt(TAX_PARAMS.vatThreshold)} par an. Vérifiez le régime applicable à votre cas sur autoentrepreneur.urssaf.fr.`,
     },
     {
       question: `De quel matériel ai-je besoin pour « ${activity.title} » ?`,
@@ -177,7 +177,7 @@ export function cityActivityFaq(city: City, activity: Activity): FaqItem[] {
       ),
     },
     {
-      question: `Combien peut-on gagner avec « ${activity.title} » à ${city.name} ?`,
+      question: `Quel complément de salaire avec « ${activity.title} » à ${city.name} ?`,
       answer: pick(
         [
           `Avec ${activity.minHours} h par semaine, le chiffre d'affaires mensuel estimé est d'environ ${eurInt(minimal.monthlyMin)} à ${eurInt(minimal.monthlyMax)}, et d'environ ${eurInt(ideal.monthlyMin)} à ${eurInt(ideal.monthlyMax)} avec ${activity.idealHours} h. Au milieu de cette dernière fourchette, il reste environ ${eurInt(net.netMonthly)} par mois après cotisations de ${pct(net.urssafRate)}, avant impôt. Estimation selon profil et temps disponible, sans garantie de revenu.`,
@@ -200,8 +200,8 @@ export function cityActivityFaq(city: City, activity: Activity): FaqItem[] {
       question: `Faut-il être micro-entrepreneur pour « ${activity.title} » à ${city.name} ?`,
       answer: `${pick(
         [
-          "Une activité de services rémunérée, exercée de façon régulière, relève en principe d'une déclaration d'activité, et la micro-entreprise est le régime le plus courant pour un complément de revenu.",
-          "La micro-entreprise est le régime le plus courant pour un complément de revenu, dès lors que l'activité de services est rémunérée et exercée de façon régulière.",
+          "Une activité de services rémunérée, exercée de façon régulière, relève en principe d'une déclaration d'activité, et la micro-entreprise est le régime le plus courant pour un complément de salaire ou de revenu.",
+          "La micro-entreprise est le régime le plus courant pour un complément de salaire ou de revenu, dès lors que l'activité de services est rémunérée et exercée de façon régulière.",
         ],
         seed + 3,
       )} L'activité « ${activity.title} » relève indicativement des ${REGIME_LABEL[regime]} : cotisations de ${pct(TAX_PARAMS.urssafRate[regime])} du chiffre d'affaires en 2026, franchise en base de TVA jusqu'à ${eurInt(TAX_PARAMS.vatThreshold)} par an. Le statut est le même partout en France ; à ${city.name} (${city.region}), ${nearbyActivities} activités du catalogue disposent d'une donnée locale. Vérifiez votre cas sur autoentrepreneur.urssaf.fr.`,
