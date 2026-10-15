@@ -17,7 +17,7 @@ import { eur, simulate, TAX_PARAMS } from "@/lib/tax";
 
 const HOME_TITLE = "Complément de salaire : activité près de chez vous | Compléo";
 const HOME_DESCRIPTION =
-  "Trouvez une activité complémentaire près de chez vous, estimez votre net après cotisations et rédigez votre annonce. Diagnostic gratuit, sans inscription.";
+  "Trouvez une activité près de chez vous pour arrondir vos fins de mois : bricolage, ménage, cours, jardinage. Questionnaire gratuit, sans inscription.";
 
 export const metadata: Metadata = {
   title: { absolute: HOME_TITLE },
