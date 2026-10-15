@@ -8,9 +8,9 @@ import { ActivityVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
 export const metadata = pageMetadata({
-  title: "Micro-activités de services : tarifs et revenus estimés",
+  title: "Activité complémentaire : complément de salaire près de chez vous",
   description:
-    "Parcourez des micro-activités de services pour particuliers (bricolage, cours, ménage, jardinage...) avec tarifs moyens, plateformes et revenu estimé.",
+    "Choisissez une activité complémentaire pour arrondir vos fins de mois (bricolage, cours, ménage, jardinage...) : tarifs moyens, plateformes, complément de salaire estimé et repères par ville.",
   path: "/activites",
 });
 
@@ -21,10 +21,11 @@ export default function ActivitiesIndexPage() {
       <main className="container max-w-4xl space-y-8 py-10">
         <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>
-          <h1 className="text-3xl font-bold">Micro-activités de services pour compléter vos revenus</h1>
+          <h1 className="text-3xl font-bold">Activités complémentaires : un complément de salaire près de chez vous</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
-            Pour chaque activité : tarif moyen, plateformes où trouver des clients et revenu estimé selon votre temps
-            disponible. Estimations selon profil et temps disponible, sans garantie de revenu.
+            Pour chaque activité complémentaire en micro-entreprise : tarif moyen, plateformes où trouver des clients de votre
+            quartier et complément de salaire estimé selon votre temps disponible. Estimations selon profil, ville et temps
+            disponible, sans garantie de revenu.
           </p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">

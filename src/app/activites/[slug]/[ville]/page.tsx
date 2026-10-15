@@ -42,8 +42,8 @@ export function generateMetadata({ params }: { params: { slug: string; ville: st
   const { activity, city } = found;
   const figures = bmoFor(city, activity);
   return pageMetadata({
-    title: `${activity.title} à ${city.name} : marché local et revenu estimé`,
-    description: `${activity.title} à ${city.name} : ${figures ? `${nf.format(figures.met)} projets de recrutement dans le secteur en ${BMO_YEAR} (France Travail), ` : ""}tarif moyen ${formatRate(activity)}, plateformes et revenu estimé.`,
+    title: `${activity.title} à ${city.name} : activité complémentaire et marché local`,
+    description: `${activity.title} à ${city.name} : ${figures ? `${nf.format(figures.met)} projets de recrutement dans le secteur en ${BMO_YEAR} (France Travail), ` : ""}tarif moyen ${formatRate(activity)}, plateformes et complément de salaire estimé.`,
     path: cityActivityPath(city, activity),
   });
 }
@@ -86,7 +86,7 @@ export default function CityActivityPage({ params }: { params: { slug: string; v
             <Link href="/activites" className="underline">Activités</Link> /{" "}
             <Link href={activityPath} className="underline">{activity.title}</Link> / {city.name}
           </p>
-          <h1 className="mt-1 text-3xl font-bold">{activity.title} à {city.name} : marché local et revenu estimé</h1>
+          <h1 className="mt-1 text-3xl font-bold">{activity.title} à {city.name} : activité complémentaire et marché local</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
             {activity.pitch} Repères locaux pour {city.name} ({city.region}), ville de {nf.format(city.population.total)} habitants,
             {" "}{city.rank}e commune de France par la population.

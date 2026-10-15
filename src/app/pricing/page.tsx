@@ -14,7 +14,7 @@ import { Offers } from "@/components/pricing/offers";
 import { FREE_MONTHLY_LISTINGS } from "@/lib/platforms";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
-export const metadata = pageMetadata({ title: "Tarifs simples : gratuit, pack ou abonnement", description: "Comparez l'offre gratuite, le pack ponctuel, le pack mensuel et l'abonnement annuel de Compléo : annonces IA, simulateur et factures PDF.", path: "/pricing" });
+export const metadata = pageMetadata({ title: "Tarifs Compléo : complément de salaire, gratuit, pack ou abonnement", description: "Pour lancer une activité complémentaire près de chez vous, comparez l'offre gratuite, le pack ponctuel, le pack mensuel et l'abonnement annuel de Compléo : annonces IA, simulateur du net et factures PDF.", path: "/pricing" });
 
 const FREE = [
   { label: "Diagnostic et 3 idées d'activités", ok: true },
@@ -49,8 +49,8 @@ export default async function PricingPage() {
     <BreadcrumbJsonLd path="/pricing" />
       <main className="container max-w-4xl py-10">
       <Link href="/" className="mb-8 flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
-      <h1 className="text-3xl font-bold">Des tarifs simples</h1>
-      <p className="mt-2 text-muted-foreground">Commencez gratuitement, puis choisissez un pack ou un abonnement quand vous avez besoin de plus d'annonces.</p>
+      <h1 className="text-3xl font-bold">Tarifs : lancez votre complément de salaire à petit prix</h1>
+      <p className="mt-2 text-muted-foreground">Commencez gratuitement votre activité complémentaire, puis choisissez un pack ou un abonnement quand vous avez besoin de plus d'annonces pour toucher les clients de votre ville.</p>
 
       <h2 className="mt-8 text-xl font-semibold">Les offres</h2>
       <div className="mt-4 space-y-6">
