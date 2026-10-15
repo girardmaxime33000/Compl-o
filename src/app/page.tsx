@@ -95,9 +95,8 @@ export default function HomePage() {
             Complément de salaire : <span className="text-success">activités et services près de chez vous</span>
           </h1>
           <p className="mt-4 text-muted-foreground md:text-lg">
-            Trouvez l'activité complémentaire qui vous correspond près de chez vous, estimez votre net après cotisations de micro-entrepreneur, rédigez votre annonce avec l'IA et éditez vos devis et factures. Bricolage, ménage, cours particuliers, jardinage, garde d'animaux, courses : choisissez en trois questions.
+            Trouvez l'activité complémentaire qui vous correspond près de chez vous, estimez votre net après cotisations et rédigez votre annonce en quelques minutes.
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">Estimations selon votre profil, votre ville et votre temps disponible. Aucun revenu n'est garanti.</p>
           <PublicCtas className="mt-8 flex flex-col justify-center gap-3 sm:flex-row md:justify-start" />
           <p className="mt-3 text-sm text-muted-foreground">
             Diagnostic gratuit, sans inscription ni carte bancaire. <Link href="/pricing" className="underline">Voir les tarifs</Link>
