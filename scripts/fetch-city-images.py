@@ -60,7 +60,7 @@ def call(path, params=None):
         with urllib.request.urlopen(req, timeout=30) as r:
             remaining = r.headers.get("X-Ratelimit-Remaining")
             if remaining is not None and int(remaining) < 3:
-                sys.exit("Quota horaire Unsplash presque épuisé (50 requêtes par heure en mode demo) : relancer plus tard.")
+                sys.exit("Quota horaire Unsplash presque épuisé (50 requêtes par heure en mode demo) : relancer `build` dans une heure, les villes déjà faites sont conservées.")
             return json.load(r)
     except urllib.error.HTTPError as e:
         sys.exit(f"Erreur Unsplash {e.code} sur {path} : {e.read().decode()[:200]}")
@@ -134,17 +134,27 @@ def build():
     unknown = set(selection) - known
     if unknown:
         sys.exit(f"Villes inconnues dans la sélection : {sorted(unknown)}")
-    photos = {}
+    # Reprise : les villes déjà écrites avec la même photo sont conservées (aucun appel, aucune nouvelle déclaration).
+    done = json.loads(OUT.read_text(encoding="utf-8")).get("photos", {}) if OUT.exists() else {}
+    photos = {slug: p for slug, p in done.items() if selection.get(slug) == p["id"]}
+
+    def save():
+        out = {"source": "Unsplash", "selectedOn": time.strftime("%Y-%m-%d"), "photos": dict(sorted(photos.items()))}
+        OUT.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
     for slug, photo_id in sorted(selection.items()):
+        if slug in photos:
+            print(f"{slug}: déjà fait ({photo_id})")
+            continue
         p = call(f"/photos/{photo_id}")
         call_url = p["links"]["download_location"]
         # Déclaration du téléchargement (directives de l'API) : l'URL contient déjà le paramètre ixid.
         req = urllib.request.Request(call_url, headers={"Authorization": f"Client-ID {key()}", "Accept-Version": "v1"})
         urllib.request.urlopen(req, timeout=30).read()
-        raw = p["urls"]["raw"].split("?")[0] + "?" + urllib.parse.urlencode({"ixid": urllib.parse.parse_qs(urllib.parse.urlparse(p["urls"]["raw"]).query).get("ixid", [""])[0]})
+        ixid = urllib.parse.parse_qs(urllib.parse.urlparse(p["urls"]["raw"]).query).get("ixid", [""])[0]
         photos[slug] = {
             "id": p["id"],
-            "raw": raw,
+            "raw": p["urls"]["raw"].split("?")[0] + "?" + urllib.parse.urlencode({"ixid": ixid}),
             "width": p["width"],
             "height": p["height"],
             "author": p["user"]["name"],
@@ -152,11 +162,11 @@ def build():
             "pageUrl": p["links"]["html"],
             "alt": p.get("alt_description") or "",
         }
+        save()  # écriture après chaque ville : un arrêt (quota) ne perd rien
         print(f"{slug}: {p['id']} par {p['user']['name']}")
         time.sleep(0.5)
-    out = {"source": "Unsplash", "selectedOn": time.strftime("%Y-%m-%d"), "photos": photos}
-    OUT.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"{len(photos)} photos écrites dans {OUT.relative_to(ROOT)}")
+    save()
+    print(f"{len(photos)} photos dans {OUT.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
