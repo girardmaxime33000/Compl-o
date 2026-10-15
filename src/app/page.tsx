@@ -13,6 +13,7 @@ import { Photo } from "@/components/marketing/photo";
 import { cityPhoto } from "@/lib/city-images";
 import { PhotoBanner } from "@/components/marketing/photo-banner";
 import { HomeViewTracker } from "@/components/marketing/home-view-tracker";
+import { SimulatorPreview } from "@/components/marketing/simulator-preview";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { ACTIVITIES, activitySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
@@ -83,6 +84,7 @@ const HERO_VISUAL = sitePhoto("hero:home") ? "photo" : "none";
 
 const SIM_EXAMPLE_REVENUE = 500;
 const SIM_EXAMPLE_REGIME = "bic" as const;
+const SIM_EXAMPLE_RATE = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 }).format(TAX_PARAMS.urssafRate[SIM_EXAMPLE_REGIME] * 100);
 
 export default function HomePage() {
   const example = simulate({ monthlyRevenue: SIM_EXAMPLE_REVENUE, regime: SIM_EXAMPLE_REGIME });
@@ -173,15 +175,23 @@ export default function HomePage() {
       </section>
 
       <section className="container pb-16" aria-labelledby="simulateur">
-        <div className="space-y-3 rounded-lg border border-primary/40 p-5 sm:p-6">
-          <h2 id="simulateur" className="flex items-center gap-2 text-2xl font-bold"><Calculator className="h-6 w-6 text-primary" /> Estimez votre net dans la poche</h2>
-          <p className="text-sm">
-            Exemple : avec {eur(SIM_EXAMPLE_REVENUE)} de chiffre d'affaires par mois en prestation de services (BIC), les
-            cotisations URSSAF ({new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 }).format(TAX_PARAMS.urssafRate[SIM_EXAMPLE_REGIME] * 100)} %,
-            valeur 2026) représentent {eur(example.urssaf)} et il reste {eur(example.netMonthly)} avant impôt sur le revenu.
-          </p>
-          <p className="text-xs text-muted-foreground">Estimation indicative, ne constitue pas un conseil fiscal.</p>
-          <Button asChild size="lg"><Link href="/simulateur-micro-entrepreneur">Estimer mon net <ArrowRight className="ml-1 h-4 w-4" /></Link></Button>
+        <div className="grid items-center gap-6 rounded-lg border border-primary/40 p-5 sm:p-6 md:grid-cols-2 md:gap-10">
+          <div className="space-y-3">
+            <h2 id="simulateur" className="flex items-center gap-2 text-2xl font-bold"><Calculator className="h-6 w-6 text-primary" /> Estimez votre net dans la poche</h2>
+            <p className="text-sm">
+              Avec {eur(SIM_EXAMPLE_REVENUE)} de chiffre d'affaires par mois en prestation de services (BIC), les cotisations
+              URSSAF ({SIM_EXAMPLE_RATE} %, valeur 2026) représentent {eur(example.urssaf)} et il reste {eur(example.netMonthly)} avant
+              impôt sur le revenu. Entrez votre propre montant dans le simulateur.
+            </p>
+            <Button asChild size="lg"><Link href="/simulateur-micro-entrepreneur">Estimer mon net <ArrowRight className="ml-1 h-4 w-4" /></Link></Button>
+          </div>
+          <SimulatorPreview
+            monthlyRevenue={SIM_EXAMPLE_REVENUE}
+            urssaf={example.urssaf}
+            netMonthly={example.netMonthly}
+            ratePercent={SIM_EXAMPLE_RATE}
+            regimeLabel="prestation de services (BIC)"
+          />
         </div>
       </section>
 
