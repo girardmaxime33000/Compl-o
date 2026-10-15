@@ -10,6 +10,7 @@ import { PublicCtas } from "@/components/marketing/ctas";
 import { CityPhoto } from "@/components/marketing/city-photo";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { StickyCta } from "@/components/marketing/sticky-cta";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
@@ -106,6 +107,7 @@ export default function CityHubPage({ params }: { params: { ville: string } }) {
         </section>
       </main>
       <SiteFooter />
+      <StickyCta />
     </>
   );
 }

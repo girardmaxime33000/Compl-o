@@ -18,6 +18,7 @@ import { cityPhoto } from "@/lib/city-images";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { Button } from "@/components/ui/button";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { StickyCta } from "@/components/marketing/sticky-cta";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
@@ -226,6 +227,7 @@ export default function CityActivityPage({ params }: { params: { slug: string; v
         </div>
       </main>
       <SiteFooter />
+      <StickyCta />
     </>
   );
 }

@@ -7,6 +7,7 @@ import { FaqSection } from "@/components/marketing/faq";
 import { Button } from "@/components/ui/button";
 import { GuideVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { StickyCta } from "@/components/marketing/sticky-cta";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
@@ -50,6 +51,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
         </section>
       </main>
       <SiteFooter />
+      <StickyCta />
     </>
   );
 }

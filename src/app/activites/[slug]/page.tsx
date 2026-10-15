@@ -20,6 +20,7 @@ import { UrbanSheet } from "@/components/activities/urban-sheet";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { Simulator } from "@/components/simulator/simulator";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { StickyCta } from "@/components/marketing/sticky-cta";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
@@ -227,6 +228,7 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
         </section>
       </main>
       <SiteFooter />
+      <StickyCta />
     </>
   );
 }

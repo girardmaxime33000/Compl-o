@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 import { UrbanPlanner } from "@/components/activities/urban-planner";
 import { Photo } from "@/components/marketing/photo";
 import { urbanPhoto } from "@/lib/site-images";
+import { StickyCta } from "@/components/marketing/sticky-cta";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 const fmt = (n: number) => new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }).format(n);
@@ -190,6 +191,7 @@ export function UrbanSheet({ activity }: { activity: UrbanActivity }) {
         </section>
       </main>
       <SiteFooter />
+      <StickyCta />
     </>
   );
 }

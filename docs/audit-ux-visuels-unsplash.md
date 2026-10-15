@@ -17,7 +17,7 @@ Ce document remplace les versions précédentes. Il reprend les constats de l'au
 |---|---|---|---|
 | V1 | Pipeline de sélection | Fait (script, catalogue de 23 emplacements, tests hors ligne). Jamais exécuté contre l'API réelle | Clé API |
 | V2 | Composant `Photo`, crédits | Fait | |
-| V3 | En-tête partagé, CTA diagnostic | Fait. Barre d'action mobile fixe non faite | |
+| V3 | En-tête partagé, CTA diagnostic | Fait, y compris la barre d'action fixe mobile (`StickyCta`) | |
 | V4 | Hero de l'accueil | Fait (cartes exemple, pastilles). Pas de photo : panneau coloré | V1 |
 | V5 | Activités | Câblé, repli sur dégradé. Aucune photo | V1 |
 | V6 | Onboarding | Câblé, repli sur puces texte. Aucune photo | V1 |
@@ -39,7 +39,7 @@ Gravité : B bloquant conversion, M majeur, m mineur.
 |---|---|---|
 | B | Pas d'en-tête partagé : `/pricing`, `/activites/[slug]`, `/login` sans navigation ni CTA | Fait (V3, 13 fichiers). `/login`, `/onboarding` et le tableau de bord gardent volontairement leur écran dédié |
 | B | « Connexion » en style primaire concurrençait le CTA diagnostic | Fait : « Connexion » en discret, « Diagnostic gratuit » seul bouton principal |
-| M | Pas de CTA fixe sur mobile pour les pages longues | Non fait (`StickyCta`) |
+| M | Pas de CTA fixe sur mobile pour les pages longues | Fait : `StickyCta` sur les fiches activité, activité × ville, activités urbaines, villes et guides (mobile < 768 px, après 400 px de défilement). Non posée sur l'accueil, `/pricing`, le simulateur et les pages d'outils. Rendu et défilement non vérifiés dans un navigateur |
 | m | Logo = icône `Rocket` + texte | Non fait (décision propriétaire) |
 
 Limite de l'en-tête : il ne lit pas la session (pour garder les pages statiques). Un utilisateur connecté voit toujours « Connexion » et « Diagnostic gratuit ».
@@ -108,7 +108,7 @@ Câblé (V6) : l'étape « Qu'aimez-vous faire ? » affiche des cartes photo pou
 `Photo` (`src/components/marketing/photo.tsx`) : ratio, `srcset`, `sizes`, `priority`, voile, contenu superposé, crédit `caption`, `overlay`, `text` (sans lien, pour une photo dans un lien) ou `page`, repli, option `phrasing` pour un bouton ou un lien. Ratios : bandeau 2,5, hero 4:3, carte 3:2, tuile 1:1, large 16:9, portrait 4:5. `PhotoCredits` et page `/credits-photos` (noindex, hors sitemap, liée au pied de page).
 
 ### V3 : navigation
-`SiteHeader` partagé sur 13 fichiers, composant statique.
+`SiteHeader` partagé sur 13 fichiers, composant statique. `StickyCta` : barre fixe en bas d'écran sous 768 px, apparaît après 400 px de défilement, masquée et non atteignable au clavier tant qu'elle est cachée, espace réservé en fin de page, zone de sécurité iPhone prise en compte, mesurée par `cta_click` (`source` `sticky`).
 
 ### V4 : hero
 `HeroShowcase`, emplacement `hero:home` dans `src/data/site-images.json`.
@@ -126,7 +126,7 @@ Tuiles de villes sur l'accueil (8), champ `color` géré (type, fond avant charg
 Guides (`guide:<slug>`), `PhotoBanner` (`cta:final`), colonne du login (`login`), deux mentions de réassurance sur `/pricing`.
 
 ### V9 : mesure
-Événements `home_view` (propriété `visual` : `photo` ou `none`) et `cta_click` (`source` : header, hero, final, page ; `target` : diagnostic, simulateur, login). `TrackedLink`, `HomeViewTracker`. Les signaux « Do Not Track » et « Global Privacy Control » désactivent toujours l'envoi. Le README décrit les événements et une requête SQL de comparaison avec et sans photo. Seules les vues de l'accueil sont comptées. Un clic n'est pas rattaché à une visite : le rapport clics sur vues est approximatif.
+Événements `home_view` (propriété `visual` : `photo` ou `none`) et `cta_click` (`source` : header, hero, final, sticky, page ; `target` : diagnostic, simulateur, login). `TrackedLink`, `HomeViewTracker`. Les signaux « Do Not Track » et « Global Privacy Control » désactivent toujours l'envoi. Le README décrit les événements et une requête SQL de comparaison avec et sans photo. Seules les vues de l'accueil sont comptées. Un clic n'est pas rattaché à une visite : le rapport clics sur vues est approximatif.
 
 ## 4. Conformité aux directives de l'API Unsplash
 
@@ -152,7 +152,7 @@ Images de partage (OG) non faites : incorporer une photo dans un PNG statique g�
 5. Relire visuellement les 20 photos de villes (cas à regarder : Villeurbanne, Saint-Denis de La Réunion, Toulon, Le Havre ; deux photos du même photographe pour Dijon et Lille).
 6. Lancer Lighthouse mobile avant et après sur l'accueil, une page activité, une page ville, `/onboarding` : LCP, CLS, poids des images.
 7. Vérifier à la main dans un navigateur (360 px et ≥ 1024 px) : superposition des deux cartes du hero, lisibilité du CTA final sur photo, colonne photo du login, cartes de l'onboarding.
-8. Non fait, par ordre de gain attendu : barre d'action fixe mobile, aperçu graphique du simulateur sur l'accueil, remplacement des compteurs « catalogue », encart de CTA sur les pages de contenu, barres de visualisation des tableaux de revenu, optimisation du bundle de `/onboarding`.
+8. Non fait, par ordre de gain attendu : aperçu graphique du simulateur sur l'accueil, remplacement des compteurs « catalogue », encart de CTA sur les pages de contenu, barres de visualisation des tableaux de revenu, optimisation du bundle de `/onboarding`.
 
 ## 6. Décisions requises du propriétaire
 
