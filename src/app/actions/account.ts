@@ -43,3 +43,14 @@ export async function deleteAccount(confirmation: string): Promise<{ ok: boolean
   await supabase.auth.signOut();
   return { ok: true };
 }
+
+/** Active ou retire le consentement aux e-mails de conseils et d'alerte de plafond. */
+export async function setEmailTips(enabled: boolean): Promise<{ ok: boolean }> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false };
+  const { error } = await supabase.from("profiles").update({ email_tips_optin: enabled === true }).eq("id", user.id);
+  return { ok: !error };
+}

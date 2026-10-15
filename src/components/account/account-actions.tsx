@@ -7,10 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/toast";
-import { deleteAccount } from "@/app/actions/account";
+import { Switch } from "@/components/ui/switch";
+import { deleteAccount, setEmailTips } from "@/app/actions/account";
 import { DELETE_CONFIRMATION } from "@/lib/account";
 
-export function AccountActions({ email }: { email: string }) {
+export function AccountActions({ email, emailTips }: { email: string; emailTips: boolean }) {
+  const [tips, setTips] = useState(emailTips);
   const [confirmation, setConfirmation] = useState("");
   const [pending, startTransition] = useTransition();
   const { toast } = useToast();
@@ -24,8 +26,34 @@ export function AccountActions({ email }: { email: string }) {
     });
   }
 
+  function toggleTips(next: boolean) {
+    setTips(next);
+    startTransition(async () => {
+      const res = await setEmailTips(next);
+      if (!res.ok) {
+        setTips(!next);
+        toast("Enregistrement impossible.", "error");
+      }
+    });
+  }
+
   return (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>E-mails de conseils</CardTitle>
+          <CardDescription>
+            Quelques e-mails pour bien démarrer et une alerte quand vos factures payées approchent du seuil de TVA ou du
+            plafond micro-entrepreneur. Désactivé par défaut, désinscription possible à tout moment. Les e-mails liés à
+            un service demandé (envoi d'une facture) ne dépendent pas de ce réglage.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center gap-3">
+          <Switch id="email-tips" checked={tips} onCheckedChange={toggleTips} disabled={pending} />
+          <Label htmlFor="email-tips">Recevoir les e-mails de conseils et d'alerte</Label>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Exporter mes données</CardTitle>

@@ -11,6 +11,8 @@ export interface Profile {
   stripe_customer_id: string | null;
   siret: string | null;
   address: string | null;
+  /** Consentement aux e-mails de conseils et d'alerte de plafond (migration 0006). */
+  email_tips_optin: boolean;
   subscription_status: SubscriptionStatus;
   subscription_plan: SubscriptionPlan | null;
   /** Obsolète depuis la migration 0005 : les crédits sont dans listing_credit_grants. */

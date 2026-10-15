@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Download, Loader2, Plus, Trash2 } from "lucide-react";
+import { Download, Loader2, Mail, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -87,6 +87,54 @@ function NewInvoiceDialog({ issuer }: { issuer: Issuer }) {
   );
 }
 
+function SendDialog({ invoice }: { invoice: Invoice }) {
+  const [open, setOpen] = useState(false);
+  const [pending, startTransition] = useTransition();
+  const { toast } = useToast();
+
+  function submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const to = String(new FormData(e.currentTarget).get("to"));
+    startTransition(async () => {
+      const res = await fetch(`/api/invoices/${invoice.id}/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) return toast(data.error ?? "Envoi impossible.", "error");
+      toast("Document envoyé.");
+      setOpen(false);
+      window.location.reload();
+    });
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="icon" aria-label="Envoyer par e-mail"><Mail className="h-4 w-4" /></Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Envoyer {invoiceNumber(invoice)} par e-mail</DialogTitle>
+          <DialogDescription>
+            Le PDF est joint. Votre client peut vous répondre directement. L'adresse saisie n'est pas conservée.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={submit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor={`to-${invoice.id}`}>E-mail du client</Label>
+            <Input id={`to-${invoice.id}`} name="to" type="email" required maxLength={254} autoComplete="off" />
+          </div>
+          <Button type="submit" className="w-full" disabled={pending}>
+            {pending && <Loader2 className="h-4 w-4 animate-spin" />} Envoyer
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function InvoiceRow({ invoice }: { invoice: Invoice }) {
   const [pending, startTransition] = useTransition();
   const { toast } = useToast();
@@ -117,6 +165,7 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
           <Button asChild variant="outline" size="icon" aria-label="Télécharger le PDF">
             <a href={`/api/invoices/${invoice.id}/pdf`}><Download className="h-4 w-4" /></a>
           </Button>
+          <SendDialog invoice={invoice} />
           <Button
             variant="ghost" size="icon" aria-label="Supprimer" disabled={pending}
             onClick={() => { if (confirm("Supprimer ce document ?")) startTransition(async () => { await deleteInvoice(invoice.id); }); }}

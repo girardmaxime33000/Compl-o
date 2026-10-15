@@ -186,6 +186,9 @@ Elles se renseignent uniquement dans `.env.local` (ignoré par git) et dans les 
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé publique (publishable) Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | Clé secrète Supabase : serveur uniquement, contourne la RLS |
 | `STRIPE_SECRET_KEY` | Clé secrète Stripe |
+| `RESEND_API_KEY`, `EMAIL_FROM` | Envoi d'e-mails via Resend (documents, séquence d'accueil, alertes). `EMAIL_FROM` : adresse d'un domaine vérifié dans Resend. Sans ces variables, l'envoi est désactivé (503) |
+| `CRON_SECRET` | Secret du cron quotidien `/api/cron/emails` (envoyé par Vercel en `Authorization: Bearer`) et des liens de désinscription |
+| `EMAIL_UNSUBSCRIBE_SECRET` | Optionnel : secret dédié aux liens de désinscription (défaut : `CRON_SECRET`) |
 | `STRIPE_PACK_PRICE_ID` | Prix du pack ponctuel (paiement unique, 4 annonces) |
 | `STRIPE_MONTHLY_PRICE_ID` | Prix du pack mensuel (abonnement, 10 annonces/jour) |
 | `STRIPE_ANNUAL_PRICE_ID` | Prix de l'abonnement annuel (annonces illimitées) |
@@ -285,3 +288,9 @@ where created_at > now() - interval '30 days' group by name order by count(*) de
 - [ ] Choix d'un fournisseur d'IA pour la production
 - [ ] Suppression de compte et export des données (RGPD)
 - [ ] Envoi des factures par e-mail
+
+### E-mails (Resend)
+
+- Envoi d'un devis ou d'une facture à un client : bouton enveloppe dans `/dashboard/invoices` (`POST /api/invoices/[id]/send`, PDF en pièce jointe, réponse du client adressée à l'utilisateur, 20 envois par 24 h et par utilisateur, adresse du client non conservée).
+- Séquence d'accueil (J+1 simulateur, J+3 première annonce si aucune) et alertes à 80 % du seuil de TVA ou du plafond micro (calculées sur les factures « Payé » de l'année, hypothèse prestations de services) : cron quotidien `vercel.json` → `/api/cron/emails`. Réservés aux comptes ayant activé le réglage dans Mon compte (désactivé par défaut) ; désinscription en un clic (`/api/email/unsubscribe`, `List-Unsubscribe`).
+- Appliquer la migration `0006_email.sql`. Dans Resend : vérifier le domaine d'envoi (DNS SPF/DKIM chez Cloudflare), créer une clé API.
