@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(LEGAL.siteUrl),
   title: "Complément de revenu : activités, annonces et factures | Compléo",
   description:
-    "Générez un complément de revenu : choisissez une micro-activité, rédigez vos annonces par IA et calculez votre net.",
+    "Rendez service près de chez vous : choisissez une micro-activité dans votre ville, rédigez votre annonce avec l'IA et estimez votre net après cotisations.",
   openGraph: { type: "website", locale: "fr_FR", siteName: "Compléo" },
 };
 

@@ -78,12 +78,12 @@ export default function HomePage() {
       <section className="container grid items-center gap-10 py-12 md:grid-cols-2 md:py-20">
         <div className="text-center md:text-left">
           <h1 className="text-3xl font-bold leading-tight md:text-5xl">
-            Gagnez <span className="text-success">200 € à 1 000 € de plus</span> par mois, simplement.
+            Un coup de main près de chez vous, <span className="text-success">un revenu en plus</span>.
           </h1>
           <p className="mt-4 text-muted-foreground md:text-lg">
-            Compléo vous guide dans le choix d'une micro-activité, rédige vos annonces et calcule ce qu'il vous reste vraiment.
+            Courses, bricolage, ménage, cours particuliers : vos voisins cherchent de l'aide, vous avez du temps et des compétences. Compléo vous aide à choisir une activité dans votre ville, à rédiger votre annonce et à voir ce qu'il vous reste après cotisations.
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">Estimation selon profil et temps disponible, sans garantie de revenu.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Les revenus dépendent de votre profil, de votre ville et du temps disponible. Aucun revenu n'est garanti.</p>
           <PublicCtas className="mt-8 flex flex-col justify-center gap-3 sm:flex-row md:justify-start" />
           <p className="mt-3 text-sm text-muted-foreground">
             Diagnostic gratuit, sans inscription ni carte bancaire. <Link href="/pricing" className="underline">Voir les tarifs</Link>
@@ -221,8 +221,8 @@ export default function HomePage() {
 
       <section className="container pb-16" aria-labelledby="cta-final">
         <div className="space-y-4 rounded-lg border border-primary/40 p-6 text-center">
-          <h2 id="cta-final" className="text-2xl font-bold">Prêt à compléter vos revenus ?</h2>
-          <p className="text-sm text-muted-foreground">Trouvez votre activité en trois questions, sans inscription.</p>
+          <h2 id="cta-final" className="text-2xl font-bold">Et si vous rendiez service près de chez vous ?</h2>
+          <p className="text-sm text-muted-foreground">Trouvez l'activité qui vous correspond en trois questions, sans inscription.</p>
           <PublicCtas className="flex flex-col justify-center gap-3 sm:flex-row" />
         </div>
       </section>
