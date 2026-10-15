@@ -23,7 +23,7 @@ export function Callout({ kind, children }: { kind: CalloutKind; children: React
 /** Synthèse de tête de guide : réponse courte, public concerné, points clés. */
 export function Tldr({ rows }: { rows: [string, ReactNode][] }) {
   return (
-    <div className="overflow-x-auto rounded-md border">
+    <div tabIndex={0} role="region" aria-label="Tableau, défilable horizontalement" className="overflow-x-auto rounded-md border">
       <table className="w-full text-left text-sm">
         <caption className="border-b bg-muted/40 p-3 text-left font-semibold">En bref</caption>
         <tbody>
@@ -41,7 +41,7 @@ export function Tldr({ rows }: { rows: [string, ReactNode][] }) {
 
 export function DataTable({ caption, head, rows }: { caption: string; head: string[]; rows: ReactNode[][] }) {
   return (
-    <div className="overflow-x-auto rounded-md border">
+    <div tabIndex={0} role="region" aria-label="Tableau, défilable horizontalement" className="overflow-x-auto rounded-md border">
       <table className="w-full text-left text-sm">
         <caption className="border-b bg-muted/40 p-3 text-left font-semibold">{caption}</caption>
         <thead>

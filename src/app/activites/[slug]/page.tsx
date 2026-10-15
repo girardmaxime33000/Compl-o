@@ -97,7 +97,7 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold">Complément de salaire estimé selon votre temps disponible</h2>
-          <div className="overflow-x-auto rounded-lg border">
+          <div tabIndex={0} role="region" aria-label="Tableau, défilable horizontalement" className="overflow-x-auto rounded-lg border">
             <table className="w-full text-sm">
               <thead className="bg-muted/50 text-left">
                 <tr>
@@ -174,7 +174,7 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
             </CardHeader>
             <CardContent><p className="whitespace-pre-line text-sm leading-relaxed">{listing.body}</p></CardContent>
           </Card>
-          <Button asChild><Link href={`/login?next=/dashboard/listings`}>Générer mon annonce avec l'IA (compte gratuit)</Link></Button>
+          <Button asChild className="h-auto whitespace-normal py-2.5 text-center"><Link href={`/login?next=/dashboard/listings`}>Générer mon annonce avec l'IA (compte gratuit)</Link></Button>
         </section>
 
         <section className="space-y-3">

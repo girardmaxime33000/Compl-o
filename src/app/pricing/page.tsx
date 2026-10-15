@@ -77,7 +77,7 @@ export default async function PricingPage() {
           Le diagnostic, le simulateur et les devis et factures PDF sont inclus dans toutes les offres. Seul le nombre
           d'annonces rédigées par IA change.
         </p>
-        <div className="overflow-x-auto rounded-lg border">
+        <div tabIndex={0} role="region" aria-label="Tableau, défilable horizontalement" className="overflow-x-auto rounded-lg border">
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>

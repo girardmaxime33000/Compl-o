@@ -103,7 +103,7 @@ export default function CityActivityPage({ params }: { params: { slug: string; v
           <p className="text-sm">
             Secteur suivi : <strong>{group?.label}</strong>, dans le bassin d'emploi « {city.bassin} » (France Travail).
           </p>
-          <div className="overflow-x-auto rounded-lg border">
+          <div tabIndex={0} role="region" aria-label="Projets de recrutement, tableau défilable horizontalement" className="overflow-x-auto rounded-lg border">
             <table className="w-full text-sm">
               <thead className="bg-muted/50 text-left">
                 <tr><th className="p-3">Indicateur ({BMO_YEAR})</th><th className="p-3">Valeur</th></tr>
@@ -128,7 +128,7 @@ export default function CityActivityPage({ params }: { params: { slug: string; v
         {profile.length > 0 && (
           <section className="space-y-3">
             <h2 className="text-xl font-semibold">Population et logements à {city.name}</h2>
-            <div className="overflow-x-auto rounded-lg border">
+            <div tabIndex={0} role="region" aria-label="Population et logements, tableau défilable horizontalement" className="overflow-x-auto rounded-lg border">
               <table className="w-full text-sm">
                 <thead className="bg-muted/50 text-left">
                   <tr><th className="p-3">Indicateur</th><th className="p-3">{city.name}</th><th className="p-3">Moyenne des 20 villes</th></tr>

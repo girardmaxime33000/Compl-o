@@ -203,14 +203,14 @@ export function OnboardingWizard({ signedIn, photos = {} }: { signedIn: boolean;
     <div className="space-y-5">
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">Étape {step + 1} sur {STEPS.length} · {STEPS[step]}</p>
-        <Progress value={((step + 1) / STEPS.length) * 100} />
+        <Progress aria-label="Progression du diagnostic" value={((step + 1) / STEPS.length) * 100} />
       </div>
 
       <Card>
         {step === 0 && (
           <>
             <CardHeader>
-              <CardTitle>Qu'aimez-vous faire ?</CardTitle>
+              <CardTitle as="h1">Qu'aimez-vous faire ?</CardTitle>
               <CardDescription>Sélectionnez un ou plusieurs domaines.</CardDescription>
             </CardHeader>
             <CardContent><Chips options={CATEGORIES} selected={categories} onToggle={toggle(setCategories)} photoFor={(id) => categoryPhoto(photos, id)} /></CardContent>
@@ -219,7 +219,7 @@ export function OnboardingWizard({ signedIn, photos = {} }: { signedIn: boolean;
         {step === 1 && (
           <>
             <CardHeader>
-              <CardTitle>De quel matériel disposez-vous ?</CardTitle>
+              <CardTitle as="h1">De quel matériel disposez-vous ?</CardTitle>
               <CardDescription>Vous pouvez ne rien sélectionner : certaines activités n'en demandent pas.</CardDescription>
             </CardHeader>
             <CardContent><Chips options={EQUIPMENT} selected={equipment} onToggle={toggle(setEquipment)} /></CardContent>
@@ -228,7 +228,7 @@ export function OnboardingWizard({ signedIn, photos = {} }: { signedIn: boolean;
         {step === 2 && (
           <>
             <CardHeader>
-              <CardTitle>Combien de temps par semaine ?</CardTitle>
+              <CardTitle as="h1">Combien de temps par semaine ?</CardTitle>
               <CardDescription>Le temps que vous pouvez consacrer à cette activité.</CardDescription>
             </CardHeader>
             <CardContent>

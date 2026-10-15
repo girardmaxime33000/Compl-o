@@ -14,8 +14,8 @@ const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 CardHeader.displayName = "CardHeader";
 
 interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
-  /** Niveau de titre : h3 par défaut, h2 quand la carte suit directement le h1. */
-  as?: "h2" | "h3";
+  /** Niveau de titre : h3 par défaut, h2 quand la carte suit directement le h1, h1 quand elle porte le titre de la page. */
+  as?: "h1" | "h2" | "h3";
 }
 
 const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(({ className, as: Tag = "h3", ...props }, ref) => (

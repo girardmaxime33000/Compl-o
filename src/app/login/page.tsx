@@ -20,7 +20,7 @@ export default function LoginPage({ searchParams }: { searchParams: { next?: str
         </Link>
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Connexion</CardTitle>
+            <CardTitle as="h1">Connexion</CardTitle>
             <CardDescription>Sans mot de passe : un lien magique ou votre compte Google.</CardDescription>
           </CardHeader>
           <CardContent>

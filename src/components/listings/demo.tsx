@@ -32,7 +32,7 @@ export function ListingDemo() {
       <Card>
         <CardHeader>
           <CardDescription>Exemple d'annonce, rédigé à l'avance (pas de génération en direct)</CardDescription>
-          <CardTitle className="text-xl">{listing.title}</CardTitle>
+          <CardTitle as="h2" className="text-xl">{listing.title}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="whitespace-pre-line text-sm leading-relaxed">{listing.body}</p>

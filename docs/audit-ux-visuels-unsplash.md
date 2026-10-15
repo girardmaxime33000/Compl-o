@@ -176,3 +176,27 @@ Images de partage (OG) non faites : incorporer une photo dans un PNG statique g�
 - Référence à relever avant la mise en ligne des photos : taux de clic du CTA du hero (`cta_click` source `hero` sur `home_view`), taux de démarrage et d'achèvement du diagnostic, inscriptions, LCP et CLS mobiles.
 - Comparer sur des périodes de même durée et de trafic comparable, avec la propriété `visual` (`none` avant, `photo` après). Un A/B 50/50 n'est pas implémenté.
 - Critère de conservation d'un lot : pas de dégradation du LCP mobile au-delà de 10 % et taux de clic du CTA en hausse ou neutre.
+
+## 9. Contrôle d'ensemble (navigateur, accessibilité, sécurité)
+
+Contrôle réalisé le 2026-10-15 sur le site compilé (`next start`, fausses clés Supabase, requêtes Unsplash bloquées), avec Chromium 360 × 740 et 1280 × 800 et axe-core (règles WCAG 2 A et AA, bonnes pratiques) sur 17 pages : accueil, `/pricing`, `/activites` et ses fiches (classique, activité × ville, urbaine), `/villes/paris`, `/guides` et un guide, simulateur, modèle de facture, générateur d'annonce, `/onboarding`, `/login`, mentions légales, CGU, `/credits-photos`. Aucun bouton cliqué sur les pages dynamiques (onboarding, login) : ce sont des rendus initiaux.
+
+Défauts trouvés puis corrigés :
+
+| Défaut | Correction |
+|---|---|
+| Contraste insuffisant (3,68:1) du vert `success` sur texte et sur le bouton « Voir mes activités » | `--success` assombri (142 71 % 29 %, 5,15:1 sur blanc) |
+| Contraste du badge « Populaire » (4,27:1) | texte `blue-800` |
+| Aucun `h1` sur `/onboarding` et `/login` | titres de carte en `h1` (`CardTitle as="h1"`) |
+| Barre de progression du diagnostic sans nom accessible | `aria-label` |
+| Saut de niveau de titre sur `/generateur-annonce` (h1 → h3) | `h2` |
+| Tableaux défilables non atteignables au clavier | `tabIndex`, `role="region"` et libellés distincts (guides, activité, activité × ville, pricing) |
+| Débordement horizontal de 9 px à 360 px sur les fiches activité (bouton « Générer mon annonce avec l'IA (compte gratuit) ») | retour à la ligne autorisé |
+| Grand vide entre les deux cartes du hero sans photo | cartes empilées dans le panneau coloré (le positionnement en coin reste pour la version avec photo) |
+| Aucun en-tête de sécurité | `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy` (`next.config.mjs`). Pas de CSP : elle exige un inventaire complet des sources (Stripe, Supabase, `images.unsplash.com`) |
+
+Après correction : 34 cas (17 pages × 2 largeurs), 0 erreur de console hors requêtes Unsplash bloquées, 0 débordement horizontal, 1 `h1` par page, 0 violation axe. `/robots.txt` et `/sitemap.xml` répondent (231 URL, pages privées et crédits absents).
+
+Non contrôlé : Lighthouse (performance, LCP, CLS), parcours cliqués (diagnostic complet, connexion, paiement Stripe), lecteur d'écran réel, appareil mobile réel, Safari et Firefox, rendu avec de vraies photos, état de la production.
+
+Dépendances (`npm audit --omit=dev`, 10 alertes dont 1 critique) : `next` 14.2.35 est signalé (déni de service via l'optimiseur d'images et la désérialisation de requêtes) ; la correction proposée est une montée de version majeure (16.x), non faite ici. Ce site n'utilise pas l'optimiseur d'images de Next (balise `<img>`, hotlink Unsplash), ce qui réduit l'exposition à l'une des deux alertes, sans l'éliminer pour l'autre. Les autres alertes (`tailwindcss`, `postcss`, `braces`) concernent la chaîne de build. À décider : planifier la migration de Next et la tester séparément.
