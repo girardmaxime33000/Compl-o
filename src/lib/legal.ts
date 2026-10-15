@@ -13,7 +13,7 @@ export const LEGAL = {
   /** Capital social, ex. « 1 000 € » : à renseigner. */
   capital: "",
   address: "",
-  email: "",
+  email: "claire.de.compleo@gmail.com",
   phone: "",
   /** Tant que la société n'est pas immatriculée : indiquer le statut ; remplacer par le SIRET et le RCS dès réception. */
   siret: "Société en cours d'immatriculation : numéro SIRET et RCS à venir",
