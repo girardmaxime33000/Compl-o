@@ -2,7 +2,7 @@
 
 // pdfkit charge ses polices standard (Helvetica...) par require dynamique : le traçage de fichiers de Vercel ne les
 // voit pas et la fonction plante en production (« Cannot find module .../standard-fonts/Helvetica.cjs »).
-const PDFKIT_FILES = ["./node_modules/pdfkit/js/standard-fonts/*.cjs", "./node_modules/pdfkit/js/data/**/*"];
+const PDFKIT_FILES = ["./node_modules/pdfkit/js/**/*"];
 
 const nextConfig = {
   experimental: {
