@@ -61,7 +61,7 @@ Limite de l'en-tête : il ne lit pas la session (pour garder les pages statiques
 |---|---|---|
 | M | Cartes d'aperçu à dégradé | Câblé (V5) : photo `activity:<id>` si présente |
 | M | Villes en liste de liens | Fait (V7) : 8 tuiles photo, liste texte pour le reste |
-| M | Compteurs décrivant le contenu du site, pas un bénéfice | Non fait |
+| M | Compteurs décrivant le contenu du site, pas un bénéfice | Fait : `BenefitStats`, quatre repères tirés du code (≈ 79 % du chiffre d'affaires restant après cotisations, seuil de franchise de TVA, « Jusqu'à » le revenu mensuel estimé de l'activité la mieux classée avec la réserve « sans garantie de revenu », annonces IA gratuites par mois). Sources conservées en dessous |
 | B | Simulateur d'accueil en paragraphe | Fait : `SimulatorPreview` (barre net / cotisations et trois lignes de montants, valeurs issues de `simulate()` et `TAX_PARAMS`), à côté du texte et du bouton. Rendu non vérifié dans un navigateur |
 | m | Guides de l'accueil en texte seul | Non fait (les cartes de `/guides` sont câblées) |
 | m | CTA final sans contraste | Câblé (V8) : `PhotoBanner`, repli sur le cadre d'origine |
@@ -152,7 +152,7 @@ Images de partage (OG) non faites : incorporer une photo dans un PNG statique g�
 5. Relire visuellement les 20 photos de villes (cas à regarder : Villeurbanne, Saint-Denis de La Réunion, Toulon, Le Havre ; deux photos du même photographe pour Dijon et Lille).
 6. Lancer Lighthouse mobile avant et après sur l'accueil, une page activité, une page ville, `/onboarding` : LCP, CLS, poids des images.
 7. Vérifier à la main dans un navigateur (360 px et ≥ 1024 px) : superposition des deux cartes du hero, lisibilité du CTA final sur photo, colonne photo du login, cartes de l'onboarding.
-8. Non fait, par ordre de gain attendu : remplacement des compteurs « catalogue », encart de CTA sur les pages de contenu, barres de visualisation des tableaux de revenu, optimisation du bundle de `/onboarding`.
+8. Non fait, par ordre de gain attendu : encart de CTA sur les pages de contenu, barres de visualisation des tableaux de revenu, optimisation du bundle de `/onboarding`.
 
 ## 6. Décisions requises du propriétaire
 

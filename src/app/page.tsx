@@ -13,6 +13,7 @@ import { Photo } from "@/components/marketing/photo";
 import { cityPhoto } from "@/lib/city-images";
 import { PhotoBanner } from "@/components/marketing/photo-banner";
 import { HomeViewTracker } from "@/components/marketing/home-view-tracker";
+import { BenefitStats, type BenefitStat } from "@/components/marketing/benefit-stats";
 import { SimulatorPreview } from "@/components/marketing/simulator-preview";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
@@ -21,6 +22,7 @@ import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityActivity
 import { GUIDES, guidePath } from "@/lib/guides";
 import { sitePhoto } from "@/lib/site-images";
 import { homeFaq } from "@/lib/seo/faq";
+import { FREE_MONTHLY_LISTINGS } from "@/lib/platforms";
 import { eur, simulate, TAX_PARAMS } from "@/lib/tax";
 
 const HOME_TITLE = "Complément de salaire : activité près de chez vous | Compléo";
@@ -89,11 +91,31 @@ const SIM_EXAMPLE_RATE = new Intl.NumberFormat("fr-FR", { maximumFractionDigits:
 export default function HomePage() {
   const example = simulate({ monthlyRevenue: SIM_EXAMPLE_REVENUE, regime: SIM_EXAMPLE_REGIME });
   const faq = homeFaq();
-  const stats = [
-    { value: ACTIVITIES.length, label: "activités du catalogue" },
-    { value: CITIES.length, label: "villes couvertes" },
-    { value: CITY_ACTIVITY_PAIRS.length, label: "pages avec donnée locale" },
-    { value: GUIDES.length, label: "guides pratiques" },
+  const nf = new Intl.NumberFormat("fr-FR");
+  const topActivity = TOP_ACTIVITIES[0];
+  const benefits: BenefitStat[] = [
+    {
+      value: `≈ ${Math.round((1 - TAX_PARAMS.urssafRate[SIM_EXAMPLE_REGIME]) * 100)} %`,
+      label: "du chiffre d'affaires reste après cotisations",
+      note: "Prestation de services (BIC), taux 2026, avant impôt sur le revenu.",
+    },
+    {
+      value: `${nf.format(TAX_PARAMS.vatThreshold)} €`,
+      label: "de chiffre d'affaires par an avant de facturer la TVA",
+      note: "Franchise en base de TVA 2026, prestations de services.",
+    },
+    ...(topActivity
+      ? [{
+          value: `Jusqu'à ${nf.format(topActivity.monthlyMax)} €`,
+          label: `de chiffre d'affaires par mois estimé (${topActivity.activity.title})`,
+          note: `Avec ${topActivity.activity.idealHours} h par semaine. Estimation selon profil et temps disponible, sans garantie de revenu.`,
+        }]
+      : []),
+    {
+      value: `${FREE_MONTHLY_LISTINGS}`,
+      label: "annonces rédigées par IA chaque mois, gratuitement",
+      note: "Avec un compte gratuit. À relire avant publication.",
+    },
   ];
 
   return (
@@ -254,18 +276,11 @@ export default function HomePage() {
       </section>
 
       <section className="container space-y-3 pb-16" aria-labelledby="sources">
-        <h2 id="sources" className="text-2xl font-bold">Des repères issus de données publiques</h2>
-        <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {stats.map((s) => (
-            <div key={s.label} className="rounded-lg border p-4">
-              <dt className="text-sm text-muted-foreground">{s.label}</dt>
-              <dd className="text-3xl font-bold">{s.value}</dd>
-            </div>
-          ))}
-        </dl>
+        <h2 id="sources" className="text-2xl font-bold">Ce que vous pouvez en attendre</h2>
+        <BenefitStats items={benefits} />
         <p className="text-sm text-muted-foreground">
-          Sources : {CITY_DATA.sources.bmo.label} ; {CITY_DATA.sources.insee.label}. Taux et plafonds fiscaux : fiches
-          Entreprendre Service Public. Données téléchargées le {CITY_DATA.downloadedOn}.
+          Sources : taux et plafonds fiscaux, fiches Entreprendre Service Public ; repères locaux, {CITY_DATA.sources.bmo.label} et{" "}
+          {CITY_DATA.sources.insee.label}. Données locales téléchargées le {CITY_DATA.downloadedOn}.
         </p>
       </section>
 
