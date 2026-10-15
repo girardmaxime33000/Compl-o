@@ -8,6 +8,7 @@ import {
 import { pageMetadata } from "@/lib/seo";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { PublicCtas } from "@/components/marketing/ctas";
+import { CityPhoto } from "@/components/marketing/city-photo";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
 
@@ -42,6 +43,8 @@ export default function CityHubPage({ params }: { params: { ville: string } }) {
       <BreadcrumbJsonLd path={path} items={[{ name: "Activités", path: "/activites" }, { name: city.name, path }]} />
       <main className="container max-w-4xl space-y-8 py-10">
         <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
+        <CityPhoto city={city} priority />
+
         <div>
           <p className="text-sm text-muted-foreground"><Link href="/activites" className="underline">Activités</Link> / {city.name}</p>
           <h1 className="mt-1 text-3xl font-bold">Micro-activités de services à {city.name}</h1>

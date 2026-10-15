@@ -245,6 +245,17 @@ Ollama ne fonctionne pas sur un hébergement type Vercel : en production, utilis
 
 **Régénérer les données** : (1) télécharger les fichiers listés dans `sources` de `src/data/cities.json` (INSEE populations légales : https://www.insee.fr/fr/statistiques/6683035 ; INSEE Dossier complet : https://www.insee.fr/fr/statistiques/5359146 ; France Travail BMO : https://statistiques.francetravail.org/bmo) dans `data/raw/` sous les noms attendus par `scripts/build-city-data.py` ; (2) `python3 scripts/extract-dossier-complet.py` si le Dossier complet change ; (3) `pip install openpyxl && python3 scripts/build-city-data.py`. Le script est déterministe : relancé sur les fichiers actuels, il reproduit le JSON à l'identique. La date de téléchargement (`downloadedOn`) est affichée sur chaque page ville et sert de `lastmod` au sitemap : la mettre à jour dans le script lors d'un nouveau téléchargement. Pour ajouter une ville, il faut une donnée locale réelle (population, Dossier complet, bassin BMO) ; une combinaison activité × ville sans projet de recrutement répond `404` et est absente du sitemap.
 
+## Photos de villes (Unsplash)
+
+Les pages `/villes/[ville]` et `/activites/[slug]/[ville]` affichent la photo Unsplash de la ville si `src/data/city-images.json` en contient une (sinon, visuel généré). Pour les renseigner :
+
+1. Créer une application sur https://unsplash.com/developers et copier l'Access Key (variable `UNSPLASH_ACCESS_KEY`, jamais dans le dépôt : elle ne sert qu'au script, pas au site).
+2. `UNSPLASH_ACCESS_KEY=... python3 scripts/fetch-city-images.py search` : recherche des candidats, écrit `data/unsplash/candidates.html` (planche de contact, ignorée par git) et un brouillon `scripts/city-images-selection.json`.
+3. Ouvrir la planche, corriger `scripts/city-images-selection.json` (`{"paris": "<id>"}`).
+4. `UNSPLASH_ACCESS_KEY=... python3 scripts/fetch-city-images.py build` : récupère les métadonnées, déclare le téléchargement à Unsplash (obligation des directives de l'API) et écrit `src/data/city-images.json`. Commiter ce JSON et la sélection.
+
+Conformité aux directives de l'API : les images ne sont pas copiées dans le dépôt, elles sont servies par `images.unsplash.com` (hotlink), avec crédit du photographe et lien vers Unsplash portant `utm_source=compleo&utm_medium=referral`. Aucun appel à l'API à l'exécution, donc la limite de 50 requêtes par heure du mode demo ne concerne que le script. Vérifier les conditions Unsplash en vigueur avant la mise en ligne (passage en mode production si exigé).
+
 ## SEO
 
 - **Sitemap** (`src/app/sitemap.ts`) : `lastmod` réel, sans `priority`. Pages ville et hubs ville : date de téléchargement des données ; guides : date de mise à jour du contenu (`updated` dans `src/lib/guides.ts`) ; pages statiques : date de build. Les pages légales sont en `noindex, follow` et absentes du sitemap.

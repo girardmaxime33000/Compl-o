@@ -13,6 +13,8 @@ import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { cityActivityFaq } from "@/lib/seo/faq";
 import { FaqSection } from "@/components/marketing/faq";
 import { PublicCtas } from "@/components/marketing/ctas";
+import { CityPhoto } from "@/components/marketing/city-photo";
+import { cityPhoto } from "@/lib/city-images";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { Button } from "@/components/ui/button";
 import { SiteFooter } from "@/components/marketing/site-footer";
@@ -77,7 +79,7 @@ export default function CityActivityPage({ params }: { params: { slug: string; v
       <main className="container max-w-4xl space-y-10 py-10">
         <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
 
-        <ActivityVisual activityId={activity.id} size="hero" className="h-32 sm:h-36" />
+        {cityPhoto(city) ? <CityPhoto city={city} priority /> : <ActivityVisual activityId={activity.id} size="hero" className="h-32 sm:h-36" />}
 
         <div>
           <p className="text-sm text-muted-foreground">
