@@ -1,6 +1,8 @@
 # Audit UI/UX et plan d'implémentation des visuels (Unsplash) : Compléo
 
-Date : 2026-10-15. Objectif : site B2C à conversion maximale (diagnostic gratuit → inscription → paywall).
+Date : 2026-10-15 (mise à jour après intégration des photos de villes, commits `b3ec49a` et `8c4a480`). Objectif : site B2C à conversion maximale (diagnostic gratuit → inscription → paywall).
+
+Changements pris en compte depuis la première version : 20 photos Unsplash de villes sélectionnées (`src/data/city-images.json`, `selectedOn` 2026-10-15), bandeau recadré avec `srcset`, réécriture du texte du hero et des titres SEO (« complément de salaire près de chez vous »), nouvelles fiches « activités urbaines ». Les constats sur ces points sont corrigés ci-dessous.
 
 ## 0. Périmètre et limites de l'audit
 
@@ -18,13 +20,32 @@ Date : 2026-10-15. Objectif : site B2C à conversion maximale (diagnostic gratui
 | Aperçu activités | `visuals.tsx` (`ActivityVisual`) | Dégradé + pictogramme Lucide | Générique, interchangeable d'une activité à l'autre. |
 | Guides | `GuideVisual` | Idem | Idem. Absent des cartes de l'accueil (texte seul). |
 | Pages activité | `activites/[slug]/page.tsx` | Bandeau dégradé `hero` | Pas de contexte réel (lieu, geste, client). |
-| Pages ville | `city-photo.tsx` | Photo Unsplash prévue | `src/data/city-images.json` contient `"photos": {}` : aucune photo n'est affichée aujourd'hui. Le pipeline existe mais n'a pas été exécuté. |
+| Pages ville | `city-photo.tsx` | 20 photos Unsplash réelles, bandeau 2,5:1 | Fait (voir 1.1). Affichées uniquement sur `/villes/[ville]` et `/activites/[slug]/[ville]`. Absentes de l'accueil (liens texte), de `/activites/[slug]`, de l'OG et des cartes. |
 | Login | `login/page.tsx` | Aucun | Écran nu, pas de réassurance. |
 | Pricing | `pricing/page.tsx` | Aucun | Tableau et cartes sans élément de réassurance visuelle. |
 | Onboarding | `components/onboarding/wizard.tsx` | À vérifier (250 lignes, non audité en détail) | Étape cruciale de l'entonnoir : voir 3.6. |
 | OG | `opengraph-image.tsx` | Texte statique | Partages sociaux sans visuel d'activité. |
 
 Acquis réutilisables : pipeline Unsplash conforme (`scripts/fetch-city-images.py` : recherche, planche de contact, déclaration de téléchargement, JSON versionné, hotlink, crédit avec UTM), `src/lib/city-images.ts`, `CityPhoto`, repli sur dégradés. Il faut généraliser, pas réécrire.
+
+### 1.1 Photos de villes : état après intégration
+
+Constaté dans le dépôt (lecture du code et du JSON) :
+
+- 20 villes couvertes sur 20 : angers, bordeaux, dijon, grenoble, le-havre, lille, lyon, marseille, montpellier, nantes, nice, paris, reims, rennes, saint-denis-reunion, saint-etienne, strasbourg, toulon, toulouse, villeurbanne. Chaque entrée porte `id`, `raw`, dimensions, `author`, `authorUrl`, `pageUrl`, `alt`. Sélection reproductible via `scripts/city-images-selection.json`.
+- Images d'origine entre 3 024 et 6 000 px de large, sans recadrage dans le dépôt : recadrage et redimensionnement côté CDN.
+- `CityPhoto` : balise `<img>` (et non `next/image`) avec `srcSet` 480/720/960/1280 px, recadrage serveur `h=w/2.5`, WebP, qualité 60, `sizes` fixés, dimensions déclarées, ratio CSS `aspect-[2.5/1]` (pas de CLS), `fetchPriority="high"` et `preconnect` quand `priority`, `loading="lazy"` sinon. Crédit photographe + Unsplash avec UTM sous chaque photo.
+- Conformité : hotlink respecté, crédit présent, UTM présents. Déclaration de téléchargement faite par le script `build` (non revérifiable sans clé API).
+
+Points à corriger ou à décider :
+
+- `alt` : le composant n'utilise pas l'`alt` du JSON mais `Vue de {ville}`. Acceptable (le texte Unsplash est en anglais et descriptif d'un détail, p. ex. « aerial photography of lighted concrete buildings at night time »). À conserver, mais le champ `alt` du JSON est inutilisé.
+- Qualité éditoriale non vérifiée : je n'ai pas visualisé les 20 photos. La sélection initiale est issue d'un brouillon « première photo de chaque ville » corrigé à la main ; une relecture visuelle reste à faire (pertinence de la ville, absence de personnes identifiables, cohérence de tonalité). Cas à regarder en priorité : Villeurbanne, Saint-Denis (La Réunion), Toulon, Le Havre, dont les requêtes ont des surcharges.
+- Deux photos du même photographe (Zhu Yunxiao : Dijon, Lille) : voir la cohérence visuelle.
+- Pas de couleur moyenne ni de placeholder : le fond `bg-muted` gris apparaît avant chargement. Ajouter `color` (fourni par l'API) dans le JSON pour un fond proche de l'image.
+- Valeur peu exploitée : 20 photos de villes mais aucune sur l'accueil, alors que la section « Activité complémentaire près de chez vous » liste ces villes en texte. Tuiles photo de villes à ajouter (priorité 2, section 3).
+- Charge : une page ville charge une seule image (≈ 40–90 Ko estimés à 1280 px, qualité 60, non mesuré). À mesurer avec Lighthouse.
+- Le hero est repositionné sur « complément de salaire près de chez vous » : la photo de ville y devient un candidat naturel (géolocalisation de l'accueil non prévue, ne pas la supposer ; une photo générique de quartier français suffit).
 
 ## 2. Audit UX/UI et conversion
 
@@ -39,7 +60,7 @@ Gravité : B bloquant conversion, M majeur, m mineur.
 
 ### 2.2 Hero (accueil)
 
-- Promesse claire et conforme aux garde-fous (« estimation selon profil et temps disponible »). À conserver.
+- Hero réécrit depuis la première version : titre « Complément de salaire : activités et services près de chez vous », sous-titre en trois questions. La promesse chiffrée « 200 € à 1 000 € » et sa ligne d'avertissement ont été retirées ensemble, ce qui reste cohérent avec les garde-fous de `CLAUDE.md`. Le bénéfice financier n'est plus quantifié au-dessus de la ligne de flottaison : à arbitrer par mesure (A/B), pas par principe.
 - B. Visuel abstrait, sans humain ni preuve produit : le visiteur ne voit ni le résultat ni quelqu'un qui lui ressemble.
 - M. Deux CTA de poids visuel proche (diagnostic en plein, simulateur en contour : acceptable) mais le micro-texte de réassurance est sous les boutons, en `text-sm` grisé. Remonter « gratuit, sans inscription, sans carte bancaire » en pastilles à côté du CTA.
 - M. Aucun élément de confiance visuel (source des données, URSSAF/INSEE/France Travail en logos textuels serait légitime : ces sources sont déjà citées en pied de page).
@@ -47,7 +68,7 @@ Gravité : B bloquant conversion, M majeur, m mineur.
 ### 2.3 Corps de page
 
 - M. « Un aperçu de ce que vous obtenez » : cartes à dégradé + pictogramme, peu désirables. C'est la section la plus propice à la photo.
-- M. Section « Activités et villes à explorer » : deux listes de liens soulignés. Zone à fort potentiel SEO et d'exploration, sans attrait visuel ni hiérarchie.
+- M. Section « Activité complémentaire près de chez vous » (ex-« Activités et villes à explorer ») : listes de liens soulignés (activités, villes, 12 couples « activité à ville »). Zone à fort potentiel SEO et d'exploration, sans attrait visuel ni hiérarchie, alors que les 20 photos de villes existent désormais. Première application : tuiles photo pour les 6 à 8 villes les mieux classées, liste texte conservée en dessous pour le maillage.
 - M. Section « Des repères issus de données publiques » : les compteurs (activités du catalogue, villes couvertes, pages avec donnée locale, guides) décrivent le contenu du site, pas un bénéfice pour l'utilisateur. Compteurs réels, donc conformes, mais faible valeur persuasive. Remplacer par des bénéfices chiffrés issus de `tax.ts` / `activities.ts` ou les replacer en pied de page.
 - m. Guides de l'accueil : cartes texte seul.
 - B. Le simulateur d'accueil est un bloc de texte. Un mini-aperçu visuel (jauge brut → cotisations → net) convertirait mieux qu'un paragraphe.
@@ -84,14 +105,16 @@ Règle générale : photos réelles, lumineuses, personnes en situation de trava
 |---|---|---|---|---|
 | `/` | Hero | Photo humaine (personne à son ordinateur à domicile ou en activité de service) + 2 cartes UI flottantes rendues en HTML (« Annonce prête », « Net estimé ») alimentées par `simulate()` | 4:3 desktop, 16:10 mobile ; `priority` | 1 |
 | `/` | Aperçu activités (3 cartes) | Photo d'activité + badge revenu estimé | 3:2 | 1 |
-| `/` | Activités et villes | Mosaïque de tuiles photo (6 activités, 6 villes) avec voile | 1:1 / 4:3 | 2 |
+| `/` | Activités et villes | Mosaïque de tuiles photo : villes (photos déjà disponibles, aucun nouveau besoin Unsplash) et 6 activités, avec voile ; liens texte conservés dessous | 1:1 / 4:3 | 1 (villes), 2 (activités) |
 | `/` | Guides | Couverture photo par guide | 16:9 | 3 |
 | `/` | Simulateur | Mini-graphique CSS brut → cotisations → net, sans photo | composant | 2 |
 | `/` | CTA final | Fond photo + voile bleu foncé | pleine largeur | 3 |
 | `/activites` | Cartes | Photo d'activité | 3:2 | 1 |
 | `/activites/[slug]` | En-tête | Photo d'activité à la place du dégradé + crédit | 21:9 desktop, 16:9 mobile | 1 |
-| `/activites/[slug]/[ville]` | En-tête | Photo de la ville (déjà prévu) sinon photo d'activité | idem | 1 |
-| `/villes/[ville]` | En-tête, tuiles activité | Photo ville ; tuiles activité en photo | 21:9 / 1:1 | 2 |
+| `/activites/[slug]/[ville]` | En-tête | Photo de la ville : fait (bandeau 2,5:1, 20 villes) ; repli sur photo d'activité à ajouter | idem | fait / 2 |
+| `/villes/[ville]` | En-tête, tuiles activité | Photo ville : fait ; tuiles activité en photo à ajouter | 2,5:1 / 1:1 | fait / 2 |
+| `/activites/[slug]` (fiches « urbaines » : `UrbanSheet`) et `/activites` (cartes « Activités urbaines ») | En-tête et cartes | Aucun visuel actuellement (nouvelles fiches texte) : photo d'activité à ajouter | 3:2 | 1 |
+| OG ville (à créer) | Fond | Photo de la ville sous voile + titre (aucune image OG par ville aujourd'hui) | 1200×630 | 3 |
 | `/guides`, `/guides/[slug]` | Cartes et en-tête | Couverture photo par guide | 16:9 | 3 |
 | `/onboarding` | Choix de domaines, résultat | Photos d'activité | 4:3 | 1 |
 | `/login` | Colonne latérale (≥ lg) | Photo + promesse + 3 puces de réassurance | 4:5 | 3 |
@@ -102,6 +125,8 @@ Règle générale : photos réelles, lumineuses, personnes en situation de trava
 ### 3.1 Requêtes Unsplash suggérées (à valider sur planche de contact)
 
 Anglais pour la pertinence des résultats, `orientation=landscape` (portrait pour le login).
+
+Les 20 clés `city:*` sont déjà sélectionnées : ne pas les rechercher à nouveau (économie de quota). Les activités urbaines publiées (`publishedUrbanActivities()` dans `src/lib/urban-activities.ts`) sont à ajouter au catalogue de requêtes.
 
 | Clé | Requête |
 |---|---|
@@ -123,7 +148,7 @@ Anglais pour la pertinence des résultats, `orientation=landscape` (portrait pou
 
 ### 4.1 Principe : sélection à la construction, pas d'appel à l'exécution
 
-Conserver l'architecture existante : le script sélectionne et déclare, un JSON versionné est lu par les pages, les images sont servies par `images.unsplash.com`. Avantages : aucun quota consommé par les visiteurs, aucune clé côté site, aucune latence supplémentaire, rendu statique (SSG/ISR) intact.
+Conserver l'architecture existante, déjà éprouvée sur les 20 villes : le script sélectionne et déclare, un JSON versionné est lu par les pages, les images sont servies par `images.unsplash.com`. Avantages : aucun quota consommé par les visiteurs, aucune clé côté site, aucune latence supplémentaire, rendu statique (SSG/ISR) intact.
 
 Ne pas appeler l'API depuis le navigateur ni depuis les Server Components à chaque requête (limite de 50 req/h en mode demo, clé exposée, latence).
 
@@ -154,8 +179,8 @@ Données : généraliser `src/data/city-images.json` en `src/data/images.json` (
 ```
 
 - Ajouter `color` (couleur moyenne, fournie par l'API) pour le fond de remplacement avant chargement : zéro CLS, zéro flash blanc.
-- Script : ajouter un catalogue de clés → requête (table 3.1) à côté de `QUERY_OVERRIDES`, mêmes commandes `search` / `build`, sélection dans `scripts/visual-images-selection.json`. Budget : environ 25 clés × (1 recherche + 1 déclaration) ≈ 50 requêtes, soit 2 passes à une heure d'intervalle en mode demo.
-- `src/lib/city-images.ts` : exporter un `unsplashLoader({ src, width, quality })` qui ajoute `w`, `q`, `fm=webp`, `fit=crop`, `auto=format`. Passer `loader={unsplashLoader}` à `next/image` et retirer `unoptimized` : `srcset` généré, images toujours servies par Unsplash. `next.config.mjs` n'a pas besoin de `remotePatterns` avec un loader personnalisé.
+- Script : ajouter un catalogue de clés → requête (table 3.1) à côté de `QUERY_OVERRIDES`, mêmes commandes `search` / `build`, sélection dans `scripts/visual-images-selection.json`. Budget : environ 25 clés × (1 recherche + 1 déclaration) ≈ 50 requêtes (hors villes, déjà faites), soit 2 passes à une heure d'intervalle en mode demo.
+- `src/lib/city-images.ts` : le `srcSet` recadré est déjà en place pour le bandeau de ville (`unsplashSrc`, `bannerSrcSet`, `BANNER_RATIO`, `BANNER_WIDTHS`) via une balise `<img>`. Ne pas le refaire : généraliser en paramétrant le ratio (`bannerSrcSet(photo, ratio, widths)`), ce qui couvre 3:2 (cartes), 1:1 (tuiles), 16:9 (guides) et 4:5 (login). Les composants futurs réutilisent la même approche `<img>` + `srcSet` + `sizes` ; le loader `next/image` proposé initialement n'est plus nécessaire.
 - Composants (dans `src/components/marketing/`) :
   - `Photo` (générique : `photoKey`, `ratio`, `sizes`, `priority`, `overlay`, `credit`) avec repli automatique sur le dégradé existant de `visuals.tsx` quand la clé est absente. Aucune page ne casse si une photo manque.
   - `ActivityVisual` et `GuideVisual` : utiliser `Photo` si disponible, sinon comportement actuel (migration non destructive).
@@ -183,7 +208,7 @@ Données : généraliser `src/data/city-images.json` en `src/data/images.json` (
 | V4 | Hero accueil | Photo + `HeroShowcase`, micro-texte de réassurance en pastilles | V2 |
 | V5 | Activités | Cartes accueil, `/activites`, `/activites/[slug]`, tuiles `/villes/[ville]` | V2 |
 | V6 | Onboarding | Cartes de choix photo, résultat illustré | V2 |
-| V7 | Villes | Exécution du pipeline villes déjà prévu (JSON actuellement vide) | V1 |
+| V7 | Villes | Pipeline villes exécuté (20/20, commits `b3ec49a`, `8c4a480`). Reste : relecture visuelle des 20 photos, champ `color`, tuiles de villes sur l'accueil, repli par photo d'activité | fait / V2 |
 | V8 | Secondaires | Guides, CTA final, login, OG, pricing (icônes) | V2 |
 | V9 | Mesure | Événements d'entonnoir (T12 : `/api/track`) : vue hero, clic CTA hero/header/sticky, démarrage et fin du diagnostic, avant/après chaque lot | T12 |
 
