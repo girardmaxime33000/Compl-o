@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Rocket } from "lucide-react";
 import { ACTIVITIES, activitySlug, formatRate } from "@/lib/activities";
+import { publishedUrbanActivities } from "@/lib/urban-activities";
 import { pageMetadata } from "@/lib/seo";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +42,25 @@ export default function ActivitiesIndexPage() {
             </Link>
           ))}
         </div>
+        <section className="space-y-4">
+          <h2 className="text-2xl font-bold">Activités urbaines</h2>
+          <p className="max-w-2xl text-sm text-muted-foreground">
+            Des services de proximité pour les habitants de petits logements en ville. Revenus nets estimés selon profil
+            et temps disponible, sans garantie.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {publishedUrbanActivities().map((a) => (
+              <Link key={a.slug} href={`/activites/${a.slug}`} className="block">
+                <Card className="h-full transition-colors hover:bg-accent/50">
+                  <CardHeader>
+                    <CardTitle as="h3" className="text-lg">{a.name}</CardTitle>
+                    <CardDescription>{a.pitch}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
       </main>
       <SiteFooter />
     </>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LEGAL } from "@/lib/legal";
 import { ACTIVITIES, activitySlug } from "@/lib/activities";
+import { publishedUrbanActivities } from "@/lib/urban-activities";
 import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityActivityPath, cityPath } from "@/lib/cities";
 import { GUIDES, guidePath } from "@/lib/guides";
 
@@ -47,6 +48,7 @@ export function sitemapEntries(): SitemapEntry[] {
       lastModified: p.path === "/guides" ? latestGuideUpdate() : BUILD_DATE,
     })),
     ...ACTIVITIES.map((a) => ({ path: `/activites/${activitySlug(a)}`, lastModified: BUILD_DATE })),
+    ...publishedUrbanActivities().map((a) => ({ path: `/activites/${a.slug}`, lastModified: BUILD_DATE })),
     ...GUIDES.map((g) => ({ path: guidePath(g), lastModified: g.updated })),
     ...CITIES.filter((c) => activitiesForCity(c).length > 0).map((c) => ({ path: cityPath(c), lastModified: dataDate })),
     ...CITY_ACTIVITY_PAIRS.map(({ city, activity }) => ({ path: cityActivityPath(city, activity), lastModified: dataDate })),

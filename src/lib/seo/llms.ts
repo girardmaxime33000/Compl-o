@@ -1,5 +1,6 @@
 import { ACTIVITIES, activitySlug, formatRate } from "@/lib/activities";
 import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityPath } from "@/lib/cities";
+import { publishedUrbanActivities } from "@/lib/urban-activities";
 import { GUIDES, guidePath } from "@/lib/guides";
 import { LEGAL } from "@/lib/legal";
 import { formatCents, OFFERS } from "@/lib/offers";
@@ -40,6 +41,7 @@ export function buildLlmsTxt(): string {
     "## Activités",
     link("Toutes les activités", "/activites", "catalogue des micro-activités de services avec tarifs et revenus estimés"),
     ...ACTIVITIES.map((a) => link(a.title, `/activites/${activitySlug(a)}`, `${a.pitch} Tarif moyen ${formatRate(a)}`)),
+    ...publishedUrbanActivities().map((a) => link(a.name, `/activites/${a.slug}`, a.pitch)),
     "",
     "## Villes",
     `Pages activité × ville (${CITY_ACTIVITY_PAIRS.length} au total, de la forme ${absoluteUrl("/activites/<activité>/<ville>")}), uniquement lorsqu'une donnée locale existe : projets de recrutement France Travail (enquête BMO ${CITY_DATA.years.join(" et ")}) et statistiques INSEE. Données téléchargées le ${CITY_DATA.downloadedOn}. Les projets de recrutement concernent des emplois salariés : ils indiquent l'activité du secteur, pas la demande de services.`,

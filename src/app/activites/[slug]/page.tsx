@@ -15,6 +15,8 @@ import { FaqSection } from "@/components/marketing/faq";
 import { PublicCtas } from "@/components/marketing/ctas";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { findPublishedUrbanActivity, publishedUrbanActivities } from "@/lib/urban-activities";
+import { UrbanSheet } from "@/components/activities/urban-sheet";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { Simulator } from "@/components/simulator/simulator";
 import { SiteFooter } from "@/components/marketing/site-footer";
@@ -22,12 +24,20 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return ACTIVITIES.map((a) => ({ slug: activitySlug(a) }));
+  return [...ACTIVITIES.map((a) => ({ slug: activitySlug(a) })), ...publishedUrbanActivities().map((a) => ({ slug: a.slug }))];
 }
 
 const HOURS = [2, 5, 8, 12, 20];
 
 export function generateMetadata({ params }: { params: { slug: string } }) {
+  const urban = findPublishedUrbanActivity(params.slug);
+  if (urban) {
+    return pageMetadata({
+      title: `${urban.name} : tarifs, matériel et revenu estimé`,
+      description: `${urban.pitch} Tarifs indicatifs, matériel, réglementation et revenu net estimé selon votre temps disponible.`,
+      path: `/activites/${urban.slug}`,
+    });
+  }
   const a = findActivityBySlug(params.slug);
   if (!a) return {};
   return pageMetadata({
@@ -38,6 +48,8 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
 }
 
 export default function ActivityPage({ params }: { params: { slug: string } }) {
+  const urban = findPublishedUrbanActivity(params.slug);
+  if (urban) return <UrbanSheet activity={urban} />;
   const activity = findActivityBySlug(params.slug);
   if (!activity) notFound();
 
