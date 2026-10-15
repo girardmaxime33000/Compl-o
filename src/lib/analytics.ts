@@ -2,7 +2,7 @@
  * Mesure d'audience interne : événements anonymes (nom, chemin, propriétés non personnelles), sans cookie,
  * sans identifiant utilisateur, sans adresse IP. Aucun outil tiers.
  */
-export const CLIENT_EVENTS = ["simulator_view", "simulation_completed", "paywall_click"] as const;
+export const CLIENT_EVENTS = ["simulator_view", "simulation_completed", "diagnostic_started", "diagnostic_completed", "paywall_click"] as const;
 export const SERVER_EVENTS = ["signup", "listing_generated", "checkout_started", "payment_success"] as const;
 
 export type ClientEvent = (typeof CLIENT_EVENTS)[number];

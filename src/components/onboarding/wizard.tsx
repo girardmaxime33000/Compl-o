@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { track } from "@/lib/analytics";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import { CATEGORIES, EQUIPMENT, formatRate, recommend, type Option } from "@/lib/activities";
@@ -70,9 +71,19 @@ export function OnboardingWizard({ signedIn }: { signedIn: boolean }) {
   const [done, setDone] = useState(false);
   const [pending, startTransition] = useTransition();
   const { toast } = useToast();
+  const started = useRef(false);
 
-  const toggle = (setter: React.Dispatch<React.SetStateAction<string[]>>) => (id: string) =>
+  // Entonnoir : « diagnostic commencé » est envoyé une seule fois, à la première interaction.
+  const markStarted = () => {
+    if (started.current) return;
+    started.current = true;
+    track("diagnostic_started");
+  };
+
+  const toggle = (setter: React.Dispatch<React.SetStateAction<string[]>>) => (id: string) => {
+    markStarted();
     setter((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  };
 
   const canNext = step === 0 ? categories.length > 0 : step === 1 ? true : hours !== null;
   const results = useMemo(
@@ -100,13 +111,17 @@ export function OnboardingWizard({ signedIn }: { signedIn: boolean }) {
     if (!signedIn) {
       // Les recommandations s'affichent avant toute demande d'inscription.
       writePending({ categories, equipment, weeklyHours: hours });
+      track("diagnostic_completed");
       setDone(true);
       return;
     }
     startTransition(async () => {
       const res = await saveOnboarding({ categories, equipment, weeklyHours: hours });
       if (!res.ok) toast(res.error ?? "Enregistrement impossible.", "error");
-      else setDone(true);
+      else {
+        track("diagnostic_completed");
+        setDone(true);
+      }
     });
   }
 
@@ -200,7 +215,10 @@ export function OnboardingWizard({ signedIn }: { signedIn: boolean }) {
                     key={h}
                     type="button"
                     aria-pressed={hours === h}
-                    onClick={() => setHours(h)}
+                    onClick={() => {
+                      markStarted();
+                      setHours(h);
+                    }}
                     className={cn(
                       "min-h-[48px] rounded-md border px-3 py-3 text-sm transition-colors",
                       hours === h ? "border-primary bg-accent font-medium" : "bg-card hover:bg-accent/50",

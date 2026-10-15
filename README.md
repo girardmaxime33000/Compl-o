@@ -4,7 +4,7 @@
 
 Compléo est une application web (SaaS B2C) qui aide les particuliers en France à générer un complément de revenu de 200 € à 1 000 € par mois grâce à une micro-activité : choisir une activité adaptée à son profil, rédiger ses annonces avec une IA, estimer ce qu'il reste après cotisations et émettre ses devis et factures.
 
-> Statut : MVP fonctionnel en développement local (connexion, diagnostic, annonces IA, simulateur, facturation PDF, paiement Stripe en mode test). Non déployé en production.
+> Statut : en production sur https://compleo.work (connexion, diagnostic, annonces IA, simulateur, facturation PDF, paiement Stripe, pages SEO activités et villes). Quatre offres : Gratuit, Pack ponctuel 4,99 €, Pack mensuel 6,99 € et Abonnement annuel 69,99 € (voir [Offres](#offres)).
 
 ---
 
@@ -112,9 +112,10 @@ src/
 │   ├── simulateur-micro-entrepreneur/ Simulateur public (sans compte)
 │   ├── modele-facture-auto-entrepreneur/ Aperçu public de facture (PDF après inscription)
 │   ├── generateur-annonce/       Démo publique d'annonces pré-rédigées (aucun appel IA anonyme)
-│   ├── sitemap.ts robots.ts opengraph-image.tsx  SEO : sitemap, robots, image Open Graph
+│   ├── sitemap.ts robots.ts opengraph-image.tsx  SEO : sitemap (lastmod réel), robots (bots d'IA), image Open Graph
 │   ├── activites/ activites/[slug]/  Pages activité publiques (une par activité du catalogue)
-│   ├── activites/[slug]/[ville]/ Pages activité × ville (20 villes, SSG, seulement avec donnée locale)
+│   ├── activites/[slug]/[ville]/ Pages activité × ville (20 villes, SSG, seulement avec donnée locale, FAQ et FAQPage)
+│   ├── villes/[ville]/           Hub d'une ville : activités avec donnée locale (maillage du footer)
 │   ├── dashboard/account/        Mon compte : export JSON et suppression du compte (RGPD)
 │   ├── api/simulation/pdf/       Export PDF d'une simulation (compte requis, résultat recalculé côté serveur)
 │   ├── guides/ guides/[slug]/    Guides éditoriaux (contenu dans src/content/guides, registre src/lib/guides.ts)
@@ -133,6 +134,7 @@ src/
 ├── components/                   Composants UI et composants par fonctionnalité
 ├── lib/
 │   ├── activities.ts             Catalogue et algorithme de correspondance
+│   ├── seo/                      Métadonnées, sitemap, builders JSON-LD (jsonld.ts) et contenus de FAQ (faq.ts)
 │   ├── tax.ts                    Taux, plafonds et calculs fiscaux
 │   ├── ai.ts                     Sélection du fournisseur d'IA
 │   ├── platforms.ts              Plateformes et quota gratuit
@@ -241,6 +243,15 @@ Ollama ne fonctionne pas sur un hébergement type Vercel : en production, utilis
 
 `src/data/cities.json` est généré par `python3 scripts/build-city-data.py` (nécessite `openpyxl`) à partir de `data/raw/` : populations légales INSEE (20 plus grandes communes, Paris, Lyon et Marseille agrégées par arrondissements), « Dossier complet » INSEE (recensement 2023 et Filosofi, extrait par `scripts/extract-dossier-complet.py`) et enquête BMO de France Travail (2024 et 2025, par bassin d'emploi). Ne pas éditer le JSON à la main. Une page `/activites/[slug]/[ville]` n'est générée que si la ville a au moins un projet de recrutement dans les métiers rattachés à l'activité (voir `GROUPS` dans le script). Le millésime BMO 2026 et la base des équipements par commune ne sont pas utilisés (voir `TASKS.md`, T11).
 
+**Régénérer les données** : (1) télécharger les fichiers listés dans `sources` de `src/data/cities.json` (INSEE populations légales : https://www.insee.fr/fr/statistiques/6683035 ; INSEE Dossier complet : https://www.insee.fr/fr/statistiques/5359146 ; France Travail BMO : https://statistiques.francetravail.org/bmo) dans `data/raw/` sous les noms attendus par `scripts/build-city-data.py` ; (2) `python3 scripts/extract-dossier-complet.py` si le Dossier complet change ; (3) `pip install openpyxl && python3 scripts/build-city-data.py`. Le script est déterministe : relancé sur les fichiers actuels, il reproduit le JSON à l'identique. La date de téléchargement (`downloadedOn`) est affichée sur chaque page ville et sert de `lastmod` au sitemap : la mettre à jour dans le script lors d'un nouveau téléchargement. Pour ajouter une ville, il faut une donnée locale réelle (population, Dossier complet, bassin BMO) ; une combinaison activité × ville sans projet de recrutement répond `404` et est absente du sitemap.
+
+## SEO
+
+- **Sitemap** (`src/app/sitemap.ts`) : `lastmod` réel, sans `priority`. Pages ville et hubs ville : date de téléchargement des données ; guides : date de mise à jour du contenu (`updated` dans `src/lib/guides.ts`) ; pages statiques : date de build. Les pages légales sont en `noindex, follow` et absentes du sitemap.
+- **Robots** (`src/app/robots.ts`) : `Allow: /` sur le contenu public, `Disallow` sur `/dashboard /login /auth /onboarding /api`. Les bots d'IA (GPTBot, OAI-SearchBot, ClaudeBot, Claude-SearchBot, PerplexityBot, Google-Extended) ont une règle explicite identique à `*`. Pour les bloquer, retirer le bot de `AI_BOTS` dans `src/lib/seo/index.ts` et ajouter un `Disallow: /` dédié. Une page déjà crawlée se désindexe avec `robots: { index: false, follow: true }` (`NOINDEX`), jamais avec `Disallow`.
+- **JSON-LD** : tous les builders sont dans `src/lib/seo/jsonld.ts` (fonctions pures ; `<` échappé à la sérialisation). `Organization` et `SoftwareApplication` (accueil), `BreadcrumbList` (pages publiques), `FAQPage` (accueil, tarifs, simulateur, hubs activité, pages activité × ville, et guides qui définissent un champ `faq`), `Article` (guides), `WebApplication` (simulateur). Les réponses des `FAQPage` sont celles affichées sur la page (`src/lib/seo/faq.ts`, `src/components/marketing/faq.tsx`).
+- **Tests** : `npm test` couvre les builders JSON-LD, le sitemap, robots, les FAQ, `tax.ts` et `activities.ts`.
+
 ## Mesure d'audience
 
 Mesure interne, sans cookie, sans outil tiers : table `analytics_events` (migration `0004_analytics_events.sql`), écrite uniquement par le service role. Un événement = nom, page, propriétés non personnelles (`source`, `offer`, `platform`, `activity`). Aucun identifiant utilisateur, aucune adresse IP, aucun agent utilisateur. Les signaux « Do Not Track » et « Global Privacy Control » désactivent l'envoi navigateur.
@@ -249,13 +260,15 @@ Mesure interne, sans cookie, sans outil tiers : table `analytics_events` (migrat
 |---|---|---|
 | `simulator_view` | navigateur | affichage du simulateur |
 | `simulation_completed` | navigateur | première modification d'un paramètre du simulateur |
+| `diagnostic_started` | navigateur | première interaction avec le diagnostic (`/onboarding`) |
+| `diagnostic_completed` | navigateur | diagnostic terminé (recommandations affichées) |
 | `paywall_click` | navigateur | clic sur « Voir les packs et abonnements » depuis la limite d'annonces |
 | `signup` | serveur | retour d'authentification d'un compte créé depuis moins de 2 minutes |
 | `listing_generated` | serveur | annonce enregistrée |
 | `checkout_started` | serveur | session Stripe Checkout créée |
 | `payment_success` | serveur | webhook Stripe de paiement confirmé |
 
-`/api/track` n'accepte que les trois événements navigateur. Entonnoir sur 30 jours :
+`/api/track` n'accepte que les cinq événements navigateur. Entonnoir visite → diagnostic → inscription → 1ʳᵉ annonce → paiement : `diagnostic_started`, `diagnostic_completed`, `signup`, `listing_generated`, `payment_success`. Les visites de pages ne sont pas mesurées (aucun traceur) ; aucun outil d'analytics tiers n'est chargé, donc aucun bandeau de consentement n'est requis. Entonnoir sur 30 jours :
 
 ```sql
 select name, count(*) from analytics_events
