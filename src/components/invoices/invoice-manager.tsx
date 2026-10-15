@@ -29,12 +29,15 @@ function NewInvoiceDialog({ issuer }: { issuer: Issuer }) {
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
+    // Tolère « 25€ », « 25 € » ou « 25,50 » : ne garde que chiffres et séparateur décimal.
+    const amount = Number(String(f.get("amount")).replace(/[^\d.,]/g, "").replace(",", "."));
+    if (!Number.isFinite(amount) || amount <= 0) return toast("Montant invalide : saisissez un nombre, par exemple 25 ou 25,50.", "error");
     startTransition(async () => {
       const res = await createInvoice({
         documentType: type,
         clientName: String(f.get("clientName")),
         description: String(f.get("description")),
-        amount: Number(String(f.get("amount")).replace(",", ".")),
+        amount,
         issueDate: String(f.get("issueDate")),
         issuerName: String(f.get("issuerName")),
         issuerSiret: String(f.get("issuerSiret")),
