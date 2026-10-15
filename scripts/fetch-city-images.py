@@ -6,7 +6,8 @@ Clé API : variable d'environnement UNSPLASH_ACCESS_KEY (jamais dans le dépôt)
 pas par le site : les pages lisent le JSON généré, sans appel à l'API à l'exécution.
 
 Étapes (stdlib seule) :
-  1. python3 scripts/fetch-city-images.py search
+  1. python3 scripts/fetch-city-images.py search [slug ...]
+     (avec des slugs : ne relance que ces villes, ex. `search saint-denis-reunion`)
      Cherche des photos pour chacune des villes de src/data/cities.json, écrit
      data/unsplash/candidates.json et une planche de contact data/unsplash/candidates.html
      (à ouvrir dans un navigateur). Si scripts/city-images-selection.json n'existe pas, y écrit un brouillon
@@ -38,9 +39,9 @@ PER_CITY = 8
 
 # Requêtes plus précises que « <ville> France » quand le nom est ambigu ou peu photographié.
 QUERY_OVERRIDES = {
-    "saint-denis": "Saint-Denis La Réunion",
+    "saint-denis-reunion": "Saint-Denis La Réunion île",
     "villeurbanne": "Villeurbanne Lyon",
-    "saint-etienne": "Saint-Étienne France ville",
+    "saint-etienne": "Saint-Etienne Loire",
     "le-havre": "Le Havre port",
 }
 
@@ -69,10 +70,14 @@ def load_cities():
     return json.loads(CITIES.read_text(encoding="utf-8"))["cities"]
 
 
-def search():
+def search(only=None):
+    """only : liste de slugs à (re)chercher ; les autres villes gardent leurs candidats et leur sélection."""
     WORK.mkdir(parents=True, exist_ok=True)
-    candidates = {}
+    candidates_file = WORK / "candidates.json"
+    candidates = json.loads(candidates_file.read_text(encoding="utf-8")) if only and candidates_file.exists() else {}
     for city in load_cities():
+        if only and city["slug"] not in only:
+            continue
         query = QUERY_OVERRIDES.get(city["slug"], f"{city['name']} France")
         data = call("/search/photos", {"query": query, "per_page": PER_CITY, "orientation": "landscape", "content_filter": "high"})
         candidates[city["slug"]] = {
@@ -111,10 +116,13 @@ def search():
     )
     (WORK / "candidates.html").write_text(html, encoding="utf-8")
 
-    if not SELECTION.exists():
-        draft = {slug: c["photos"][0]["id"] for slug, c in candidates.items() if c["photos"]}
-        SELECTION.write_text(json.dumps(draft, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        print(f"Brouillon de sélection écrit : {SELECTION.relative_to(ROOT)} (première photo de chaque ville, à relire).")
+    draft = json.loads(SELECTION.read_text(encoding="utf-8")) if SELECTION.exists() else {}
+    for slug, c in candidates.items():
+        # Sans argument : ne touche pas à une sélection existante. Avec des slugs : remet la première photo des villes citées.
+        if c["photos"] and (slug in (only or []) or slug not in draft):
+            draft[slug] = c["photos"][0]["id"]
+    SELECTION.write_text(json.dumps(draft, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"Brouillon de sélection : {SELECTION.relative_to(ROOT)} (première photo par ville, à relire).")
     print(f"Planche de contact : {(WORK / 'candidates.html').relative_to(ROOT)}")
 
 
@@ -152,7 +160,7 @@ def build():
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     if cmd == "search":
-        search()
+        search(sys.argv[2:] or None)
     elif cmd == "build":
         build()
     else:
