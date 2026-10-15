@@ -6,13 +6,14 @@ import { MONTHLY_PLAN_DAILY_LISTINGS, PACK_LISTING_CREDITS } from "@/lib/platfor
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
-import { Check, Rocket, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Offers } from "@/components/pricing/offers";
 import { FREE_MONTHLY_LISTINGS } from "@/lib/platforms";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { SiteHeader } from "@/components/marketing/site-header";
 
 export const metadata = pageMetadata({ title: "Tarifs Compléo : complément de salaire, gratuit, pack ou abonnement", description: "Pour lancer une activité complémentaire près de chez vous, comparez l'offre gratuite, le pack ponctuel, le pack mensuel et l'abonnement annuel de Compléo : annonces IA, simulateur du net et factures PDF.", path: "/pricing" });
 
@@ -47,8 +48,8 @@ export default async function PricingPage() {
   return (
     <>
     <BreadcrumbJsonLd path="/pricing" />
+      <SiteHeader />
       <main className="container max-w-4xl py-10">
-      <Link href="/" className="mb-8 flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
       <h1 className="text-3xl font-bold">Tarifs : lancez votre complément de salaire à petit prix</h1>
       <p className="mt-2 text-muted-foreground">Commencez gratuitement votre activité complémentaire, puis choisissez un pack ou un abonnement quand vous avez besoin de plus d'annonces pour toucher les clients de votre ville.</p>
 

@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Rocket } from "lucide-react";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { LEGAL } from "@/lib/legal";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { SiteHeader } from "@/components/marketing/site-header";
 
 export function LegalSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -17,8 +17,8 @@ export function LegalPage({ title, path, children }: { title: string; path: stri
   return (
     <>
       <BreadcrumbJsonLd path={path} />
+      <SiteHeader />
       <main className="container max-w-3xl space-y-8 py-10">
-        <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>
           <h1 className="text-3xl font-bold">{title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">Dernière mise à jour : {LEGAL.lastUpdate}</p>

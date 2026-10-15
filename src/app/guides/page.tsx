@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { Rocket } from "lucide-react";
 import { GUIDES, guidePath } from "@/lib/guides";
 import { pageMetadata } from "@/lib/seo";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GuideVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { SiteHeader } from "@/components/marketing/site-header";
 
 export const metadata = pageMetadata({
   title: "Guides complément de salaire : démarrer une activité complémentaire",
@@ -17,8 +17,8 @@ export default function GuidesIndexPage() {
   return (
     <>
       <BreadcrumbJsonLd path="/guides" />
+      <SiteHeader />
       <main className="container max-w-3xl space-y-8 py-10">
-        <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>
           <h1 className="text-3xl font-bold">Guides pour votre complément de salaire</h1>
           <p className="mt-2 text-muted-foreground">Des guides pratiques pour démarrer une activité complémentaire près de chez vous : annonces, micro-entreprise, TVA, devis et cumul.</p>

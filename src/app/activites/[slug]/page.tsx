@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Info, Rocket } from "lucide-react";
+import { Info } from "lucide-react";
 import {
   ACTIVITIES, activitySlug, equipmentLabel, findActivityBySlug, formatRate, monthlyIncomeRange, regimeOf, relatedActivities,
 } from "@/lib/activities";
@@ -20,6 +20,7 @@ import { UrbanSheet } from "@/components/activities/urban-sheet";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { Simulator } from "@/components/simulator/simulator";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
 
@@ -68,8 +69,8 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
         path={path}
         items={[{ name: "Activités", path: "/activites" }, { name: activity.title, path }]}
       />
+      <SiteHeader />
       <main className="container max-w-4xl space-y-10 py-10">
-        <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
 
         <ActivityVisual activityId={activity.id} size="hero" />
 

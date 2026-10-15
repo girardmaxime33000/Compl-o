@@ -4,11 +4,12 @@ import { FaqSection } from "@/components/marketing/faq";
 import { simulatorFaq } from "@/lib/seo/faq";
 import { eur, simulate, TAX_PARAMS } from "@/lib/tax";
 import Link from "next/link";
-import { Info, Rocket } from "lucide-react";
+import { Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Simulator } from "@/components/simulator/simulator";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { SiteHeader } from "@/components/marketing/site-header";
 
 const TITLE = "Simulateur micro-entrepreneur : calculez votre net";
 const DESCRIPTION =
@@ -34,8 +35,8 @@ export default function PublicSimulatorPage() {
     <>
       <BreadcrumbJsonLd path="/simulateur-micro-entrepreneur" />
       <WebApplicationJsonLd name="Simulateur micro-entrepreneur : net dans la poche" description={DESCRIPTION} path="/simulateur-micro-entrepreneur" />
+      <SiteHeader />
       <main className="container space-y-6 py-10">
-        <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>
           <h1 className="text-3xl font-bold">Simulateur micro-entrepreneur : votre net dans la poche</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">

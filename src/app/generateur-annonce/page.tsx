@@ -1,10 +1,10 @@
 import { pageMetadata } from "@/lib/seo";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import Link from "next/link";
-import { Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ListingDemo } from "@/components/listings/demo";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { SiteHeader } from "@/components/marketing/site-header";
 
 const TITLE = "Exemples d'annonces de services pour micro-activité";
 const DESCRIPTION =
@@ -16,8 +16,8 @@ export default function ListingDemoPage() {
   return (
     <>
       <BreadcrumbJsonLd path="/generateur-annonce" />
+      <SiteHeader />
       <main className="container max-w-3xl space-y-8 py-10">
-        <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>
           <h1 className="text-3xl font-bold">Exemples d'annonces pour votre micro-activité</h1>
           <p className="mt-2 text-muted-foreground">

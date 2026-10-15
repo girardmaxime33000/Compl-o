@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Info, Rocket } from "lucide-react";
+import { Info } from "lucide-react";
 import { activitySlug, findActivityBySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
 import {
   activitiesForCity, BMO_PREVIOUS_YEAR, BMO_YEAR, bmoEvolution, bmoFor, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA,
@@ -18,6 +18,7 @@ import { cityPhoto } from "@/lib/city-images";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { Button } from "@/components/ui/button";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
 
@@ -76,8 +77,8 @@ export default function CityActivityPage({ params }: { params: { slug: string; v
           { name: city.name, path },
         ]}
       />
+      <SiteHeader />
       <main className="container max-w-4xl space-y-10 py-10">
-        <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
 
         {cityPhoto(city) ? <CityPhoto city={city} priority /> : <ActivityVisual activityId={activity.id} size="hero" className="h-32 sm:h-36" />}
 

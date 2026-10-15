@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Rocket } from "lucide-react";
 import { DEFAULT_CTA, findGuide, GUIDES, guidePath } from "@/lib/guides";
 import { pageMetadata } from "@/lib/seo";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
@@ -8,6 +7,7 @@ import { FaqSection } from "@/components/marketing/faq";
 import { Button } from "@/components/ui/button";
 import { GuideVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
 
@@ -33,8 +33,8 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
     <>
       <BreadcrumbJsonLd path={guidePath(guide)} items={[{ name: "Guides", path: "/guides" }, { name: guide.title, path: guidePath(guide) }]} />
       <ArticleJsonLd title={guide.title} description={guide.description} path={guidePath(guide)} published={guide.published} updated={guide.updated} imagePath={`${guidePath(guide)}/opengraph-image`} />
+      <SiteHeader />
       <main className="container max-w-3xl space-y-8 py-10">
-        <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>
           <p className="text-sm text-muted-foreground"><Link href="/guides" className="underline">Guides</Link> / {guide.title}</p>
           <h1 className="mt-1 text-3xl font-bold">{guide.title}</h1>

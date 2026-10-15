@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Rocket } from "lucide-react";
 import { activitySlug, formatRate } from "@/lib/activities";
 import {
   activitiesForCity, BMO_YEAR, bmoFor, CITIES, CITY_DATA, cityActivityPath, cityPath, findCity,
@@ -11,6 +10,7 @@ import { PublicCtas } from "@/components/marketing/ctas";
 import { CityPhoto } from "@/components/marketing/city-photo";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
 
@@ -41,8 +41,8 @@ export default function CityHubPage({ params }: { params: { ville: string } }) {
   return (
     <>
       <BreadcrumbJsonLd path={path} items={[{ name: "Activités", path: "/activites" }, { name: city.name, path }]} />
+      <SiteHeader />
       <main className="container max-w-4xl space-y-8 py-10">
-        <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <CityPhoto city={city} priority />
 
         <div>

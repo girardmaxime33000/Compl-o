@@ -1,9 +1,9 @@
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { legalMetadata } from "@/lib/seo";
 import Link from "next/link";
-import { Rocket } from "lucide-react";
 import { LEGAL } from "@/lib/legal";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { SiteHeader } from "@/components/marketing/site-header";
 
 export const metadata = legalMetadata({ title: "Mentions légales", description: "Mentions légales du site Compléo : éditeur, hébergement, données personnelles et médiation.", path: "/mentions-legales" });
 
@@ -24,8 +24,8 @@ export default function LegalNoticePage() {
   return (
     <>
       <BreadcrumbJsonLd path="/mentions-legales" />
+      <SiteHeader />
       <main className="container max-w-3xl space-y-8 py-10">
-        <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
         <div>
           <h1 className="text-3xl font-bold">Mentions légales</h1>
           <p className="mt-1 text-sm text-muted-foreground">Dernière mise à jour : {LEGAL.lastUpdate}</p>

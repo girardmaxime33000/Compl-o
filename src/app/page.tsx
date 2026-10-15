@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Calculator, FileText, Megaphone, Rocket, Sparkles } from "lucide-react";
+import { ArrowRight, Calculator, FileText, Megaphone, Sparkles } from "lucide-react";
 import { OrganizationJsonLd } from "@/components/seo/json-ld";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaqSection } from "@/components/marketing/faq";
 import { PublicCtas } from "@/components/marketing/ctas";
 import { ActivityVisual } from "@/components/marketing/visuals";
+import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { ACTIVITIES, activitySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
 import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityActivityPath, cityPath } from "@/lib/cities";
@@ -78,16 +79,10 @@ export default function HomePage() {
   ];
 
   return (
-    <main>
+    <>
       <OrganizationJsonLd />
-      <header className="container flex h-14 items-center justify-between">
-        <span className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</span>
-        <nav className="flex items-center gap-1">
-          <Button asChild variant="ghost" size="sm"><Link href="/simulateur-micro-entrepreneur">Simulateur</Link></Button>
-          <Button asChild variant="ghost" size="sm"><Link href="/pricing">Tarifs</Link></Button>
-          <Button asChild size="sm"><Link href="/login">Connexion</Link></Button>
-        </nav>
-      </header>
+      <SiteHeader />
+      <main>
 
       <section className="container grid items-center gap-10 py-12 md:grid-cols-2 md:py-20">
         <div className="text-center md:text-left">
@@ -247,6 +242,7 @@ export default function HomePage() {
         </div>
       </section>
       <SiteFooter />
-    </main>
+      </main>
+    </>
   );
 }

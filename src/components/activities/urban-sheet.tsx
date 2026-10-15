@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Info, Rocket } from "lucide-react";
+import { Info } from "lucide-react";
 import type { EquipmentLine, PriceLine, UrbanActivity } from "@/lib/urban-activities";
 import { publishedUrbanActivities } from "@/lib/urban-activities";
 import { cmaNotice, computeMonthlyNetIncome, renderAd } from "@/lib/urban-income";
@@ -10,6 +10,7 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { UrbanPlanner } from "@/components/activities/urban-planner";
+import { SiteHeader } from "@/components/marketing/site-header";
 
 const fmt = (n: number) => new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }).format(n);
 const range = (min: number, max: number) => (min === max ? `${fmt(min)}` : `${fmt(min)} à ${fmt(max)}`);
@@ -48,8 +49,8 @@ export function UrbanSheet({ activity }: { activity: UrbanActivity }) {
   return (
     <>
       <BreadcrumbJsonLd path={path} items={[{ name: "Activités", path: "/activites" }, { name: activity.name, path }]} />
+      <SiteHeader />
       <main className="container max-w-4xl space-y-10 py-10">
-        <Link href="/" className="flex items-center gap-2 font-bold text-primary"><Rocket className="h-5 w-5" /> Compléo</Link>
 
         <div>
           <p className="text-sm text-muted-foreground"><Link href="/activites" className="underline">Activités</Link> / {activity.name}</p>

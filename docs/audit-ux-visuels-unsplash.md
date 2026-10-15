@@ -204,7 +204,7 @@ Données : généraliser `src/data/city-images.json` en `src/data/images.json` (
 |---|---|---|---|
 | V1 | Pipeline | Étendre le script, catalogue de requêtes, exécution `search`, revue de la planche, `build`. Commit du JSON. | Clé API (propriétaire) |
 | V2 | Fondations | `unsplashLoader`, composant `Photo`, `PhotoCredits`, page « Crédits photos », tests | V1 |
-| V3 | Navigation | `SiteHeader` partagé, CTA primaire, `StickyCta` mobile, application aux pages publiques | aucune (peut démarrer sans V1) |
+| V3 | Navigation | `SiteHeader` partagé, CTA primaire, application aux pages publiques : fait (`src/components/marketing/site-header.tsx`). Reste : `StickyCta` mobile | aucune (peut démarrer sans V1) |
 | V4 | Hero accueil | Photo + `HeroShowcase`, micro-texte de réassurance en pastilles | V2 |
 | V5 | Activités | Cartes accueil, `/activites`, `/activites/[slug]`, tuiles `/villes/[ville]` | V2 |
 | V6 | Onboarding | Cartes de choix photo, résultat illustré | V2 |
