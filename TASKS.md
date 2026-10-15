@@ -137,13 +137,14 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - notes: demandé par le propriétaire le 2026-10-15 après réception d'une facture de test (PDF et e-mail jugés trop neutres). À faire après la création du SIRET de Compléo : logo, bandeau et pied de page des PDF (`src/components/invoices/invoice-pdf.tsx`, `src/components/simulator/simulation-pdf.tsx`), gabarit HTML des e-mails (`src/lib/email-templates.ts`), mention « Document créé avec Compléo » avec lien, e-mail de contact `maxime@compleo.work`. Décision propriétaire requise : logo et charte (fichiers fournis ou à créer). Question à trancher : le pied de page de Compléo apparaît-il sur les factures des utilisateurs (visibilité de la marque, mais peut gêner l'utilisateur) ; option réservée au plan gratuit.
 
 ### T15 RGPD
-- statut: blocked
+- statut: done (test réel confirmé par le propriétaire le 2026-10-15 ; détail des constats non communiqué)
 - dépend de: -
 - branche: claude/new-session-og6dhq
 - critères d'acceptation: suppression de compte et export des données.
 - vérifications faites / non faites: typecheck, lint, build OK (2026-10-14). `next start` : `GET /api/account/export` sans session 401 ; `/dashboard/account` sans session redirige (307). NON fait : export réel (contenu du JSON), suppression réelle d'un compte de test (Stripe client supprimé, utilisateur Supabase supprimé, cascade profil/annonces/factures/compétences), refus de la suppression sans le mot de confirmation côté serveur (code écrit, non exécuté).
 - notes: `/dashboard/account` (lien dans l'en-tête du dashboard) ; `GET /api/account/export` (JSON : compte, profil, compétences, annonces, factures, via la session de l'utilisateur donc sous RLS) ; action serveur `deleteAccount` : confirmation « SUPPRIMER », suppression du client Stripe (résilie les abonnements ; en cas d'échec on s'arrête), puis `auth.admin.deleteUser` (cascade). Les crédits d'annonces non utilisés sont perdus (affiché). Les événements d'audience sont anonymes et non rattachés au compte. Politique de confidentialité mise à jour (texte en brouillon). Les factures émises par l'utilisateur sont supprimées avec le compte : si l'utilisateur doit les conserver légalement, l'export est son recours (à signaler dans les CGU si besoin).
-- bloqué / à faire par le propriétaire : tester avec un compte de test (achat de pack puis suppression, vérifier dans Stripe et dans Supabase Auth).
+- test réel : export et suppression d'un compte de test effectués par le propriétaire, déclarés conformes (« T15 c'est ok »). Non détaillé : contenu du JSON exporté, suppression côté Stripe (le test a-t-il porté sur un compte avec achat ?), rejet de la suppression sans mot de confirmation. À reprendre avec un achat de pack avant le passage en live si ces points n'ont pas été contrôlés.
+- e-mails (T14) : le journal `email_log` est supprimé en cascade avec le profil mais n'est pas inclus dans l'export JSON ; à ajouter si l'on souhaite un export exhaustif.
 
 ### T16 Tests
 - statut: done
