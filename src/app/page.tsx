@@ -95,7 +95,7 @@ export default function HomePage() {
             Complément de salaire : <span className="text-success">activités et services près de chez vous</span>
           </h1>
           <p className="mt-4 text-muted-foreground md:text-lg">
-            Trouvez l'activité complémentaire qui vous correspond près de chez vous, estimez votre net après cotisations et rédigez votre annonce en quelques minutes.
+            Répondez à trois questions : nous vous proposons des activités simples à faire près de chez vous, puis nous vous aidons à écrire votre annonce.
           </p>
           <PublicCtas className="mt-8 flex flex-col justify-center gap-3 sm:flex-row md:justify-start" />
           <p className="mt-3 text-sm text-muted-foreground">
