@@ -205,7 +205,7 @@ Données : généraliser `src/data/city-images.json` en `src/data/images.json` (
 | V1 | Pipeline | Étendre le script, catalogue de requêtes, exécution `search`, revue de la planche, `build`. Commit du JSON. | Clé API (propriétaire) |
 | V2 | Fondations | `Photo` générique (`src/components/marketing/photo.tsx`), `photoSrcSet` et ratios (`city-images.ts`), `PhotoCredits` et page `/credits-photos` (noindex, liée au pied de page), tests : fait. `CityPhoto` migré sur `Photo`. Reste : clés non-villes (dépend de V1) | V1 |
 | V3 | Navigation | `SiteHeader` partagé, CTA primaire, application aux pages publiques : fait (`src/components/marketing/site-header.tsx`). Reste : `StickyCta` mobile | aucune (peut démarrer sans V1) |
-| V4 | Hero accueil | Photo + `HeroShowcase`, micro-texte de réassurance en pastilles | V2 |
+| V4 | Hero accueil | `HeroShowcase` (cartes exemple d'annonce et exemple de calcul alimentées par `simulate()`), pastilles de réassurance, emplacement `hero:home` (`src/data/site-images.json`) : fait. Photo non sélectionnée (dépend de V1, clé API) : panneau coloré en attendant | V2 |
 | V5 | Activités | Cartes accueil, `/activites`, `/activites/[slug]`, tuiles `/villes/[ville]` | V2 |
 | V6 | Onboarding | Cartes de choix photo, résultat illustré | V2 |
 | V7 | Villes | Pipeline villes exécuté (20/20, commits `b3ec49a`, `8c4a480`). Reste : relecture visuelle des 20 photos, champ `color`, tuiles de villes sur l'accueil, repli par photo d'activité | fait / V2 |

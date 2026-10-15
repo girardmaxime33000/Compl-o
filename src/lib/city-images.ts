@@ -34,6 +34,8 @@ export type UnsplashPhoto = CityPhoto;
 export const PHOTO_RATIOS = {
   /** Bandeau de page (ville, activité). */
   banner: 2.5,
+  /** Hero de l'accueil. */
+  hero: 4 / 3,
   /** Carte. */
   card: 3 / 2,
   /** Tuile carrée. */

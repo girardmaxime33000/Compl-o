@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Calculator, FileText, Megaphone, Sparkles } from "lucide-react";
+import { ArrowRight, Calculator, Check, FileText, Megaphone, Sparkles } from "lucide-react";
 import { OrganizationJsonLd } from "@/components/seo/json-ld";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaqSection } from "@/components/marketing/faq";
 import { PublicCtas } from "@/components/marketing/ctas";
 import { ActivityVisual } from "@/components/marketing/visuals";
+import { HeroShowcase } from "@/components/marketing/hero-showcase";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { ACTIVITIES, activitySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
 import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityActivityPath, cityPath } from "@/lib/cities";
 import { GUIDES, guidePath } from "@/lib/guides";
+import { sitePhoto } from "@/lib/site-images";
 import { homeFaq } from "@/lib/seo/faq";
 import { eur, simulate, TAX_PARAMS } from "@/lib/tax";
 
@@ -65,6 +67,9 @@ const TOP_PAIRS = [...CITY_ACTIVITY_PAIRS]
   .filter((p, i, all) => all.findIndex((q) => q.city.slug === p.city.slug) === i)
   .slice(0, 12);
 
+/** Activité de l'exemple d'annonce du hero : la première du catalogue. */
+const HERO_ACTIVITY = ACTIVITIES[0];
+
 const SIM_EXAMPLE_REVENUE = 500;
 const SIM_EXAMPLE_REGIME = "bic" as const;
 
@@ -93,18 +98,16 @@ export default function HomePage() {
             Répondez à trois questions : nous vous proposons des activités simples à faire près de chez vous, puis nous vous aidons à écrire votre annonce.
           </p>
           <PublicCtas className="mt-8 flex flex-col justify-center gap-3 sm:flex-row md:justify-start" />
-          <p className="mt-3 text-sm text-muted-foreground">
-            Diagnostic gratuit, sans inscription ni carte bancaire. <Link href="/pricing" className="underline">Voir les tarifs</Link>
-          </p>
+          <ul className="mt-4 flex flex-wrap justify-center gap-2 text-sm md:justify-start" aria-label="Ce que comprend le diagnostic">
+            {["Diagnostic gratuit", "Sans inscription", "Sans carte bancaire"].map((label) => (
+              <li key={label} className="flex items-center gap-1.5 rounded-full border bg-card px-3 py-1">
+                <Check className="h-3.5 w-3.5 text-success" aria-hidden="true" /> {label}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-sm text-muted-foreground"><Link href="/pricing" className="underline">Voir les tarifs</Link></p>
         </div>
-        <Image
-          src="/images/hero-compleo.svg"
-          alt="Illustration : une idée d'activité, une annonce et une facture prêtes à l'emploi"
-          width={640}
-          height={440}
-          priority
-          className="mx-auto h-auto w-full max-w-md rounded-2xl md:max-w-none"
-        />
+        {HERO_ACTIVITY && <HeroShowcase photo={sitePhoto("hero:home")} activity={HERO_ACTIVITY} example={example} />}
       </section>
 
       <section className="container space-y-6 pb-16" aria-labelledby="comment">
