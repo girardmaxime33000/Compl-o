@@ -21,6 +21,7 @@ import { ActivityVisual } from "@/components/marketing/visuals";
 import { Simulator } from "@/components/simulator/simulator";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { StickyCta } from "@/components/marketing/sticky-cta";
+import { ContentCta } from "@/components/marketing/content-cta";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
@@ -89,6 +90,8 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
             </p>
           )}
         </div>
+
+        <ContentCta />
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold">Complément de salaire estimé selon votre temps disponible</h2>

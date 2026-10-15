@@ -11,6 +11,7 @@ import { CityPhoto } from "@/components/marketing/city-photo";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { StickyCta } from "@/components/marketing/sticky-cta";
+import { ContentCta } from "@/components/marketing/content-cta";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
@@ -55,6 +56,8 @@ export default function CityHubPage({ params }: { params: { ville: string } }) {
             bassin d'emploi « {city.bassin} ».
           </p>
         </div>
+
+        <ContentCta />
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold">Activités complémentaires avec repères locaux à {city.name}</h2>

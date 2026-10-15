@@ -72,7 +72,7 @@ Limite de l'en-tête : il ne lit pas la session (pour garder les pages statiques
 | Gravité | Constat | État |
 |---|---|---|
 | M | Bandeau dégradé sans information | Câblé (V5, V8) : photo d'activité ou de guide, ratio fixe, hauteur plafonnée |
-| M | Pas de CTA au-dessus de la ligne de flottaison | Partiel : l'en-tête partagé porte le CTA. Pas d'encart latéral ni de barre fixe |
+| M | Pas de CTA au-dessus de la ligne de flottaison | Fait : l'en-tête partagé porte le CTA, et `ContentCta` (encart pleine largeur sous l'introduction, une seule action : le diagnostic) figure sur les fiches activité, activité × ville, activités urbaines, villes et guides. Choix : encart en ligne plutôt que colonne latérale, pour garder la même mise en page à toutes les largeurs. Rendu non vérifié dans un navigateur |
 | m | Tableaux de revenu sans visualisation | Non fait |
 
 ### 2.5 Pricing et login
@@ -126,7 +126,7 @@ Tuiles de villes sur l'accueil (8), champ `color` géré (type, fond avant charg
 Guides (`guide:<slug>`), `PhotoBanner` (`cta:final`), colonne du login (`login`), deux mentions de réassurance sur `/pricing`.
 
 ### V9 : mesure
-Événements `home_view` (propriété `visual` : `photo` ou `none`) et `cta_click` (`source` : header, hero, final, sticky, page ; `target` : diagnostic, simulateur, login). `TrackedLink`, `HomeViewTracker`. Les signaux « Do Not Track » et « Global Privacy Control » désactivent toujours l'envoi. Le README décrit les événements et une requête SQL de comparaison avec et sans photo. Seules les vues de l'accueil sont comptées. Un clic n'est pas rattaché à une visite : le rapport clics sur vues est approximatif.
+Événements `home_view` (propriété `visual` : `photo` ou `none`) et `cta_click` (`source` : header, hero, final, sticky, encart, page ; `target` : diagnostic, simulateur, login). `TrackedLink`, `HomeViewTracker`. Les signaux « Do Not Track » et « Global Privacy Control » désactivent toujours l'envoi. Le README décrit les événements et une requête SQL de comparaison avec et sans photo. Seules les vues de l'accueil sont comptées. Un clic n'est pas rattaché à une visite : le rapport clics sur vues est approximatif.
 
 ## 4. Conformité aux directives de l'API Unsplash
 
@@ -152,7 +152,7 @@ Images de partage (OG) non faites : incorporer une photo dans un PNG statique g�
 5. Relire visuellement les 20 photos de villes (cas à regarder : Villeurbanne, Saint-Denis de La Réunion, Toulon, Le Havre ; deux photos du même photographe pour Dijon et Lille).
 6. Lancer Lighthouse mobile avant et après sur l'accueil, une page activité, une page ville, `/onboarding` : LCP, CLS, poids des images.
 7. Vérifier à la main dans un navigateur (360 px et ≥ 1024 px) : superposition des deux cartes du hero, lisibilité du CTA final sur photo, colonne photo du login, cartes de l'onboarding.
-8. Non fait, par ordre de gain attendu : encart de CTA sur les pages de contenu, barres de visualisation des tableaux de revenu, optimisation du bundle de `/onboarding`.
+8. Non fait, par ordre de gain attendu : barres de visualisation des tableaux de revenu, optimisation du bundle de `/onboarding`.
 
 ## 6. Décisions requises du propriétaire
 

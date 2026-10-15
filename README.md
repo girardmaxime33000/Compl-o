@@ -310,7 +310,7 @@ Mesure interne, sans cookie, sans outil tiers : table `analytics_events` (migrat
 | `diagnostic_started` | navigateur | première interaction avec le diagnostic (`/onboarding`) |
 | `diagnostic_completed` | navigateur | diagnostic terminé (recommandations affichées) |
 | `home_view` | navigateur | chargement de l'accueil (`visual` : `photo` ou `none`, version du hero) |
-| `cta_click` | navigateur | clic sur un bouton d'action : `source` = `header`, `hero`, `final`, `sticky` (barre fixe mobile) ou `page`, `target` = `diagnostic`, `simulateur` ou `login` |
+| `cta_click` | navigateur | clic sur un bouton d'action : `source` = `header`, `hero`, `final`, `sticky` (barre fixe mobile), `encart` (encart des pages de contenu) ou `page`, `target` = `diagnostic`, `simulateur` ou `login` |
 | `paywall_click` | navigateur | clic sur « Voir les packs et abonnements » depuis la limite d'annonces |
 | `signup` | serveur | retour d'authentification d'un compte créé depuis moins de 2 minutes |
 | `listing_generated` | serveur | annonce enregistrée |

@@ -19,6 +19,7 @@ import { ActivityVisual } from "@/components/marketing/visuals";
 import { Button } from "@/components/ui/button";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { StickyCta } from "@/components/marketing/sticky-cta";
+import { ContentCta } from "@/components/marketing/content-cta";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
@@ -94,6 +95,8 @@ export default function CityActivityPage({ params }: { params: { slug: string; v
             {" "}{city.rank}e commune de France par la population.
           </p>
         </div>
+
+        <ContentCta />
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold">Le marché local à {city.name}</h2>

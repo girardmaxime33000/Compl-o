@@ -13,6 +13,7 @@ import { UrbanPlanner } from "@/components/activities/urban-planner";
 import { Photo } from "@/components/marketing/photo";
 import { urbanPhoto } from "@/lib/site-images";
 import { StickyCta } from "@/components/marketing/sticky-cta";
+import { ContentCta } from "@/components/marketing/content-cta";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 const fmt = (n: number) => new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }).format(n);
@@ -72,6 +73,8 @@ export function UrbanSheet({ activity }: { activity: UrbanActivity }) {
             {activity.sapEligibility !== "NONE" && <Badge variant="default">Éligible au crédit d'impôt SAP (sous conditions)</Badge>}
           </div>
         </div>
+
+        <ContentCta />
 
         {notice && (
           <div role="note" className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">

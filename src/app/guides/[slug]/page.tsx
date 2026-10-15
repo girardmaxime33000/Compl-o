@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { GuideVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { StickyCta } from "@/components/marketing/sticky-cta";
+import { ContentCta } from "@/components/marketing/content-cta";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
@@ -41,6 +42,8 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
           <h1 className="mt-1 text-3xl font-bold">{guide.title}</h1>
           <p className="mt-2 text-sm text-muted-foreground">Mis à jour le {fmt(guide.updated)}</p>
         </div>
+
+        <ContentCta />
         <GuideVisual slug={guide.slug} size="hero" />
         <Content />
         {guide.faq && <FaqSection items={guide.faq} />}
