@@ -337,6 +337,12 @@ where created_at > now() - interval '30 days' and name in ('home_view', 'cta_cli
 
 Un clic n'est pas rattaché à une visite (aucun identifiant) : le rapport clics / vues est une approximation, fiable seulement sur des périodes de comparaison de même durée et de trafic comparable.
 
+## Exploitation et maintenance
+
+Environnements, branches, intégration continue, procédure de déploiement et de retour arrière, supervision, sauvegardes, calendrier de maintenance (dont la mise à jour fiscale du 1er janvier) et marche à suivre en cas d'incident : `docs/deploiement-et-maintenance.md`. Variables d'environnement de prévisualisation : `docs/preview-env-checklist.md`. Migration Next 16 : `docs/migration-next-16.md`.
+
+Commandes utiles : `npm run check:env -- --env production|preview|development [--file .env]` (contrôle des variables, échoue sur un mélange d'environnements), `npm run check:photos` (photos Unsplash toujours disponibles), `/api/health` (sonde de disponibilité). Intégration continue : `.github/workflows/ci.yml`.
+
 ## Sécurité
 
 - Row Level Security sur toutes les tables.

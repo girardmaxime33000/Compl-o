@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check:env": "node scripts/check-env.mjs",
+    "check:photos": "node scripts/check-photo-links.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.79",

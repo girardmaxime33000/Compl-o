@@ -1,0 +1,55 @@
+name: CI
+
+# Vérifications minimales avant toute fusion : types, lint, tests, build, tests du script Unsplash.
+# Aucune clé réelle : le build utilise des valeurs factices (les pages statiques n'appellent aucun service).
+on:
+  pull_request:
+  push:
+    branches: ["claude/**", "main"]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_SITE_URL: https://ci.invalid
+      NEXT_PUBLIC_SUPABASE_URL: https://ci.invalid
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tests du script de sélection Unsplash (API simulée)
+        run: python3 -B -m unittest scripts/test_fetch_unsplash_images.py
+
+  audit:
+    # Informatif : une alerte de dépendance ne bloque pas une fusion mais doit rester visible.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm audit --omit=dev --audit-level=high

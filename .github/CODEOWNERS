@@ -1,0 +1,7 @@
+# Relecture demandée automatiquement. Les zones sensibles (paiement, authentification, droits, base) passent par le propriétaire.
+*                                  @girardmaxime33000
+/src/app/api/webhooks/             @girardmaxime33000
+/src/app/api/stripe/               @girardmaxime33000
+/src/lib/supabase/                 @girardmaxime33000
+/src/lib/tax.ts                    @girardmaxime33000
+/supabase/                         @girardmaxime33000
