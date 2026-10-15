@@ -24,7 +24,13 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   ]);
   if (!invoice || !issuer) return NextResponse.json({ error: "Document introuvable." }, { status: 404 });
 
-  const buffer = await renderToBuffer(InvoicePdf({ invoice, issuer }));
+  let buffer: Buffer;
+  try {
+    buffer = await renderToBuffer(InvoicePdf({ invoice, issuer }));
+  } catch (e) {
+    console.error("invoice-pdf render", e);
+    return NextResponse.json({ error: "Génération du PDF impossible." }, { status: 500 });
+  }
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",

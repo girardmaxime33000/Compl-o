@@ -48,7 +48,13 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   }
 
   const number = invoiceNumber(invoice);
-  const pdf = await renderToBuffer(InvoicePdf({ invoice, issuer }));
+  let pdf: Buffer;
+  try {
+    pdf = await renderToBuffer(InvoicePdf({ invoice, issuer }));
+  } catch (e) {
+    console.error("invoice-send pdf render", e);
+    return NextResponse.json({ error: "Génération du PDF impossible." }, { status: 500 });
+  }
   const mail = invoiceEmail({
     number,
     documentLabel: invoice.document_type === "devis" ? "Devis" : "Facture",
