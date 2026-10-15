@@ -2,6 +2,9 @@ import {
   Armchair, Bike, BookOpen, Calculator, Hammer, Languages, Laptop, Megaphone, PawPrint, Receipt, Scale, SprayCan, Sprout,
   Tag, Landmark, Percent, GraduationCap, type LucideIcon,
 } from "lucide-react";
+import { Photo } from "@/components/marketing/photo";
+import type { PhotoRatio, UnsplashPhoto } from "@/lib/city-images";
+import { activityPhoto } from "@/lib/site-images";
 import { cn } from "@/lib/utils";
 
 /**
@@ -40,16 +43,29 @@ const FALLBACK: Theme = { icon: BookOpen, from: "#2563eb", to: "#1e3a8a" };
 
 const SIZES = {
   /** Bandeau de carte. */
-  card: { box: "h-24 rounded-t-lg", icon: "h-10 w-10" },
+  card: {
+    box: "h-24 rounded-t-lg", icon: "h-10 w-10",
+    photo: { ratio: "card" as PhotoRatio, className: "rounded-t-lg", sizes: "(min-width: 768px) 320px, 100vw", credit: "text" as const },
+  },
   /** Petite pastille (listes). */
-  tile: { box: "h-14 w-14 rounded-xl", icon: "h-7 w-7" },
+  tile: {
+    box: "h-14 w-14 rounded-xl", icon: "h-7 w-7",
+    photo: { ratio: "tile" as PhotoRatio, className: "h-14 w-14 shrink-0 rounded-xl", sizes: "56px", credit: "page" as const },
+  },
   /** Bandeau en tête de page. */
-  hero: { box: "h-40 rounded-2xl sm:h-48", icon: "h-16 w-16 sm:h-20 sm:w-20" },
+  hero: {
+    box: "h-40 rounded-2xl sm:h-48", icon: "h-16 w-16 sm:h-20 sm:w-20",
+    photo: { ratio: "banner" as PhotoRatio, className: "rounded-2xl [&_img]:max-h-56 sm:[&_img]:max-h-72", sizes: "(min-width: 896px) 864px, 100vw", credit: "caption" as const },
+  },
 } as const;
 
-function Visual({ theme, size, className }: { theme: Theme; size: keyof typeof SIZES; className?: string }) {
+function Visual({ theme, size, className, photo }: { theme: Theme; size: keyof typeof SIZES; className?: string; photo?: UnsplashPhoto }) {
   const { icon: Icon, from, to } = theme;
   const s = SIZES[size];
+  if (photo) {
+    // Photo décorative : le titre de l'activité est toujours affiché à côté, donc alt vide.
+    return <Photo photo={photo} alt="" priority={size === "hero"} className={cn(s.photo.className, className)} ratio={s.photo.ratio} sizes={s.photo.sizes} credit={s.photo.credit} />;
+  }
   return (
     <div
       aria-hidden="true"
@@ -63,8 +79,9 @@ function Visual({ theme, size, className }: { theme: Theme; size: keyof typeof S
   );
 }
 
-export function ActivityVisual({ activityId, size = "card", className }: { activityId: string; size?: keyof typeof SIZES; className?: string }) {
-  return <Visual theme={ACTIVITY_THEMES[activityId] ?? FALLBACK} size={size} className={className} />;
+/** Photo Unsplash de l'activité si elle a été sélectionnée (`activity:<id>`), sinon dégradé et pictogramme. `photo` force une photo. */
+export function ActivityVisual({ activityId, size = "card", className, photo }: { activityId: string; size?: keyof typeof SIZES; className?: string; photo?: UnsplashPhoto }) {
+  return <Visual theme={ACTIVITY_THEMES[activityId] ?? FALLBACK} size={size} className={className} photo={photo ?? activityPhoto(activityId)} />;
 }
 
 export function GuideVisual({ slug, size = "card", className }: { slug: string; size?: keyof typeof SIZES; className?: string }) {

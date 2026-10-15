@@ -6,6 +6,8 @@ import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
+import { Photo } from "@/components/marketing/photo";
+import { urbanPhoto } from "@/lib/site-images";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 export const metadata = pageMetadata({
@@ -52,7 +54,8 @@ export default function ActivitiesIndexPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             {publishedUrbanActivities().map((a) => (
               <Link key={a.slug} href={`/activites/${a.slug}`} className="block">
-                <Card className="h-full transition-colors hover:bg-accent/50">
+                <Card className="h-full overflow-hidden transition-colors hover:bg-accent/50">
+                  <Photo photo={urbanPhoto(a.slug)} alt="" ratio="card" sizes="(min-width: 768px) 420px, 100vw" credit="text" className="rounded-t-lg" />
                   <CardHeader>
                     <CardTitle as="h3" className="text-lg">{a.name}</CardTitle>
                     <CardDescription>{a.pitch}</CardDescription>

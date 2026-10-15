@@ -2,6 +2,9 @@ import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { PhotoCredits, type PhotoCreditEntry } from "@/components/marketing/photo-credits";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SiteHeader } from "@/components/marketing/site-header";
+import { ACTIVITIES } from "@/lib/activities";
+import { URBAN_ACTIVITIES } from "@/lib/urban-activities";
+import { sitePhotoEntries } from "@/lib/site-images";
 import { CITIES } from "@/lib/cities";
 import { cityPhoto, UNSPLASH_URL } from "@/lib/city-images";
 import { legalMetadata } from "@/lib/seo";
@@ -12,10 +15,21 @@ export const metadata = legalMetadata({
   path: "/credits-photos",
 });
 
-const ENTRIES: PhotoCreditEntry[] = CITIES.flatMap((c) => {
-  const photo = cityPhoto(c);
-  return photo ? [{ label: c.name, photo }] : [];
-});
+function siteLabel(key: string): string {
+  if (key === "hero:home") return "Accueil";
+  const [kind, id = ""] = key.split(":");
+  if (kind === "activity") return ACTIVITIES.find((a) => a.id === id)?.title ?? id;
+  if (kind === "urban") return URBAN_ACTIVITIES.find((a) => a.slug === id)?.name ?? id;
+  return key;
+}
+
+const ENTRIES: PhotoCreditEntry[] = [
+  ...sitePhotoEntries().map(([key, photo]) => ({ label: siteLabel(key), photo })),
+  ...CITIES.flatMap((c) => {
+    const photo = cityPhoto(c);
+    return photo ? [{ label: c.name, photo }] : [];
+  }),
+];
 
 export default function PhotoCreditsPage() {
   return (

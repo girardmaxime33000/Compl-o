@@ -10,6 +10,8 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { UrbanPlanner } from "@/components/activities/urban-planner";
+import { Photo } from "@/components/marketing/photo";
+import { urbanPhoto } from "@/lib/site-images";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 const fmt = (n: number) => new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }).format(n);
@@ -51,6 +53,14 @@ export function UrbanSheet({ activity }: { activity: UrbanActivity }) {
       <BreadcrumbJsonLd path={path} items={[{ name: "Activités", path: "/activites" }, { name: activity.name, path }]} />
       <SiteHeader />
       <main className="container max-w-4xl space-y-10 py-10">
+        <Photo
+          photo={urbanPhoto(activity.slug)}
+          alt=""
+          ratio="banner"
+          sizes="(min-width: 896px) 864px, 100vw"
+          priority
+          className="rounded-2xl [&_img]:max-h-56 sm:[&_img]:max-h-72"
+        />
 
         <div>
           <p className="text-sm text-muted-foreground"><Link href="/activites" className="underline">Activités</Link> / {activity.name}</p>

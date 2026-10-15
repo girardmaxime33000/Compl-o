@@ -17,9 +17,10 @@ interface PhotoProps {
   priority?: boolean;
   /**
    * `caption` : légende sous la photo. `overlay` : pastille discrète sur la photo.
-   * `page` : crédit uniquement sur /credits-photos (fonds décoratifs) ; à réserver aux cas où une légende dégrade la lecture.
+   * `text` : pastille sans lien, pour une photo placée dans un lien (les liens imbriqués sont invalides) ; le crédit lié
+   * figure sur /credits-photos. `page` : crédit uniquement sur /credits-photos (miniatures où aucune pastille ne tient).
    */
-  credit?: "caption" | "overlay" | "page";
+  credit?: "caption" | "overlay" | "text" | "page";
   /** Voile dégradé sous le contenu `children` pour garantir le contraste d'un texte en surimpression. */
   overlay?: boolean;
   /** Rendu quand `photo` est absente (p. ex. le dégradé de `visuals.tsx`). */
@@ -27,6 +28,10 @@ interface PhotoProps {
   /** Contenu superposé (titre, badge). */
   children?: ReactNode;
   className?: string;
+}
+
+function PlainCredit({ photo, className }: { photo: UnsplashPhoto; className?: string }) {
+  return <span className={className}>Photo : {photo.author} / Unsplash</span>;
 }
 
 function Credit({ photo, className }: { photo: UnsplashPhoto; className?: string }) {
@@ -66,6 +71,9 @@ export function Photo({ photo, alt, ratio, sizes, priority = false, credit = "ca
         />
         {overlay && <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />}
         {children && <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">{children}</div>}
+        {credit === "text" && (
+          <PlainCredit photo={photo} className="absolute bottom-1 right-1 max-w-[90%] truncate rounded bg-black/60 px-1.5 py-0.5 text-[11px] text-white" />
+        )}
         {credit === "overlay" && (
           <Credit photo={photo} className="absolute bottom-1 right-1 rounded bg-black/60 px-1.5 py-0.5 text-[11px] text-white [&_a]:text-white" />
         )}
