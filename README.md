@@ -1,6 +1,6 @@
 # Compléo
 
-**Un coup de main près de chez vous, un revenu en plus.**
+**Complément de salaire : activités et services près de chez vous.**
 
 Compléo est une application web (SaaS B2C) qui aide les particuliers urbains en France à rendre service près de chez eux et à en tirer un complément de revenu (estimation selon profil, ville et temps disponible, sans garantie) grâce à une micro-activité : choisir une activité adaptée à son profil, rédiger ses annonces avec une IA, estimer ce qu'il reste après cotisations et émettre ses devis et factures.
 

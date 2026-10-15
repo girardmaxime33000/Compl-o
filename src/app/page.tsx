@@ -9,7 +9,7 @@ import { PublicCtas } from "@/components/marketing/ctas";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { ACTIVITIES, activitySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
-import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityPath } from "@/lib/cities";
+import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityActivityPath, cityPath } from "@/lib/cities";
 import { GUIDES, guidePath } from "@/lib/guides";
 import { homeFaq } from "@/lib/seo/faq";
 import { eur, simulate, TAX_PARAMS } from "@/lib/tax";
@@ -50,6 +50,12 @@ const MAIN_CITIES = CITIES.filter((c) => activitiesForCity(c).length > 0)
   .sort((a, b) => a.rank - b.rank)
   .slice(0, 10);
 
+/** Associations activité × ville avec donnée locale, pour les villes les mieux classées (une activité par ville, puis complétées). */
+const TOP_PAIRS = [...CITY_ACTIVITY_PAIRS]
+  .sort((a, b) => a.city.rank - b.city.rank)
+  .filter((p, i, all) => all.findIndex((q) => q.city.slug === p.city.slug) === i)
+  .slice(0, 12);
+
 const SIM_EXAMPLE_REVENUE = 500;
 const SIM_EXAMPLE_REGIME = "bic" as const;
 
@@ -78,10 +84,10 @@ export default function HomePage() {
       <section className="container grid items-center gap-10 py-12 md:grid-cols-2 md:py-20">
         <div className="text-center md:text-left">
           <h1 className="text-3xl font-bold leading-tight md:text-5xl">
-            Un coup de main près de chez vous, <span className="text-success">un revenu en plus</span>.
+            Complément de salaire : <span className="text-success">activités et services près de chez vous</span>
           </h1>
           <p className="mt-4 text-muted-foreground md:text-lg">
-            Courses, bricolage, ménage, cours particuliers : vos voisins cherchent de l'aide, vous avez du temps et des compétences. Compléo vous aide à choisir une activité dans votre ville, à rédiger votre annonce et à voir ce qu'il vous reste après cotisations.
+            {ACTIVITIES.length} activités complémentaires en micro-entreprise, des données locales pour {CITIES.length} villes : trouvez comment arrondir vos fins de mois avec bricolage, ménage, cours particuliers ou courses, rédigez votre annonce et estimez votre net après cotisations.
           </p>
           <p className="mt-2 text-xs text-muted-foreground">Les revenus dépendent de votre profil, de votre ville et du temps disponible. Aucun revenu n'est garanti.</p>
           <PublicCtas className="mt-8 flex flex-col justify-center gap-3 sm:flex-row md:justify-start" />
@@ -163,7 +169,7 @@ export default function HomePage() {
       </section>
 
       <section className="container space-y-6 pb-16" aria-labelledby="explorer">
-        <h2 id="explorer" className="text-2xl font-bold">Activités et villes à explorer</h2>
+        <h2 id="explorer" className="text-2xl font-bold">Activité complémentaire près de chez vous</h2>
         <div className="grid gap-8 md:grid-cols-2">
           <div>
             <h3 className="mb-2 font-semibold">Activités</h3>
@@ -175,10 +181,17 @@ export default function HomePage() {
             </ul>
           </div>
           <div>
-            <h3 className="mb-2 font-semibold">Villes</h3>
+            <h3 className="mb-2 font-semibold">Compléments de salaire par ville</h3>
             <ul className="grid grid-cols-2 gap-1 text-sm">
               {MAIN_CITIES.map((c) => (
                 <li key={c.slug}><Link href={cityPath(c)} className="underline">{c.name}</Link></li>
+              ))}
+            </ul>
+            <ul className="mt-4 space-y-1 text-sm">
+              {TOP_PAIRS.map(({ city, activity }) => (
+                <li key={`${city.slug}-${activity.id}`}>
+                  <Link href={cityActivityPath(city, activity)} className="underline">{activity.title} à {city.name}</Link>
+                </li>
               ))}
             </ul>
           </div>

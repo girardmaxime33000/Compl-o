@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Compléo : un coup de main près de chez vous, un revenu en plus";
+export const alt = "Compléo : complément de salaire, activités et services près de chez vous";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -14,7 +14,7 @@ export default function OpengraphImage() {
         }}
       >
         <div style={{ fontSize: 96, fontWeight: 700 }}>Compléo</div>
-        <div style={{ fontSize: 44, marginTop: 24 }}>Un coup de main près de chez vous, un revenu en plus.</div>
+        <div style={{ fontSize: 44, marginTop: 24 }}>Complément de salaire près de chez vous.</div>
         <div style={{ fontSize: 28, marginTop: 32, opacity: 0.85 }}>Activités locales, annonces, net après cotisations, factures</div>
       </div>
     ),
