@@ -73,7 +73,7 @@ Limite de l'en-tête : il ne lit pas la session (pour garder les pages statiques
 |---|---|---|
 | M | Bandeau dégradé sans information | Câblé (V5, V8) : photo d'activité ou de guide, ratio fixe, hauteur plafonnée |
 | M | Pas de CTA au-dessus de la ligne de flottaison | Fait : l'en-tête partagé porte le CTA, et `ContentCta` (encart pleine largeur sous l'introduction, une seule action : le diagnostic) figure sur les fiches activité, activité × ville, activités urbaines, villes et guides. Choix : encart en ligne plutôt que colonne latérale, pour garder la même mise en page à toutes les largeurs. Rendu non vérifié dans un navigateur |
-| m | Tableaux de revenu sans visualisation | Non fait |
+| m | Tableaux de revenu sans visualisation | Fait : `IncomeRangeBar` dans le tableau de `/activites/[slug]` (fourchette min–max sur une échelle commune aux cinq lignes, décorative, montants conservés en texte). Les fiches activité × ville et urbaines n'ont pas ce tableau. Rendu non vérifié dans un navigateur |
 
 ### 2.5 Pricing et login
 
@@ -152,7 +152,7 @@ Images de partage (OG) non faites : incorporer une photo dans un PNG statique g�
 5. Relire visuellement les 20 photos de villes (cas à regarder : Villeurbanne, Saint-Denis de La Réunion, Toulon, Le Havre ; deux photos du même photographe pour Dijon et Lille).
 6. Lancer Lighthouse mobile avant et après sur l'accueil, une page activité, une page ville, `/onboarding` : LCP, CLS, poids des images.
 7. Vérifier à la main dans un navigateur (360 px et ≥ 1024 px) : superposition des deux cartes du hero, lisibilité du CTA final sur photo, colonne photo du login, cartes de l'onboarding.
-8. Non fait, par ordre de gain attendu : barres de visualisation des tableaux de revenu, optimisation du bundle de `/onboarding`.
+8. Non fait, par ordre de gain attendu : optimisation du bundle de `/onboarding`.
 
 ## 6. Décisions requises du propriétaire
 

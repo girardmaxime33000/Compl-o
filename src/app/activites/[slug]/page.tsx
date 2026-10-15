@@ -22,6 +22,7 @@ import { Simulator } from "@/components/simulator/simulator";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { StickyCta } from "@/components/marketing/sticky-cta";
 import { ContentCta } from "@/components/marketing/content-cta";
+import { IncomeRangeBar } from "@/components/activities/income-range-bar";
 import { SiteHeader } from "@/components/marketing/site-header";
 
 export const dynamicParams = false;
@@ -59,6 +60,7 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
   const path = `/activites/${activitySlug(activity)}`;
   const listing = demoListing(activity);
   const ideal = monthlyIncomeRange(activity, activity.idealHours);
+  const incomeScaleMax = Math.max(...HOURS.map((h) => monthlyIncomeRange(activity, h).monthlyMax));
   const simulatedRevenue = Math.round((ideal.monthlyMin + ideal.monthlyMax) / 2 / 10) * 10;
   const related = relatedActivities(activity);
   const cities = citiesForActivity(activity);
@@ -98,7 +100,11 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
           <div className="overflow-x-auto rounded-lg border">
             <table className="w-full text-sm">
               <thead className="bg-muted/50 text-left">
-                <tr><th className="p-3">Temps par semaine</th><th className="p-3">Chiffre d'affaires mensuel estimé</th></tr>
+                <tr>
+                  <th className="p-3">Temps par semaine</th>
+                  <th className="p-3">Chiffre d'affaires mensuel estimé</th>
+                  <th className="p-3"><span className="sr-only">Fourchette en graphique</span></th>
+                </tr>
               </thead>
               <tbody>
                 {HOURS.map((h) => {
@@ -106,7 +112,8 @@ export default function ActivityPage({ params }: { params: { slug: string } }) {
                   return (
                     <tr key={h} className="border-t">
                       <td className="p-3">{h === 20 ? "20 h et +" : `${h} h`}</td>
-                      <td className="p-3">≈ {monthlyMin} € à {monthlyMax} €</td>
+                      <td className="whitespace-nowrap p-3">≈ {monthlyMin} € à {monthlyMax} €</td>
+                      <td className="w-full p-3"><IncomeRangeBar min={monthlyMin} max={monthlyMax} scaleMax={incomeScaleMax} /></td>
                     </tr>
                   );
                 })}
