@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Calculator, FileText, Megaphone, Rocket, Sparkles } from "lucide-react";
@@ -14,8 +15,15 @@ import { GUIDES, guidePath } from "@/lib/guides";
 import { homeFaq } from "@/lib/seo/faq";
 import { eur, simulate, TAX_PARAMS } from "@/lib/tax";
 
-export const metadata = {
+const HOME_TITLE = "Complément de salaire : activité près de chez vous | Compléo";
+const HOME_DESCRIPTION =
+  "Trouvez une activité complémentaire près de chez vous, estimez votre net après cotisations et rédigez votre annonce. Diagnostic gratuit, sans inscription.";
+
+export const metadata: Metadata = {
+  title: { absolute: HOME_TITLE },
+  description: HOME_DESCRIPTION,
   alternates: { canonical: "/" },
+  openGraph: { title: HOME_TITLE, description: HOME_DESCRIPTION, url: "/", type: "website", locale: "fr_FR", siteName: "Compléo" },
 };
 
 const STEPS = [
@@ -87,9 +95,9 @@ export default function HomePage() {
             Complément de salaire : <span className="text-success">activités et services près de chez vous</span>
           </h1>
           <p className="mt-4 text-muted-foreground md:text-lg">
-            {ACTIVITIES.length} activités complémentaires en micro-entreprise, des données locales pour {CITIES.length} villes : trouvez comment arrondir vos fins de mois avec bricolage, ménage, cours particuliers ou courses, rédigez votre annonce et estimez votre net après cotisations.
+            Trouvez l'activité complémentaire qui vous correspond près de chez vous, estimez votre net après cotisations de micro-entrepreneur, rédigez votre annonce avec l'IA et éditez vos devis et factures. Bricolage, ménage, cours particuliers, jardinage, garde d'animaux, courses : choisissez en trois questions.
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">Les revenus dépendent de votre profil, de votre ville et du temps disponible. Aucun revenu n'est garanti.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Estimations selon votre profil, votre ville et votre temps disponible. Aucun revenu n'est garanti.</p>
           <PublicCtas className="mt-8 flex flex-col justify-center gap-3 sm:flex-row md:justify-start" />
           <p className="mt-3 text-sm text-muted-foreground">
             Diagnostic gratuit, sans inscription ni carte bancaire. <Link href="/pricing" className="underline">Voir les tarifs</Link>
