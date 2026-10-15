@@ -39,7 +39,7 @@ PER_CITY = 8
 
 # Requêtes plus précises que « <ville> France » quand le nom est ambigu ou peu photographié.
 QUERY_OVERRIDES = {
-    "saint-denis-reunion": "Saint-Denis La Réunion île",
+    "saint-denis-reunion": "Saint-Denis Reunion",
     "villeurbanne": "Villeurbanne Lyon",
     "saint-etienne": "Saint-Etienne Loire",
     "le-havre": "Le Havre port",
@@ -119,7 +119,9 @@ def search(only=None):
     draft = json.loads(SELECTION.read_text(encoding="utf-8")) if SELECTION.exists() else {}
     for slug, c in candidates.items():
         # Sans argument : ne touche pas à une sélection existante. Avec des slugs : remet la première photo des villes citées.
-        if c["photos"] and (slug in (only or []) or slug not in draft):
+        if slug in (only or []) and not c["photos"]:
+            draft.pop(slug, None)  # aucune photo : on retire l'ancienne sélection, la page garde son visuel généré
+        elif c["photos"] and (slug in (only or []) or slug not in draft):
             draft[slug] = c["photos"][0]["id"]
     SELECTION.write_text(json.dumps(draft, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Brouillon de sélection : {SELECTION.relative_to(ROOT)} (première photo par ville, à relire).")
