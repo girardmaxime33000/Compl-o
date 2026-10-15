@@ -7,21 +7,36 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Photo } from "@/components/marketing/photo";
+import type { UnsplashPhoto } from "@/lib/city-images";
 import { track } from "@/lib/analytics";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
-import { CATEGORIES, EQUIPMENT, formatRate, recommend, type Option } from "@/lib/activities";
+import { ACTIVITIES, CATEGORIES, EQUIPMENT, formatRate, recommend, type Option } from "@/lib/activities";
 import { PLATFORMS } from "@/lib/platforms";
 import { saveOnboarding } from "@/app/actions/onboarding";
 
 const STEPS = ["Compétences", "Matériel", "Disponibilité"] as const;
 const HOURS = [2, 5, 8, 12, 20];
 
-function Chips({ options, selected, onToggle }: { options: Option[]; selected: string[]; onToggle: (id: string) => void }) {
+/** Photos Unsplash par id d'activité du catalogue (calculées côté serveur). Vide tant qu'aucune photo n'est sélectionnée. */
+export type ActivityPhotos = Record<string, UnsplashPhoto>;
+
+/** Photo représentant un domaine : celle de la première activité du catalogue de cette catégorie. */
+const categoryPhoto = (photos: ActivityPhotos, categoryId: string) => {
+  const activity = ACTIVITIES.find((a) => a.category === categoryId);
+  return activity ? photos[activity.id] : undefined;
+};
+
+function Chips({
+  options, selected, onToggle, photoFor,
+}: { options: Option[]; selected: string[]; onToggle: (id: string) => void; photoFor?: (id: string) => UnsplashPhoto | undefined }) {
+  const withPhotos = options.some((o) => photoFor?.(o.id));
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
+    <div className={cn("grid gap-2", withPhotos ? "grid-cols-2 sm:grid-cols-3" : "sm:grid-cols-2")}>
       {options.map((o) => {
         const on = selected.includes(o.id);
+        const photo = photoFor?.(o.id);
         return (
           <button
             key={o.id}
@@ -29,12 +44,19 @@ function Chips({ options, selected, onToggle }: { options: Option[]; selected: s
             aria-pressed={on}
             onClick={() => onToggle(o.id)}
             className={cn(
-              "flex min-h-[48px] items-center justify-between rounded-md border px-4 py-3 text-left text-sm transition-colors",
-              on ? "border-primary bg-accent font-medium" : "bg-card hover:bg-accent/50",
+              "text-left text-sm transition-colors",
+              photo
+                ? cn("relative overflow-hidden rounded-lg border-2 bg-card", on ? "border-primary" : "border-transparent hover:border-primary/40")
+                : cn("flex min-h-[48px] items-center justify-between rounded-md border px-4 py-3", on ? "border-primary bg-accent font-medium" : "bg-card hover:bg-accent/50"),
             )}
           >
-            {o.label}
-            {on && <Check className="h-4 w-4 text-primary" />}
+            {photo && (
+              <Photo photo={photo} alt="" ratio="card" sizes="(min-width: 640px) 200px, 50vw" credit="text" phrasing />
+            )}
+            <span className={cn(photo && "flex min-h-[48px] items-center justify-between gap-2 px-3 py-2", photo && on && "bg-accent font-medium")}>
+              {o.label}
+              {on && <Check className="h-4 w-4 shrink-0 text-primary" />}
+            </span>
           </button>
         );
       })}
@@ -63,7 +85,7 @@ const writePending = (a: Answers | null) => {
   }
 };
 
-export function OnboardingWizard({ signedIn }: { signedIn: boolean }) {
+export function OnboardingWizard({ signedIn, photos = {} }: { signedIn: boolean; photos?: ActivityPhotos }) {
   const [step, setStep] = useState(0);
   const [categories, setCategories] = useState<string[]>([]);
   const [equipment, setEquipment] = useState<string[]>([]);
@@ -133,7 +155,8 @@ export function OnboardingWizard({ signedIn }: { signedIn: boolean }) {
           <p className="text-muted-foreground">Estimations basées sur {hours} h/semaine, dont 60 % réellement facturées.</p>
         </div>
         {results.map(({ activity, monthlyMin, monthlyMax, missingEquipment }, i) => (
-          <Card key={activity.id}>
+          <Card key={activity.id} className="overflow-hidden">
+            <Photo photo={photos[activity.id]} alt="" ratio="wide" sizes="(min-width: 672px) 640px, 100vw" credit="caption" />
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Badge>#{i + 1}</Badge>
@@ -190,7 +213,7 @@ export function OnboardingWizard({ signedIn }: { signedIn: boolean }) {
               <CardTitle>Qu'aimez-vous faire ?</CardTitle>
               <CardDescription>Sélectionnez un ou plusieurs domaines.</CardDescription>
             </CardHeader>
-            <CardContent><Chips options={CATEGORIES} selected={categories} onToggle={toggle(setCategories)} /></CardContent>
+            <CardContent><Chips options={CATEGORIES} selected={categories} onToggle={toggle(setCategories)} photoFor={(id) => categoryPhoto(photos, id)} /></CardContent>
           </>
         )}
         {step === 1 && (

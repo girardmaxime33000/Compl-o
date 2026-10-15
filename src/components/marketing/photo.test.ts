@@ -57,3 +57,14 @@ describe("<Photo>", () => {
     expect(render({ photo: undefined, fallback: createElement("p", null, "repli") })).toBe("<p>repli</p>");
   });
 });
+
+describe("<Photo phrasing>", () => {
+  it("n'émet ni figure ni div (contenu valide dans un bouton ou un lien)", () => {
+    const html = render({ phrasing: true, credit: "text" });
+    expect(html).not.toContain("<figure");
+    expect(html).not.toContain("<div");
+    expect(html).not.toContain("<figcaption");
+    expect(html).toContain("<span");
+    expect(html).toContain("Photo : Jeanne Dupont / Unsplash");
+  });
+});

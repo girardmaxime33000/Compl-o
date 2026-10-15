@@ -28,6 +28,8 @@ interface PhotoProps {
   /** Contenu superposé (titre, badge). */
   children?: ReactNode;
   className?: string;
+  /** Rendre des <span> block au lieu de <figure>/<div> : requis dans un <button> ou un <a>, qui n'acceptent que du contenu de type texte. */
+  phrasing?: boolean;
 }
 
 function PlainCredit({ photo, className }: { photo: UnsplashPhoto; className?: string }) {
@@ -48,13 +50,15 @@ function Credit({ photo, className }: { photo: UnsplashPhoto; className?: string
  * Photo Unsplash générique : hotlink (images.unsplash.com), recadrée et redimensionnée par le CDN, `srcset`, ratio réservé
  * (aucun CLS), crédit conforme aux directives de l'API. <img> et non next/image : Next ne doit ni copier ni proxifier l'image.
  */
-export function Photo({ photo, alt, ratio, sizes, priority = false, credit = "caption", overlay = false, fallback, children, className }: PhotoProps) {
+export function Photo({ photo, alt, ratio, sizes, priority = false, credit = "caption", overlay = false, fallback, children, className, phrasing = false }: PhotoProps) {
+  const Figure = phrasing ? "span" : "figure";
+  const Box = phrasing ? "span" : "div";
   if (!photo) return fallback ? <>{fallback}</> : null;
   const r = PHOTO_RATIOS[ratio];
   return (
-    <figure className={cn("overflow-hidden bg-muted", className)}>
+    <Figure className={cn("overflow-hidden bg-muted", phrasing && "block", className)}>
       {priority && <link rel="preconnect" href="https://images.unsplash.com" />}
-      <div className="relative">
+      <Box className={cn("relative", phrasing && "block")}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={unsplashSrc(photo, MAX_WIDTH, 60, Math.round(MAX_WIDTH / r))}
@@ -69,16 +73,20 @@ export function Photo({ photo, alt, ratio, sizes, priority = false, credit = "ca
           style={{ aspectRatio: String(r) }}
           className="block w-full object-cover"
         />
-        {overlay && <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />}
-        {children && <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">{children}</div>}
+        {overlay && <Box aria-hidden="true" className={cn("pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent", phrasing && "block")} />}
+        {children && <Box className="absolute inset-0 flex flex-col justify-end p-4 text-white">{children}</Box>}
         {credit === "text" && (
           <PlainCredit photo={photo} className="absolute bottom-1 right-1 max-w-[90%] truncate rounded bg-black/60 px-1.5 py-0.5 text-[11px] text-white" />
         )}
         {credit === "overlay" && (
           <Credit photo={photo} className="absolute bottom-1 right-1 rounded bg-black/60 px-1.5 py-0.5 text-[11px] text-white [&_a]:text-white" />
         )}
-      </div>
-      {credit === "caption" && <figcaption className="px-3 py-1.5 text-xs text-muted-foreground"><Credit photo={photo} /></figcaption>}
-    </figure>
+      </Box>
+      {credit === "caption" && (
+        phrasing
+          ? <span className="block px-3 py-1.5 text-xs text-muted-foreground"><Credit photo={photo} /></span>
+          : <figcaption className="px-3 py-1.5 text-xs text-muted-foreground"><Credit photo={photo} /></figcaption>
+      )}
+    </Figure>
   );
 }
