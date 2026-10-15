@@ -6,7 +6,7 @@ Date : 2026-10-16. À relire à chaque changement d'hébergeur, de fournisseur o
 
 | Constat | Risque | Action |
 |---|---|---|
-| Vercel traite la branche `claude/new-session-og6dhq` comme **Production** : chaque push y déploie sur `compleo.work` (liste des déploiements du 2026-10-16) | Un changement non testé part en ligne dès le push, sans relecture | Régler la « Production Branch » sur une branche stable (section 2) |
+| ~~Vercel traitait la branche `claude/new-session-og6dhq` comme Production~~ (chaque push y déployait sur `compleo.work`) | Corrigé le 2026-10-16 : `main` créée, branche par défaut du dépôt, protégée par un ruleset GitHub, et « Branch Tracking » de l'environnement Production réglé sur `main` (Vercel > Settings > Environments > Production) | Reste à faire : premier déploiement issu de `main` (en attente de la fusion de cette PR) |
 | Aucune intégration continue : la seule vérification visible sur les PR est « Vercel Preview Comments » | Rien n'empêche de fusionner un build cassé ou un test rouge | Workflow `.github/workflows/ci.yml` ajouté ; en faire une vérification obligatoire (section 3) |
 | Alerte critique `npm audit` sur `next` 14.2.35 | Déni de service possible | Migration prête : [PR #4](https://github.com/girardmaxime33000/Compl-o/pull/4), à valider sur prévisualisation (`docs/migration-next-16.md`) |
 | Plan Vercel « Hobby » | Usage commercial interdit par les conditions Hobby ; cron limité à une exécution par jour ; pas de contournement de protection garanti | Passer au plan Pro avant le lancement commercial (décision propriétaire, à vérifier dans les conditions Vercel en vigueur) |
@@ -16,17 +16,20 @@ Date : 2026-10-16. À relire à chaque changement d'hébergeur, de fournisseur o
 
 | Environnement | Source | URL | Données et clés |
 |---|---|---|---|
-| Production | branche de production (à définir, voir ci-dessous) | `compleo.work` | Supabase de production, Stripe live, e-mail réel |
+| Production | branche `main` | `compleo.work` | Supabase de production, Stripe live, e-mail réel |
 | Preview | toute autre branche et toute PR | `compl-o-git-<branche>-maxime33s-projects.vercel.app` (protégée par Vercel Authentication) | Supabase de test, Stripe **mode test**, aucune clé de production |
 | Local | `npm run dev` | `localhost:3000` | `.env.local` hors dépôt, projet de test |
 
-**Règles de branches (décision propriétaire à valider) :**
-1. Une branche stable (par exemple `main`, ou la branche par défaut actuelle `claude/trusting-archimedes-bm4hqh`) est la seule « Production Branch » : Vercel > Settings > Git > Production Branch.
-2. Le travail se fait sur des branches `claude/<id>-<slug>`, une PR par sujet (CLAUDE.md). Les branches de travail ne déploient qu'en Preview.
-3. Protection de branche GitHub (Settings > Branches) sur la branche stable : PR obligatoire, vérification `CI / verify` obligatoire, branche à jour avant fusion, pas de push direct.
-4. Fusion en « squash » ou « merge » : au choix, mais jamais de réécriture d'historique sur la branche stable.
+**État en place (2026-10-16)**
 
-Tant que la branche de production n'a pas été changée, tout push sur `claude/new-session-og6dhq` met le site en ligne : ne poussez rien de non testé dessus.
+- `main` est la branche par défaut du dépôt et la **Production Branch** de Vercel (Settings > Environments > Production > Branch Tracking). Elle a été créée au commit `5900e2c`, identique à ce qui était alors en production.
+- Un ruleset GitHub « Protéger main » a été créé par le propriétaire (branche marquée protégée par l'API GitHub ; le détail des règles n'a pas été relu par Claude). Réglage attendu : suppression et push forcé interdits, PR obligatoire avant fusion, vérification `verify` (CI) obligatoire. Aucune approbation n'est exigée (dépôt à un seul propriétaire : une approbation obligatoire bloquerait toute fusion) et la liste de contournement est vide.
+- Les branches `claude/<id>-<slug>` ne déploient qu'en Preview.
+
+**Règles de travail**
+1. Une PR par sujet vers `main` (CLAUDE.md). Fusion après CI verte et contrôle sur la prévisualisation.
+2. Jamais de push direct sur `main` ni de réécriture d'historique sur `main`.
+3. Un déploiement de production n'a lieu qu'à la fusion dans `main` : c'est le seul moment où un changement part en ligne.
 
 ## 3. Intégration continue
 
@@ -113,7 +116,7 @@ Aussi ajoutés : `.github/dependabot.yml` (mises à jour hebdomadaires groupées
 
 ## 11. Décisions propriétaire en attente
 
-1. Branche de production et protection de branche (section 2).
+1. ~~Branche de production et protection de branche~~ : faits (section 2).
 2. Passage au plan Vercel Pro avant le lancement commercial.
 3. Calendrier de la migration Next 16 (PR #4) après jeu de tests sur prévisualisation.
 4. Outil de supervision externe et destinataire des alertes.
