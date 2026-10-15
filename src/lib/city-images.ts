@@ -1,7 +1,7 @@
 import raw from "@/data/city-images.json";
 import type { City } from "@/lib/cities";
 
-/** Photos Unsplash des villes, sélectionnées par `scripts/fetch-city-images.py` (aucun appel API à l'exécution). */
+/** Photos Unsplash des villes, sélectionnées par `scripts/fetch-unsplash-images.py` (aucun appel API à l'exécution). */
 export interface CityPhoto {
   id: string;
   /** URL de base images.unsplash.com (sans paramètres de taille). */

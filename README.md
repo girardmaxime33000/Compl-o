@@ -265,14 +265,27 @@ Segment `URBAN`, ajouté sans modifier le catalogue `src/lib/activities.ts` (les
 
 **Régénérer les données** : (1) télécharger les fichiers listés dans `sources` de `src/data/cities.json` (INSEE populations légales : https://www.insee.fr/fr/statistiques/6683035 ; INSEE Dossier complet : https://www.insee.fr/fr/statistiques/5359146 ; France Travail BMO : https://statistiques.francetravail.org/bmo) dans `data/raw/` sous les noms attendus par `scripts/build-city-data.py` ; (2) `python3 scripts/extract-dossier-complet.py` si le Dossier complet change ; (3) `pip install openpyxl && python3 scripts/build-city-data.py`. Le script est déterministe : relancé sur les fichiers actuels, il reproduit le JSON à l'identique. La date de téléchargement (`downloadedOn`) est affichée sur chaque page ville et sert de `lastmod` au sitemap : la mettre à jour dans le script lors d'un nouveau téléchargement. Pour ajouter une ville, il faut une donnée locale réelle (population, Dossier complet, bassin BMO) ; une combinaison activité × ville sans projet de recrutement répond `404` et est absente du sitemap.
 
-## Photos de villes (Unsplash)
+## Photos (Unsplash)
 
-Les pages `/villes/[ville]` et `/activites/[slug]/[ville]` affichent la photo Unsplash de la ville si `src/data/city-images.json` en contient une (sinon, visuel généré). Pour les renseigner :
+Les photos sont sélectionnées à l'avance par `scripts/fetch-unsplash-images.py` et lues par le site dans deux fichiers JSON (aucun appel à l'API à l'exécution). Chaque emplacement sans photo garde son visuel généré.
+
+| Périmètre | Emplacements | Fichier lu par le site | Sélection (à commiter) |
+|---|---|---|---|
+| `cities` (défaut) | une photo par ville (`/villes/[ville]`, `/activites/[slug]/[ville]`, tuiles de l'accueil) | `src/data/city-images.json` | `scripts/city-images-selection.json` |
+| `site` | `hero:home`, `cta:final`, `login`, `activity:<id>`, `urban:<slug>`, `guide:<slug>` (23 emplacements) | `src/data/site-images.json` | `scripts/site-images-selection.json` |
+
+Les requêtes de recherche du périmètre `site` sont dans `scripts/site-images-catalogue.json` (un test vérifie qu'il couvre exactement les activités, activités urbaines publiées et guides du code). Ajouter une activité ou un guide impose d'y ajouter sa ligne.
 
 1. Créer une application sur https://unsplash.com/developers et copier l'Access Key (variable `UNSPLASH_ACCESS_KEY`, jamais dans le dépôt : elle ne sert qu'au script, pas au site).
-2. `UNSPLASH_ACCESS_KEY=... python3 scripts/fetch-city-images.py search` : recherche des candidats, écrit `data/unsplash/candidates.html` (planche de contact, ignorée par git) et un brouillon `scripts/city-images-selection.json`.
-3. Ouvrir la planche, corriger `scripts/city-images-selection.json` (`{"paris": "<id>"}`).
-4. `UNSPLASH_ACCESS_KEY=... python3 scripts/fetch-city-images.py build` : récupère les métadonnées, déclare le téléchargement à Unsplash (obligation des directives de l'API) et écrit `src/data/city-images.json`. Commiter ce JSON et la sélection.
+2. `UNSPLASH_ACCESS_KEY=... python3 scripts/fetch-unsplash-images.py search site` (ou `cities`, ou `search site hero:home login` pour certaines clés) : recherche des candidats, écrit `data/unsplash/site-candidates.html` (planche de contact, ignorée par git) et un brouillon de sélection (première photo de chaque emplacement).
+3. Ouvrir la planche, corriger le fichier de sélection (`{"hero:home": "<id Unsplash>"}`). Critères : photo lumineuse, personnes en situation de travail ou de service, aucune légende laissant croire à un client réel, pas de marque ou de visage identifiable dans un contexte sensible.
+4. `python3 scripts/fetch-unsplash-images.py check site` : contrôle hors ligne de la sélection (clés connues, doublons signalés).
+5. `UNSPLASH_ACCESS_KEY=... python3 scripts/fetch-unsplash-images.py build site` : déclare le téléchargement à Unsplash (obligation des directives de l'API, une fois par photo) et écrit le JSON. Les métadonnées (auteur, couleur moyenne) viennent des candidats : une requête par photo. Commiter le JSON et la sélection.
+6. `python3 scripts/fetch-unsplash-images.py check site` : contrôle du JSON écrit (champs obligatoires, liens `images.unsplash.com`). `colors` ajoute la couleur moyenne aux anciennes entrées qui n'en ont pas.
+
+Quota : le mode demo est limité à 50 requêtes par heure. Le périmètre `site` demande 23 requêtes de recherche, puis 23 de déclaration : lancer `search` et `build` à une heure d'écart. Le script s'arrête avant l'épuisement du quota et reprend là où il s'est arrêté (les entrées déjà écrites sont conservées). Le passage de l'application en mode production est à demander à Unsplash avant le lancement public.
+
+Tests du script (API simulée, hors ligne) : `python3 -B -m unittest scripts/test_fetch_unsplash_images.py`.
 
 Composants : `<Photo>` (`src/components/marketing/photo.tsx`) affiche n'importe quelle photo sélectionnée (ratio, `srcset`, crédit en légende ou en pastille, repli) ; `CityPhoto` l'utilise pour les villes. Tous les crédits sont listés sur `/credits-photos`.
 

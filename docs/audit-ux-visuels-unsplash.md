@@ -7,7 +7,7 @@ Changements pris en compte depuis la première version : 20 photos Unsplash de v
 ## 0. Périmètre et limites de l'audit
 
 - Le site https://compleo.work n'est pas joignable depuis l'environnement d'exécution (échec DNS `ENOTFOUND`). Aucune capture, aucun Lighthouse, aucune mesure réelle.
-- L'audit porte sur le code source du dépôt, branche `claude/new-session-og6dhq` : `src/app/**`, `src/components/marketing/**`, `public/images/*.svg`, `scripts/fetch-city-images.py`.
+- L'audit porte sur le code source du dépôt, branche `claude/new-session-og6dhq` : `src/app/**`, `src/components/marketing/**`, `public/images/*.svg`, `scripts/fetch-unsplash-images.py`.
 - Non vérifié : rendu réel, performances réelles (LCP, CLS), comportement mobile réel, état de déploiement (la prod peut différer du dépôt), analytics existants (entonnoir).
 - Aucune donnée d'audience : les priorités ci-dessous sont des hypothèses à valider par mesure (section 8).
 
@@ -26,7 +26,7 @@ Changements pris en compte depuis la première version : 20 photos Unsplash de v
 | Onboarding | `components/onboarding/wizard.tsx` | À vérifier (250 lignes, non audité en détail) | Étape cruciale de l'entonnoir : voir 3.6. |
 | OG | `opengraph-image.tsx` | Texte statique | Partages sociaux sans visuel d'activité. |
 
-Acquis réutilisables : pipeline Unsplash conforme (`scripts/fetch-city-images.py` : recherche, planche de contact, déclaration de téléchargement, JSON versionné, hotlink, crédit avec UTM), `src/lib/city-images.ts`, `CityPhoto`, repli sur dégradés. Il faut généraliser, pas réécrire.
+Acquis réutilisables : pipeline Unsplash conforme (`scripts/fetch-unsplash-images.py` : recherche, planche de contact, déclaration de téléchargement, JSON versionné, hotlink, crédit avec UTM), `src/lib/city-images.ts`, `CityPhoto`, repli sur dégradés. Il faut généraliser, pas réécrire.
 
 ### 1.1 Photos de villes : état après intégration
 
@@ -202,7 +202,7 @@ Données : généraliser `src/data/city-images.json` en `src/data/images.json` (
 
 | # | Lot | Contenu | Dépendance |
 |---|---|---|---|
-| V1 | Pipeline | Étendre le script, catalogue de requêtes, exécution `search`, revue de la planche, `build`. Commit du JSON. | Clé API (propriétaire) |
+| V1 | Pipeline | Script généralisé `scripts/fetch-unsplash-images.py` (périmètres `cities` et `site`, commandes `search`, `build`, `colors`, `check`), catalogue de requêtes `scripts/site-images-catalogue.json` (23 emplacements), tests hors ligne : fait. Exécution réelle non faite (clé API du propriétaire) | Clé API (propriétaire) |
 | V2 | Fondations | `Photo` générique (`src/components/marketing/photo.tsx`), `photoSrcSet` et ratios (`city-images.ts`), `PhotoCredits` et page `/credits-photos` (noindex, liée au pied de page), tests : fait. `CityPhoto` migré sur `Photo`. Reste : clés non-villes (dépend de V1) | V1 |
 | V3 | Navigation | `SiteHeader` partagé, CTA primaire, application aux pages publiques : fait (`src/components/marketing/site-header.tsx`). Reste : `StickyCta` mobile | aucune (peut démarrer sans V1) |
 | V4 | Hero accueil | `HeroShowcase` (cartes exemple d'annonce et exemple de calcul alimentées par `simulate()`), pastilles de réassurance, emplacement `hero:home` (`src/data/site-images.json`) : fait. Photo non sélectionnée (dépend de V1, clé API) : panneau coloré en attendant | V2 |
