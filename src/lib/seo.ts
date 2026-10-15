@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LEGAL } from "@/lib/legal";
 import { ACTIVITIES, activitySlug } from "@/lib/activities";
 import { CITY_ACTIVITY_PAIRS, cityActivityPath } from "@/lib/cities";
+import { GUIDES, guidePath } from "@/lib/guides";
 
 /** Pages publiques indexables (sitemap + fil d'Ariane). */
 export const PUBLIC_PAGES = [
@@ -10,6 +11,7 @@ export const PUBLIC_PAGES = [
   { path: "/modele-facture-auto-entrepreneur", name: "Modèle de facture auto-entrepreneur", priority: 0.8 },
   { path: "/generateur-annonce", name: "Exemples d'annonces", priority: 0.8 },
   { path: "/activites", name: "Activités", priority: 0.8 },
+  { path: "/guides", name: "Guides", priority: 0.7 },
   { path: "/pricing", name: "Tarifs", priority: 0.7 },
   { path: "/mentions-legales", name: "Mentions légales", priority: 0.2 },
   { path: "/cgu", name: "CGU", priority: 0.2 },
@@ -19,6 +21,9 @@ export const PUBLIC_PAGES = [
 
 /** Pages activité, une par entrée du catalogue `activities.ts` (source unique). */
 export const ACTIVITY_PAGES = ACTIVITIES.map((a) => ({ path: `/activites/${activitySlug(a)}`, name: a.title, priority: 0.8 }));
+
+/** Guides publiés. */
+export const GUIDE_PAGES = GUIDES.map((g) => ({ path: guidePath(g), name: g.title, priority: 0.7 }));
 
 /** Pages activité × ville : seulement les couples avec une donnée locale vérifiable. */
 export const CITY_ACTIVITY_SITEMAP = CITY_ACTIVITY_PAIRS.map(({ city, activity }) => ({ path: cityActivityPath(city, activity), name: `${activity.title} à ${city.name}`, priority: 0.6 }));

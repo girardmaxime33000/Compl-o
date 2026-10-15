@@ -14,6 +14,7 @@ export function SiteFooter() {
           <Link href="/modele-facture-auto-entrepreneur" className="hover:text-foreground hover:underline">Modèle de facture</Link>
           <Link href="/generateur-annonce" className="hover:text-foreground hover:underline">Exemples d'annonces</Link>
           <Link href="/activites" className="hover:text-foreground hover:underline">Activités</Link>
+          <Link href="/guides" className="hover:text-foreground hover:underline">Guides</Link>
           <Link href="/pricing" className="hover:text-foreground hover:underline">Tarifs</Link>
         </nav>
       </div>

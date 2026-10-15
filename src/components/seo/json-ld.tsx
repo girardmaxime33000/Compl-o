@@ -62,3 +62,20 @@ export function BreadcrumbJsonLd({ path, items }: { path: string; items?: { name
     />
   );
 }
+
+export function ArticleJsonLd({ title, description, path, updated }: { title: string; description: string; path: string; updated: string }) {
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: title,
+        description,
+        inLanguage: "fr-FR",
+        dateModified: updated,
+        mainEntityOfPage: absoluteUrl(path),
+        publisher: { "@type": "Organization", name: LEGAL.siteName, url: absoluteUrl("/") },
+      }}
+    />
+  );
+}

@@ -117,6 +117,7 @@ src/
 │   ├── activites/[slug]/[ville]/ Pages activité × ville (20 villes, SSG, seulement avec donnée locale)
 │   ├── dashboard/account/        Mon compte : export JSON et suppression du compte (RGPD)
 │   ├── api/simulation/pdf/       Export PDF d'une simulation (compte requis, résultat recalculé côté serveur)
+│   ├── guides/ guides/[slug]/    Guides éditoriaux (contenu dans src/content/guides, registre src/lib/guides.ts)
 │   ├── mentions-legales/         Mentions légales
 │   ├── cgu/ cgv/ confidentialite/ CGU, CGV, politique de confidentialité (brouillons à faire relire)
 │   ├── dashboard/                Espace connecté
