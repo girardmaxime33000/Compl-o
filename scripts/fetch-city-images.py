@@ -17,6 +17,9 @@ pas par le site : les pages lisent le JSON généré, sans appel à l'API à l'e
      Récupère les métadonnées des photos retenues, déclare le « téléchargement » à Unsplash (obligation des
      directives de l'API : endpoint download_location, une fois par photo retenue) et écrit src/data/city-images.json.
 
+  4. python3 scripts/fetch-city-images.py colors
+     Ajoute la couleur moyenne (fond avant chargement) aux photos déjà retenues, sans nouvelle déclaration de téléchargement.
+
 Les images ne sont PAS copiées dans le dépôt : le site les affiche depuis images.unsplash.com (hotlink exigé par les
 directives de l'API), avec crédit du photographe et lien vers Unsplash.
 """
@@ -161,6 +164,7 @@ def build():
             "authorUrl": p["user"]["links"]["html"],
             "pageUrl": p["links"]["html"],
             "alt": p.get("alt_description") or "",
+            "color": p.get("color") or "",
         }
         save()  # écriture après chaque ville : un arrêt (quota) ne perd rien
         print(f"{slug}: {p['id']} par {p['user']['name']}")
@@ -169,10 +173,27 @@ def build():
     print(f"{len(photos)} photos dans {OUT.relative_to(ROOT)}")
 
 
+def colors():
+    """Ajoute la couleur moyenne aux photos déjà retenues. Lecture seule : aucune nouvelle déclaration de téléchargement."""
+    data = json.loads(OUT.read_text(encoding="utf-8"))
+    changed = 0
+    for slug, photo in sorted(data["photos"].items()):
+        if photo.get("color"):
+            continue
+        photo["color"] = call(f"/photos/{photo['id']}").get("color") or ""
+        changed += 1
+        OUT.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")  # reprise possible après un arrêt de quota
+        print(f"{slug}: {photo['color']}")
+        time.sleep(0.5)
+    print(f"{changed} couleurs ajoutées dans {OUT.relative_to(ROOT)}")
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     if cmd == "search":
         search(sys.argv[2:] or None)
+    elif cmd == "colors":
+        colors()
     elif cmd == "build":
         build()
     else:

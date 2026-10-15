@@ -208,7 +208,7 @@ Données : généraliser `src/data/city-images.json` en `src/data/images.json` (
 | V4 | Hero accueil | `HeroShowcase` (cartes exemple d'annonce et exemple de calcul alimentées par `simulate()`), pastilles de réassurance, emplacement `hero:home` (`src/data/site-images.json`) : fait. Photo non sélectionnée (dépend de V1, clé API) : panneau coloré en attendant | V2 |
 | V5 | Activités | `ActivityVisual` utilise la photo `activity:<id>` si elle existe (cartes accueil et /activites, bandeau /activites/[slug], tuiles /villes/[ville]), sinon dégradé ; photos `urban:<slug>` sur les cartes et fiches urbaines ; crédits listés sur /credits-photos : fait. Aucune photo d'activité sélectionnée (dépend de V1, clé API) | V2 |
 | V6 | Onboarding | Étape 1 : cartes photo par domaine (photo de la première activité de la catégorie) ; résultats : photo par activité recommandée ; repli sur les puces et cartes texte sans photo : fait. Aucune photo d'activité sélectionnée (dépend de V1) | V2 |
-| V7 | Villes | Pipeline villes exécuté (20/20, commits `b3ec49a`, `8c4a480`). Reste : relecture visuelle des 20 photos, champ `color`, tuiles de villes sur l'accueil, repli par photo d'activité | fait / V2 |
+| V7 | Villes | Pipeline villes exécuté (20/20). Fait : tuiles photo de villes sur l'accueil (8, liste texte pour les autres), champ `color` pris en charge (type, fond avant chargement, script `build` et commande `colors` pour les 20 entrées existantes). Reste : exécuter `colors` (clé API), relecture visuelle des 20 photos | fait |
 | V8 | Secondaires | Guides, CTA final, login, OG, pricing (icônes) | V2 |
 | V9 | Mesure | Événements d'entonnoir (T12 : `/api/track`) : vue hero, clic CTA hero/header/sticky, démarrage et fin du diagnostic, avant/après chaque lot | T12 |
 

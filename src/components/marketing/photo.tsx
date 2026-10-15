@@ -56,7 +56,7 @@ export function Photo({ photo, alt, ratio, sizes, priority = false, credit = "ca
   if (!photo) return fallback ? <>{fallback}</> : null;
   const r = PHOTO_RATIOS[ratio];
   return (
-    <Figure className={cn("overflow-hidden bg-muted", phrasing && "block", className)}>
+    <Figure className={cn("overflow-hidden bg-muted", phrasing && "block", className)} style={photo.color ? { backgroundColor: photo.color } : undefined}>
       {priority && <link rel="preconnect" href="https://images.unsplash.com" />}
       <Box className={cn("relative", phrasing && "block")}>
         {/* eslint-disable-next-line @next/next/no-img-element */}

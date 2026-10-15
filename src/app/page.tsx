@@ -9,6 +9,8 @@ import { FaqSection } from "@/components/marketing/faq";
 import { PublicCtas } from "@/components/marketing/ctas";
 import { ActivityVisual } from "@/components/marketing/visuals";
 import { HeroShowcase } from "@/components/marketing/hero-showcase";
+import { Photo } from "@/components/marketing/photo";
+import { cityPhoto } from "@/lib/city-images";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { ACTIVITIES, activitySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
@@ -60,6 +62,10 @@ const POPULAR_ACTIVITIES = ACTIVITIES.slice(0, 6);
 const MAIN_CITIES = CITIES.filter((c) => activitiesForCity(c).length > 0)
   .sort((a, b) => a.rank - b.rank)
   .slice(0, 10);
+
+/** Tuiles photo : les villes les mieux classées qui ont une photo. Les autres restent en liste texte. */
+const TILE_CITIES = MAIN_CITIES.filter((c) => cityPhoto(c)).slice(0, 8);
+const TEXT_CITIES = MAIN_CITIES.filter((c) => !TILE_CITIES.includes(c));
 
 /** Associations activité × ville avec donnée locale, pour les villes les mieux classées (une activité par ville, puis complétées). */
 const TOP_PAIRS = [...CITY_ACTIVITY_PAIRS]
@@ -187,11 +193,25 @@ export default function HomePage() {
           </div>
           <div>
             <h3 className="mb-2 font-semibold">Compléments de salaire par ville</h3>
-            <ul className="grid grid-cols-2 gap-1 text-sm">
-              {MAIN_CITIES.map((c) => (
-                <li key={c.slug}><Link href={cityPath(c)} className="underline">{c.name}</Link></li>
-              ))}
-            </ul>
+            {TILE_CITIES.length > 0 && (
+              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4">
+                {TILE_CITIES.map((c) => (
+                  <li key={c.slug}>
+                    <Link href={cityPath(c)} className="block overflow-hidden rounded-lg border bg-card transition-colors hover:bg-accent/50">
+                      <Photo photo={cityPhoto(c)} alt="" ratio="card" sizes="(min-width: 1024px) 140px, (min-width: 640px) 25vw, 50vw" credit="text" phrasing />
+                      <span className="block px-2 py-1.5 text-sm font-medium">{c.name}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {TEXT_CITIES.length > 0 && (
+              <ul className="mt-3 grid grid-cols-2 gap-1 text-sm">
+                {TEXT_CITIES.map((c) => (
+                  <li key={c.slug}><Link href={cityPath(c)} className="underline">{c.name}</Link></li>
+                ))}
+              </ul>
+            )}
             <ul className="mt-4 space-y-1 text-sm">
               {TOP_PAIRS.map(({ city, activity }) => (
                 <li key={`${city.slug}-${activity.id}`}>

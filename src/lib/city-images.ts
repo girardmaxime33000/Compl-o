@@ -12,6 +12,8 @@ export interface CityPhoto {
   authorUrl: string;
   pageUrl: string;
   alt: string;
+  /** Couleur moyenne de l'image (fournie par l'API), utilisée comme fond avant chargement. Absente des anciennes entrées. */
+  color?: string;
 }
 
 const PHOTOS = (raw as { photos: Record<string, CityPhoto> }).photos;

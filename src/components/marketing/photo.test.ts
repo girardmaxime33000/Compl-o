@@ -68,3 +68,11 @@ describe("<Photo phrasing>", () => {
     expect(html).toContain("Photo : Jeanne Dupont / Unsplash");
   });
 });
+
+describe("<Photo color>", () => {
+  it("utilise la couleur moyenne comme fond avant chargement, si elle existe", () => {
+    const html = renderToStaticMarkup(createElement(Photo, { photo: { ...photo, color: "#336699" }, alt: "", ratio: "card", sizes: "100vw" }));
+    expect(html).toContain("background-color:#336699");
+    expect(render()).not.toContain("background-color");
+  });
+});
