@@ -22,10 +22,18 @@ const UTM = "utm_source=compleo&utm_medium=referral";
 export const cityPhoto = (city: City): CityPhoto | undefined => PHOTOS[city.slug];
 
 /** Les images restent servies par le CDN d'Unsplash (hotlink exigé), redimensionnées par ses paramètres. */
-export function unsplashSrc(photo: Pick<CityPhoto, "raw">, width: number, quality = 70): string {
+export function unsplashSrc(photo: Pick<CityPhoto, "raw">, width: number, quality = 65, height?: number): string {
   const sep = photo.raw.includes("?") ? "&" : "?";
-  return `${photo.raw}${sep}w=${width}&q=${quality}&fm=webp&fit=crop&auto=format`;
+  return `${photo.raw}${sep}w=${width}${height ? `&h=${height}` : ""}&q=${quality}&fm=webp&fit=crop&auto=format`;
 }
+
+/** Rapport largeur / hauteur du bandeau : l'image est recadrée côté CDN à ce format (poids bien plus faible). */
+export const BANNER_RATIO = 2.5;
+export const BANNER_WIDTHS = [480, 720, 960, 1280] as const;
+
+/** `srcSet` du bandeau : une taille par largeur d'écran, recadrée au format du bandeau. */
+export const bannerSrcSet = (photo: Pick<CityPhoto, "raw">) =>
+  BANNER_WIDTHS.map((w) => `${unsplashSrc(photo, w, 60, Math.round(w / BANNER_RATIO))} ${w}w`).join(", ");
 
 export const withUtm = (url: string) => `${url}${url.includes("?") ? "&" : "?"}${UTM}`;
 
