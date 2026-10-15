@@ -20,7 +20,7 @@ export async function createInvoice(input: z.input<typeof createSchema>): Promis
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Données invalides." };
   const d = parsed.data;
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -50,14 +50,14 @@ export async function createInvoice(input: z.input<typeof createSchema>): Promis
 
 export async function updateInvoiceStatus(id: string, status: "draft" | "sent" | "paid") {
   if (!z.uuid().safeParse(id).success || !["draft", "sent", "paid"].includes(status)) return { ok: false };
-  const { error } = await createClient().from("invoices").update({ status }).eq("id", id);
+  const { error } = await (await createClient()).from("invoices").update({ status }).eq("id", id);
   revalidatePath("/dashboard/invoices");
   return { ok: !error };
 }
 
 export async function deleteInvoice(id: string) {
   if (!z.uuid().safeParse(id).success) return { ok: false };
-  const { error } = await createClient().from("invoices").delete().eq("id", id);
+  const { error } = await (await createClient()).from("invoices").delete().eq("id", id);
   revalidatePath("/dashboard/invoices");
   return { ok: !error };
 }

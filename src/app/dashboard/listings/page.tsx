@@ -5,7 +5,8 @@ import type { Listing } from "@/types/database";
 
 export const metadata = { title: "Annonces | Compléo" };
 
-export default async function ListingsPage({ searchParams }: { searchParams: { service?: string } }) {
+export default async function ListingsPage(props: { searchParams: Promise<{ service?: string }> }) {
+  const searchParams = await props.searchParams;
   const { supabase, user, profile } = await requireUser();
 
   const [{ data: listings }, quota] = await Promise.all([

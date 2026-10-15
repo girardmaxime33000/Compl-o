@@ -1,6 +1,5 @@
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { legalMetadata } from "@/lib/seo";
-import Link from "next/link";
 import { LEGAL } from "@/lib/legal";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SiteHeader } from "@/components/marketing/site-header";

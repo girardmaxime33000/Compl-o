@@ -14,7 +14,7 @@ export async function saveOnboarding(input: z.input<typeof schema>): Promise<{ o
   const parsed = schema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Données invalides." };
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

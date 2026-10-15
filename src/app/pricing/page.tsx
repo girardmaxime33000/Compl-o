@@ -38,7 +38,7 @@ function Features({ items }: { items: { label: string; ok: boolean }[] }) {
 }
 
 export default async function PricingPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

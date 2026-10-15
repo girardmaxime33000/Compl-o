@@ -4,6 +4,7 @@ import {
   webApplicationJsonLd,
 } from "@/lib/seo/jsonld";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const roundTrip = (data: Parameters<typeof serializeJsonLd>[0]) => JSON.parse(serializeJsonLd(data)) as Record<string, any>;
 
 describe("builders JSON-LD", () => {

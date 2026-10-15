@@ -33,7 +33,8 @@ export function generateStaticParams() {
 
 const HOURS = [2, 5, 8, 12, 20];
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const urban = findPublishedUrbanActivity(params.slug);
   if (urban) {
     return pageMetadata({
@@ -51,7 +52,8 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   });
 }
 
-export default function ActivityPage({ params }: { params: { slug: string } }) {
+export default async function ActivityPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const urban = findPublishedUrbanActivity(params.slug);
   if (urban) return <UrbanSheet activity={urban} />;
   const activity = findActivityBySlug(params.slug);

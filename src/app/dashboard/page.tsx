@@ -1,4 +1,3 @@
-import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { ArrowRight, Calculator, FileText, Megaphone, Sparkles } from "lucide-react";
 import { requireUser, isPremium } from "@/lib/auth";
@@ -13,7 +12,8 @@ import { ManageSubscription } from "@/components/pricing/manage-subscription";
 
 export const metadata = { title: "Tableau de bord | Compléo" };
 
-export default async function DashboardPage({ searchParams }: { searchParams: { checkout?: string } }) {
+export default async function DashboardPage(props: { searchParams: Promise<{ checkout?: string }> }) {
+  const searchParams = await props.searchParams;
   const { supabase, user, profile } = await requireUser();
 
   const [{ data: skills }, quota] = await Promise.all([

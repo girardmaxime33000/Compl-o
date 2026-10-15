@@ -11,10 +11,11 @@ export function generateStaticParams() {
   return [...ACTIVITIES.map((a) => ({ slug: activitySlug(a) })), ...publishedUrbanActivities().map((a) => ({ slug: a.slug }))];
 }
 
-export default function Image({ params }: { params: { slug: string } }) {
-  const urban = findPublishedUrbanActivity(params.slug);
+export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const urban = findPublishedUrbanActivity(slug);
   if (urban) return ogCard({ kicker: "Activités", title: urban.name, subtitle: "Tarifs, matériel et revenu net estimé selon votre temps", from: "#0d9488", to: "#134e4a" });
-  const activity = findActivityBySlug(params.slug);
+  const activity = findActivityBySlug(slug);
   const theme = ACTIVITY_THEMES[activity?.id ?? ""];
   return ogCard({
     kicker: "Activités",

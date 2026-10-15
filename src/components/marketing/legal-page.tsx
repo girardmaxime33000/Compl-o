@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { LEGAL } from "@/lib/legal";
 import { SiteFooter } from "@/components/marketing/site-footer";

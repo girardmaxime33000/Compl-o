@@ -1,4 +1,4 @@
-import { pageMetadata, NOINDEX } from "@/lib/seo";
+import { NOINDEX } from "@/lib/seo";
 import Link from "next/link";
 import { Rocket } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +10,8 @@ import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Connexion | Compléo", ...NOINDEX };
 
-export default function LoginPage({ searchParams }: { searchParams: { next?: string; error?: string } }) {
+export default async function LoginPage(props: { searchParams: Promise<{ next?: string; error?: string }> }) {
+  const searchParams = await props.searchParams;
   const photo = sitePhoto("login");
   return (
     <main className={cn("container min-h-screen py-10", photo ? "grid items-center gap-10 lg:grid-cols-2" : "flex flex-col items-center justify-center")}>
