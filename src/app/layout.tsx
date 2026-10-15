@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { LEGAL } from "@/lib/legal";
 import { ToastProvider } from "@/components/ui/toast";
+
+// Police auto-hébergée par next/font (aucune requête vers Google au chargement des pages).
+const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(LEGAL.siteUrl),
@@ -13,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={inter.variable}>
       <body><ToastProvider>{children}</ToastProvider></body>
     </html>
   );

@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { track } from "@/lib/analytics";
@@ -22,7 +22,16 @@ const LEVEL_STYLE: Record<AlertLevel, { box: string; bar: string; Icon: typeof C
 
 const num = (v: string) => (v === "" ? 0 : Number(v.replace(",", ".")) || 0);
 
-export function Simulator({ initialRevenue = 500, initialRegime = "bnc" }: { initialRevenue?: number; initialRegime?: ActivityRegime }) {
+export function Simulator({
+  initialRevenue = 500,
+  initialRegime = "bnc",
+  headingLevel = "h3",
+}: {
+  initialRevenue?: number;
+  initialRegime?: ActivityRegime;
+  /** Niveau des titres de cartes : h2 quand le simulateur suit directement le h1 de la page. */
+  headingLevel?: "h2" | "h3";
+}) {
   const [revenue, setRevenue] = useState(String(initialRevenue));
   const [regime, setRegime] = useState<ActivityRegime>(initialRegime);
   const [areOn, setAreOn] = useState(false);
@@ -93,7 +102,7 @@ export function Simulator({ initialRevenue = 500, initialRegime = "bnc" }: { ini
     <div className="grid gap-6 lg:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle>Vos paramètres</CardTitle>
+          <CardTitle as={headingLevel}>Vos paramètres</CardTitle>
           <CardDescription>Prestation de services en micro-entreprise.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
@@ -114,6 +123,9 @@ export function Simulator({ initialRevenue = 500, initialRegime = "bnc" }: { ini
                 <TabsTrigger value="bnc">BNC · {(TAX_PARAMS.urssafRate.bnc * 100).toFixed(1)} %</TabsTrigger>
                 <TabsTrigger value="bic">BIC · {(TAX_PARAMS.urssafRate.bic * 100).toFixed(1)} %</TabsTrigger>
               </TabsList>
+              {/* Contenus vides : les onglets ne servent qu'à choisir le régime, mais aria-controls doit viser un élément existant. */}
+              <TabsContent value="bnc" forceMount className="mt-0" />
+              <TabsContent value="bic" forceMount className="mt-0" />
             </Tabs>
             <p className="text-xs text-muted-foreground">
               BNC : cours, conseil, informatique… BIC : bricolage, ménage, livraison, services artisanaux.
@@ -163,7 +175,7 @@ export function Simulator({ initialRevenue = 500, initialRegime = "bnc" }: { ini
         {result.unemployment && (
           <Card>
             <CardHeader>
-              <CardTitle>Cumul avec le chômage</CardTitle>
+              <CardTitle as={headingLevel}>Cumul avec le chômage</CardTitle>
               <CardDescription>Estimation indicative : seul France Travail fait foi.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
@@ -187,7 +199,7 @@ export function Simulator({ initialRevenue = 500, initialRegime = "bnc" }: { ini
                 <div className="flex items-center gap-2 font-medium">
                   <Icon className="h-4 w-4 shrink-0" /> {a.label}
                 </div>
-                <Progress value={a.ratio * 100} indicatorClassName={bar} />
+                <Progress value={a.ratio * 100} aria-label={a.label} indicatorClassName={bar} />
                 <p className="text-xs">{eur(a.annualRevenue)} / {eur(a.threshold)} par an</p>
                 <p className="text-sm">{a.message}</p>
               </div>
