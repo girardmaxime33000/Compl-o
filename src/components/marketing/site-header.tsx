@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TrackedLink } from "@/components/marketing/tracked-link";
 
 const LINKS = [
   { href: "/simulateur-micro-entrepreneur", label: "Simulateur", className: "hidden sm:inline-flex" },
@@ -26,12 +27,12 @@ export function SiteHeader() {
               <Link href={href}>{label}</Link>
             </Button>
           ))}
-          <Button asChild variant="ghost" size="sm" className="px-2 sm:px-3"><Link href="/login">Connexion</Link></Button>
+          <Button asChild variant="ghost" size="sm" className="px-2 sm:px-3"><TrackedLink href="/login" trackProps={{ source: "header", target: "login" }}>Connexion</TrackedLink></Button>
           <Button asChild size="sm">
-            <Link href="/onboarding">
+            <TrackedLink href="/onboarding" trackProps={{ source: "header", target: "diagnostic" }}>
               <span className="sm:hidden">Diagnostic</span>
               <span className="hidden sm:inline">Diagnostic gratuit</span>
-            </Link>
+            </TrackedLink>
           </Button>
         </nav>
       </div>

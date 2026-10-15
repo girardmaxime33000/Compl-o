@@ -288,7 +288,7 @@ Conformité aux directives de l'API : les images ne sont pas copiées dans le d�
 
 ## Mesure d'audience
 
-Mesure interne, sans cookie, sans outil tiers : table `analytics_events` (migration `0004_analytics_events.sql`), écrite uniquement par le service role. Un événement = nom, page, propriétés non personnelles (`source`, `offer`, `platform`, `activity`). Aucun identifiant utilisateur, aucune adresse IP, aucun agent utilisateur. Les signaux « Do Not Track » et « Global Privacy Control » désactivent l'envoi navigateur.
+Mesure interne, sans cookie, sans outil tiers : table `analytics_events` (migration `0004_analytics_events.sql`), écrite uniquement par le service role. Un événement = nom, page, propriétés non personnelles (`source`, `offer`, `platform`, `activity`, `target`, `visual`). Aucun identifiant utilisateur, aucune adresse IP, aucun agent utilisateur. Les signaux « Do Not Track » et « Global Privacy Control » désactivent l'envoi navigateur.
 
 | Événement | Origine | Déclencheur |
 |---|---|---|
@@ -296,18 +296,33 @@ Mesure interne, sans cookie, sans outil tiers : table `analytics_events` (migrat
 | `simulation_completed` | navigateur | première modification d'un paramètre du simulateur |
 | `diagnostic_started` | navigateur | première interaction avec le diagnostic (`/onboarding`) |
 | `diagnostic_completed` | navigateur | diagnostic terminé (recommandations affichées) |
+| `home_view` | navigateur | chargement de l'accueil (`visual` : `photo` ou `none`, version du hero) |
+| `cta_click` | navigateur | clic sur un bouton d'action : `source` = `header`, `hero`, `final` ou `page`, `target` = `diagnostic`, `simulateur` ou `login` |
 | `paywall_click` | navigateur | clic sur « Voir les packs et abonnements » depuis la limite d'annonces |
 | `signup` | serveur | retour d'authentification d'un compte créé depuis moins de 2 minutes |
 | `listing_generated` | serveur | annonce enregistrée |
 | `checkout_started` | serveur | session Stripe Checkout créée |
 | `payment_success` | serveur | webhook Stripe de paiement confirmé |
 
-`/api/track` n'accepte que les cinq événements navigateur. Entonnoir visite → diagnostic → inscription → 1ʳᵉ annonce → paiement : `diagnostic_started`, `diagnostic_completed`, `signup`, `listing_generated`, `payment_success`. Les visites de pages ne sont pas mesurées (aucun traceur) ; aucun outil d'analytics tiers n'est chargé, donc aucun bandeau de consentement n'est requis. Entonnoir sur 30 jours :
+`/api/track` n'accepte que les sept événements navigateur. Entonnoir accueil → clic → diagnostic → inscription → 1ʳᵉ annonce → paiement : `home_view`, `cta_click`, `diagnostic_started`, `diagnostic_completed`, `signup`, `listing_generated`, `payment_success`. Seules les vues de l'accueil sont comptées (dénominateur des clics) ; les autres visites de pages ne sont pas mesurées (aucun traceur) ; aucun outil d'analytics tiers n'est chargé, donc aucun bandeau de consentement n'est requis. Entonnoir sur 30 jours :
 
 ```sql
 select name, count(*) from analytics_events
 where created_at > now() - interval '30 days' group by name order by count(*) desc;
 ```
+
+Taux de clic du hero, avec et sans photo (version du visuel dans `props->>'visual'`) :
+
+```sql
+select props->>'visual' as visuel,
+       count(*) filter (where name = 'home_view') as vues_accueil,
+       count(*) filter (where name = 'cta_click' and props->>'source' = 'hero' and props->>'target' = 'diagnostic') as clics_hero_diagnostic,
+       count(*) filter (where name = 'cta_click' and props->>'source' = 'header' and props->>'target' = 'diagnostic') as clics_entete_diagnostic
+from analytics_events
+where created_at > now() - interval '30 days' and name in ('home_view', 'cta_click') group by 1;
+```
+
+Un clic n'est pas rattaché à une visite (aucun identifiant) : le rapport clics / vues est une approximation, fiable seulement sur des périodes de comparaison de même durée et de trafic comparable.
 
 ## Sécurité
 

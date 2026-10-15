@@ -12,6 +12,7 @@ import { HeroShowcase } from "@/components/marketing/hero-showcase";
 import { Photo } from "@/components/marketing/photo";
 import { cityPhoto } from "@/lib/city-images";
 import { PhotoBanner } from "@/components/marketing/photo-banner";
+import { HomeViewTracker } from "@/components/marketing/home-view-tracker";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { ACTIVITIES, activitySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
@@ -77,6 +78,9 @@ const TOP_PAIRS = [...CITY_ACTIVITY_PAIRS]
 /** Activité de l'exemple d'annonce du hero : la première du catalogue. */
 const HERO_ACTIVITY = ACTIVITIES[0];
 
+/** Version du visuel du hero, jointe aux événements pour comparer avec et sans photo. */
+const HERO_VISUAL = sitePhoto("hero:home") ? "photo" : "none";
+
 const SIM_EXAMPLE_REVENUE = 500;
 const SIM_EXAMPLE_REGIME = "bic" as const;
 
@@ -94,6 +98,7 @@ export default function HomePage() {
     <>
       <OrganizationJsonLd />
       <SiteHeader />
+      <HomeViewTracker visual={HERO_VISUAL} />
       <main>
 
       <section className="container grid items-center gap-10 py-12 md:grid-cols-2 md:py-20">
@@ -104,7 +109,7 @@ export default function HomePage() {
           <p className="mt-4 text-muted-foreground md:text-lg">
             Répondez à trois questions : nous vous proposons des activités simples à faire près de chez vous, puis nous vous aidons à écrire votre annonce.
           </p>
-          <PublicCtas className="mt-8 flex flex-col justify-center gap-3 sm:flex-row md:justify-start" />
+          <PublicCtas source="hero" visual={HERO_VISUAL} className="mt-8 flex flex-col justify-center gap-3 sm:flex-row md:justify-start" />
           <ul className="mt-4 flex flex-wrap justify-center gap-2 text-sm md:justify-start" aria-label="Ce que comprend le diagnostic">
             {["Diagnostic gratuit", "Sans inscription", "Sans carte bancaire"].map((label) => (
               <li key={label} className="flex items-center gap-1.5 rounded-full border bg-card px-3 py-1">
@@ -263,7 +268,7 @@ export default function HomePage() {
           <div className="relative space-y-4 text-center">
             <h2 id="cta-final" className="text-2xl font-bold">Et si vous rendiez service près de chez vous ?</h2>
             <p className="text-sm text-muted-foreground">Trouvez l'activité qui vous correspond en trois questions, sans inscription.</p>
-            <PublicCtas className="flex flex-col justify-center gap-3 sm:flex-row" />
+            <PublicCtas source="final" visual={HERO_VISUAL} className="flex flex-col justify-center gap-3 sm:flex-row" />
           </div>
         </PhotoBanner>
       </section>
