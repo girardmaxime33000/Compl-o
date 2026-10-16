@@ -90,7 +90,7 @@ Le quota du plan est consommé d'abord, puis les crédits du pack ponctuel. Les 
 
 | Domaine | Technologie |
 |---|---|
-| Framework | Next.js 14 (App Router, Server Components, Server Actions), React 18 |
+| Framework | Next.js 16 (App Router, Server Components, Server Actions, Turbopack), React 19 |
 | Langage | TypeScript (mode strict) |
 | Interface | Tailwind CSS, composants de style shadcn/ui (Radix UI), `lucide-react` |
 | Base de données et authentification | Supabase (PostgreSQL, Row Level Security, lien magique et Google) |
@@ -139,16 +139,16 @@ src/
 │   ├── ai.ts                     Sélection du fournisseur d'IA
 │   ├── platforms.ts              Plateformes et quota gratuit
 │   ├── legal.ts                  Informations légales de l'éditeur
-│   ├── stripe/ supabase/         Clients serveur, navigateur, admin, middleware
+│   ├── stripe/ supabase/         Clients serveur, navigateur, admin, proxy
 │   └── auth.ts                   Accès utilisateur et redirections sûres
-├── middleware.ts                 Rafraîchissement de session et routes protégées
+├── proxy.ts                      Rafraîchissement de session et routes protégées (ex-middleware)
 └── types/database.ts             Types des tables
 supabase/migrations/              Schéma SQL
 ```
 
 Principes :
 
-- La route `/dashboard` est protégée par le middleware ; `/onboarding` est publique (recommandations affichées sans compte, enregistrées après connexion).
+- La route `/dashboard` est protégée par le proxy (`src/proxy.ts`, ex-middleware) ; `/onboarding` est publique (recommandations affichées sans compte, enregistrées après connexion).
 - Les quotas et les droits (Premium) sont vérifiés **côté serveur**, jamais uniquement dans l'interface.
 - La logique métier (fiscalité, recommandations) est isolée dans `src/lib`, en fonctions pures faciles à tester.
 

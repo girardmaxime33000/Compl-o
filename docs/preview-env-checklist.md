@@ -1,9 +1,8 @@
-# Checklist des variables d'environnement Preview (PR #4, migration Next 16)
+# Checklist des variables d'environnement Preview
 
-Date : 2026-10-15. Liste établie à partir du code (`process.env.*` dans `src/`), de `.env.example` et de `vercel.json`. Aucune valeur secrète n'est écrite ici.
+Date : 2026-10-15, mise à jour le 2026-10-16 après le premier usage réel (migration Next 16, PR #4). Liste établie à partir du code (`process.env.*` dans `src/`), de `.env.example` et de `vercel.json`. Aucune valeur secrète n'est écrite ici.
 
-Adresse de prévisualisation stable de la branche `claude/next-16-migration` :
-`https://compl-o-git-claude-next-16-migration-maxime33s-projects.vercel.app`
+Adresse de prévisualisation stable d'une branche : `https://compl-o-git-<branche, « / » remplacé par « - »>-maxime33s-projects.vercel.app` (exemple pour la branche `claude/next-16-migration` : `https://compl-o-git-claude-next-16-migration-maxime33s-projects.vercel.app`).
 
 ## 0. Règles à respecter
 
@@ -103,3 +102,12 @@ Le cron de `vercel.json` (`0 8 * * *`) ne s'exécute **que sur le déploiement d
 - **Webhook sans secret correspondant** : un secret `whsec_…` change à chaque point de terminaison Stripe ; en créer un nouveau impose de mettre à jour la variable puis de redéployer.
 - **Protection de déploiement Vercel** : bloque les appels extérieurs (webhook Stripe, cron appelé depuis l'extérieur) sans contournement.
 - **Variables ajoutées sans redéploiement** : les valeurs `NEXT_PUBLIC_*` et celles lues au démarrage ne sont prises en compte qu'au prochain déploiement.
+
+## 4. Retour d'expérience (premier usage, 2026-10-16)
+
+- **Lien magique renvoyé vers `localhost:3000`** : cause constatée, la « Site URL » du projet Supabase de test était restée sur la valeur par défaut `http://localhost:3000` et l'adresse de prévisualisation n'était pas dans les « Redirect URLs ». Corrigé en réglant les deux (Authentication > URL Configuration, adresse suivie de `/**` pour les Redirect URLs), puis en redemandant un lien (l'ancien code est à usage unique).
+- **Type des variables dans Vercel** : « Config » pour `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY` (valeurs publiques, relisibles après enregistrement, ce qui aide à vérifier l'absence de `/` final) ; « Secret » pour `SUPABASE_SERVICE_ROLE_KEY` et tout secret. Vercel affiche un avertissement « Keep This Value Private » sur les variables `NEXT_PUBLIC_` : générique, à ignorer pour elles.
+- **Portée des variables** : à l'ajout, choisir l'environnement « Preview » puis cocher la branche voulue ; revenir en arrière avec la flèche `<` pour changer d'environnement. Contrôler ensuite que les variables de production (Stripe, Resend, `CRON_SECRET`) n'affichent que « Production », jamais « All Environments ».
+- **Redéploiement** : après tout ajout de variable, Redeploy de la ligne de la **branche concernée** (pas celle d'une autre branche), « Use existing Build Cache » décoché ; la fenêtre rappelle que le nouveau déploiement utilise les derniers réglages du projet.
+- **Protection de déploiement** : « Vercel Authentication » (Standard Protection) était active : la prévisualisation exige d'être connecté à Vercel, sans effet sur le domaine de production.
+- **Envoi d'e-mails de Supabase** : limité à quelques messages par heure avec l'envoi par défaut ; ne pas enchaîner les essais.

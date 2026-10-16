@@ -1,6 +1,6 @@
 # Déploiement et maintenance : guide d'exploitation de Compléo
 
-Date : 2026-10-16. À relire à chaque changement d'hébergeur, de fournisseur ou de processus. Les points marqués « décision propriétaire » ne peuvent pas être tranchés par le code.
+Date : 2026-10-16 (mis à jour après la migration Next 16 et la bascule de production sur `main`). À relire à chaque changement d'hébergeur, de fournisseur ou de processus. Les points marqués « décision propriétaire » ne peuvent pas être tranchés par le code.
 
 ## 1. État constaté (à corriger en premier)
 
@@ -8,7 +8,7 @@ Date : 2026-10-16. À relire à chaque changement d'hébergeur, de fournisseur o
 |---|---|---|
 | ~~Vercel traitait la branche `claude/new-session-og6dhq` comme Production~~ (chaque push y déployait sur `compleo.work`) | Corrigé le 2026-10-16 : `main` créée, branche par défaut du dépôt, protégée par un ruleset GitHub, et « Branch Tracking » de l'environnement Production réglé sur `main` (Vercel > Settings > Environments > Production) | Reste à faire : premier déploiement issu de `main` (en attente de la fusion de cette PR) |
 | Aucune intégration continue : la seule vérification visible sur les PR est « Vercel Preview Comments » | Rien n'empêche de fusionner un build cassé ou un test rouge | Workflow `.github/workflows/ci.yml` ajouté ; en faire une vérification obligatoire (section 3) |
-| Alerte critique `npm audit` sur `next` 14.2.35 | Déni de service possible | Migration prête : [PR #4](https://github.com/girardmaxime33000/Compl-o/pull/4), à valider sur prévisualisation (`docs/migration-next-16.md`) |
+| ~~Alerte critique `npm audit` sur `next` 14.2.35~~ | Corrigé le 2026-10-16 : migration vers Next 16.4.2 fusionnée ([PR #4](https://github.com/girardmaxime33000/Compl-o/pull/4)) et en production | Restent 8 alertes dans la chaîne de build de Tailwind 3 (job `audit` informatif rouge) : Tailwind 4 à planifier ; détail dans `docs/migration-next-16.md` |
 | Plan Vercel « Hobby » | Usage commercial interdit par les conditions Hobby ; cron limité à une exécution par jour ; pas de contournement de protection garanti | Passer au plan Pro avant le lancement commercial (décision propriétaire, à vérifier dans les conditions Vercel en vigueur) |
 | Aucune supervision ni sauvegarde documentée | Panne ou perte de données découverte par les clients | Sections 6 et 7 |
 
@@ -111,14 +111,14 @@ Aussi ajoutés : `.github/dependabot.yml` (mises à jour hebdomadaires groupées
 - En-têtes de sécurité en place (`next.config.mjs`). Pas de CSP : demande un inventaire des sources (Stripe, Supabase, `images.unsplash.com`) puis un déploiement en mode « report-only » avant application.
 - Droits Premium, quotas et colonnes sensibles contrôlés côté serveur ; clé de service Supabase uniquement côté serveur.
 - Signature des webhooks Stripe vérifiée ; routes cron protégées par `CRON_SECRET`.
-- Dépendances : Dependabot + `npm audit` ; les montées majeures sont des migrations planifiées (Tailwind 4 pour les alertes de build restantes).
+- Dépendances : Dependabot + `npm audit` ; les montées majeures sont des migrations planifiées (Tailwind 4 pour les alertes de build restantes). Le projet tourne sous Next 16.4.2 : après chaque mise à jour mineure, le job `verify` doit rester vert avant fusion.
 - Accès : authentification à deux facteurs sur GitHub, Vercel, Supabase, Stripe, Resend et le registrar du domaine ; comptes nominatifs, pas de partage de mot de passe.
 
 ## 11. Décisions propriétaire en attente
 
 1. ~~Branche de production et protection de branche~~ : faits (section 2).
 2. Passage au plan Vercel Pro avant le lancement commercial.
-3. Calendrier de la migration Next 16 (PR #4) après jeu de tests sur prévisualisation.
+3. ~~Migration Next 16~~ : faite et en production (voir `docs/migration-next-16.md`). Reste à décider : calendrier de la migration Tailwind 4.
 4. Outil de supervision externe et destinataire des alertes.
 5. Plan Supabase (sauvegardes, restauration) et lieu de stockage des exports.
 6. Relecture juridique des textes et registre RGPD.
