@@ -48,6 +48,8 @@ if (provider === "openai-compatible" && /localhost|127\.0\.0\.1/.test(env.AI_BAS
 
 if (has("RESEND_API_KEY") !== has("EMAIL_FROM")) warnings.push("RESEND_API_KEY et EMAIL_FROM vont ensemble : l'envoi d'e-mails reste désactivé tant que les deux ne sont pas définies");
 if (!has("RESEND_API_KEY")) warnings.push("E-mail non configuré : envoi de factures et séquence d'e-mails désactivés");
+if (env.NEWSLETTER_ENABLED === "true" && (!has("RESEND_API_KEY") || !has("EMAIL_FROM"))) errors.push("NEWSLETTER_ENABLED=true sans RESEND_API_KEY et EMAIL_FROM : le formulaire serait affiché mais l'inscription renverrait une erreur");
+if (env.NEWSLETTER_ENABLED === "true" && !has("EMAIL_UNSUBSCRIBE_SECRET") && !has("CRON_SECRET")) errors.push("NEWSLETTER_ENABLED=true sans secret de désinscription (CRON_SECRET ou EMAIL_UNSUBSCRIBE_SECRET)");
 if (env.CRON_SECRET && env.CRON_SECRET.length < 32) warnings.push("CRON_SECRET court (moins de 32 caractères)");
 
 // Garde-fous : mélange des environnements.

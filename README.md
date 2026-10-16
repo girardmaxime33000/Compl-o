@@ -188,6 +188,7 @@ Elles se renseignent uniquement dans `.env.local` (ignoré par git) et dans les 
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé publique (publishable) Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | Clé secrète Supabase : serveur uniquement, contourne la RLS |
 | `STRIPE_SECRET_KEY` | Clé secrète Stripe |
+| `NEWSLETTER_ENABLED` | `true` : affiche le formulaire d'inscription du blog et ouvre `/api/newsletter/subscribe`. Vide par défaut. À activer seulement après relecture juridique de la politique de confidentialité et du texte de consentement. Valeur lue au build : redéployer après changement |
 | `RESEND_API_KEY`, `EMAIL_FROM` | Envoi d'e-mails via Resend (documents, séquence d'accueil, alertes). `EMAIL_FROM` : adresse d'un domaine vérifié dans Resend. Sans ces variables, l'envoi est désactivé (503) |
 | `CRON_SECRET` | Secret du cron quotidien `/api/cron/emails` (envoyé par Vercel en `Authorization: Bearer`) et des liens de désinscription |
 | `EMAIL_UNSUBSCRIBE_SECRET` | Optionnel : secret dédié aux liens de désinscription (défaut : `CRON_SECRET`) |
@@ -307,6 +308,25 @@ Routes : `/blog`, `/blog/[slug]`, `/blog/categorie/[cat]`, flux RSS `/blog/rss.x
 
 Pour publier un article : créer le composant, l'ajouter à `BLOG_POSTS` (slug en minuscules, chiffres et tirets, 50 caractères maximum : le slug est la valeur de `article` dans la mesure), puis renseigner `reviewedOn` après relecture. `npm test` vérifie les slugs, les dates, les catégories, les sources, le sitemap et le flux RSS. Mesure : `blog_view` et `cta_click` portent le slug de l'article (voir « Mesure d'audience »).
 
+### Newsletter du blog (capture d'e-mail)
+
+Double opt-in, sans compte. Migration `0010_newsletter.sql` (table `newsletter_subscribers`, RLS activée, aucun droit pour `anon` et `authenticated` : service role uniquement). **Désactivée par défaut** : tant que `NEWSLETTER_ENABLED` n'est pas `true`, aucun formulaire n'est affiché et `/api/newsletter/subscribe` répond 503.
+
+- **Parcours.** Formulaire en bas de chaque article et de `/blog` (`src/components/blog/newsletter-form.tsx`) : e-mail + case de consentement non cochée par défaut, validée aussi côté serveur (`consent` strictement `true`). `POST /api/newsletter/subscribe` crée une ligne `pending` et envoie un e-mail avec un lien de confirmation. `GET /api/newsletter/confirm?t=…` affiche un bouton (il n'enregistre rien : les messageries ouvrent souvent les liens) ; le clic envoie un `POST` qui passe la ligne en `confirmed` et enregistre `newsletter_confirmed`. `GET` ou `POST /api/newsletter/unsubscribe?s=…&t=…` désinscrit en un clic (lien signé HMAC, `List-Unsubscribe-Post` géré).
+- **Preuve de consentement.** Date, version du texte (`NEWSLETTER_CONSENT_VERSION` dans `src/lib/newsletter-consent.ts`, à changer à chaque modification du texte) et origine (`blog` ou `blog:<slug>`). Ni adresse IP ni agent utilisateur. Le jeton de confirmation n'est jamais stocké (empreinte SHA-256).
+- **Protection contre les abus.** Champ piège (honeypot), réponse identique que l'adresse existe ou non, délai de 10 minutes entre deux e-mails pour une même adresse en attente, 3 e-mails par 24 h et par adresse, 100 e-mails de confirmation par heure au total (429 au-delà), jeton valable 48 h, lignes `pending` de plus de 7 jours supprimées à chaque inscription. Pas de limitation par adresse IP (aucune IP n'est conservée).
+- **Désinscrits.** La ligne reste avec le statut `unsubscribed` pour ne plus solliciter la personne ; suppression sur demande (adresse de contact de la politique de confidentialité). Une réinscription explicite repasse en `pending` avec une nouvelle confirmation.
+- **Pas encore fait : l'envoi de la newsletter elle-même.** Aucune campagne n'est envoyée par le code. Pour envoyer, lire les lignes `status = 'confirmed'`, mettre dans chaque message `newsletterUnsubscribeUrl(id)` (`src/lib/email-templates.ts`) en lien de pied de page et en `unsubscribeUrl` de `sendEmail` (en-têtes List-Unsubscribe). L'outil d'envoi des campagnes (script, Resend Broadcasts ou autre) reste à décider.
+- **Avant d'activer.** Appliquer `0010_newsletter.sql`, vérifier `RESEND_API_KEY`, `EMAIL_FROM` et `CRON_SECRET` (ou `EMAIL_UNSUBSCRIBE_SECRET`), faire relire par un juriste la section « Newsletter » de la politique de confidentialité et le texte de consentement (brouillons), puis définir `NEWSLETTER_ENABLED=true` et redéployer. `npm run check:env` signale une activation sans e-mail configuré.
+
+Articles d'entrée des inscriptions confirmées :
+
+```sql
+select props->>'article' as article, count(*) as inscriptions_confirmees
+from analytics_events
+where name = 'newsletter_confirmed' and created_at > now() - interval '30 days' group by 1 order by 2 desc;
+```
+
 ## Mesure d'audience
 
 Deux mesures coexistent. (1) Umami Cloud (`https://cloud.umami.is/script.js`, `src/app/layout.tsx`) : fréquentation générale, sans cookie ; chargé uniquement si `VERCEL_ENV=production`, avec `data-exclude-search` (aucun paramètre d'URL transmis) et `data-do-not-track`. L'identifiant du site est public. Les statistiques se consultent sur cloud.umami.is. (2) Mesure interne, sans cookie : table `analytics_events` (migration `0004_analytics_events.sql`), écrite uniquement par le service role. Un événement = nom, page, propriétés non personnelles (`source`, `offer`, `platform`, `activity`, `target`, `visual`, `article`). Aucun identifiant utilisateur, aucune adresse IP, aucun agent utilisateur. Les signaux « Do Not Track » et « Global Privacy Control » désactivent l'envoi navigateur.
@@ -325,6 +345,7 @@ Deux mesures coexistent. (1) Umami Cloud (`https://cloud.umami.is/script.js`, `s
 | `listing_generated` | serveur | annonce enregistrée |
 | `checkout_started` | serveur | session Stripe Checkout créée |
 | `payment_success` | serveur | webhook Stripe de paiement confirmé |
+| `newsletter_confirmed` | serveur | inscription à la newsletter confirmée par le lien de l'e-mail (`article` = slug de l'article d'origine) |
 
 `/api/track` n'accepte que les huit événements navigateur. Entonnoir accueil → clic → diagnostic → inscription → 1ʳᵉ annonce → paiement : `home_view`, `cta_click`, `diagnostic_started`, `diagnostic_completed`, `signup`, `listing_generated`, `payment_success`. Seules les vues de l'accueil sont comptées (dénominateur des clics) ; les autres visites de pages ne sont pas mesurées (aucun traceur) ; l'entonnoir interne ci-dessous ne dépend pas d'Umami. Umami Cloud est chargé sans cookie ni paramètre d'URL ; le besoin éventuel d'un bandeau de consentement reste à confirmer au regard des conditions d'exemption de la CNIL (réglages du compte Umami, absence de recoupement). Entonnoir sur 30 jours :
 
@@ -402,6 +423,7 @@ Commandes utiles : `npm run check:env -- --env production|preview|development [-
 
 - Envoi d'un devis ou d'une facture à un client : bouton enveloppe dans `/dashboard/invoices` (`POST /api/invoices/[id]/send`, PDF en pièce jointe, réponse du client adressée à l'utilisateur, 20 envois par 24 h et par utilisateur, adresse du client non conservée).
 - Séquence d'accueil (J+1 simulateur, J+3 première annonce si aucune) et alertes à 80 % du seuil de TVA ou du plafond micro (calculées sur les factures « Payé » de l'année, hypothèse prestations de services) : cron quotidien `vercel.json` → `/api/cron/emails`. Réservés aux comptes ayant activé le réglage dans Mon compte (désactivé par défaut) ; désinscription en un clic (`/api/email/unsubscribe`, `List-Unsubscribe`).
+- Newsletter du blog : appliquer la migration `0010_newsletter.sql` avant de définir `NEWSLETTER_ENABLED=true`. Voir « Newsletter du blog ».
 - Appliquer la migration `0006_email.sql`. Dans Resend : vérifier le domaine d'envoi (DNS SPF/DKIM chez Cloudflare), créer une clé API.
 - Témoignages (T24) : appliquer la migration `0009_testimonials.sql` avant de déployer le code (sinon la page Annonces du tableau de bord échoue à lire `testimonials`). Voir « Preuve sociale ».
 - Annonces multi-sites (T20) : appliquer la migration `0007_listing_variants.sql` (colonne `listings.variants`, additive) avant de déployer le code, sinon l'enregistrement des annonces échoue (500, crédit remboursé). Une génération produit jusqu'à 5 versions (une par site choisi) et compte pour un seul quota ou crédit. Appliquer aussi `0008_listing_platforms.sql` (valeurs ajoutées au type énuméré `listing_platform`). Compléo ne publie rien sur ces sites.

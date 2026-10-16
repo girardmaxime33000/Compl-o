@@ -5,6 +5,7 @@ import { NOINDEX, pageMetadata } from "@/lib/seo";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SiteHeader } from "@/components/marketing/site-header";
+import { NewsletterSignup } from "@/components/blog/newsletter-signup";
 import { PostList } from "@/components/blog/post-list";
 
 export function generateMetadata(): Metadata {
@@ -44,6 +45,7 @@ export default function BlogIndexPage() {
         ) : (
           <p className="text-muted-foreground">Les premiers articles arrivent bientôt. En attendant, consultez nos <Link href="/guides" className="text-primary underline">guides</Link>.</p>
         )}
+        <NewsletterSignup source="blog" />
       </main>
       <SiteFooter />
     </>

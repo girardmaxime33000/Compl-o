@@ -70,3 +70,15 @@ export function verifyUnsubscribeToken(userId: string, token: string): boolean {
   const b = Buffer.from(token);
   return a.length === b.length && timingSafeEqual(a, b);
 }
+
+/** Désinscription de la newsletter du blog : jeton lié à l'identifiant de l'abonné, préfixe distinct des e-mails de compte. */
+export function newsletterUnsubscribeToken(subscriberId: string): string {
+  return createHmac("sha256", unsubscribeSecret()).update(`newsletter-unsub:${subscriberId}`).digest("hex");
+}
+
+export function verifyNewsletterUnsubscribeToken(subscriberId: string, token: string): boolean {
+  if (!unsubscribeSecret()) return false;
+  const a = Buffer.from(newsletterUnsubscribeToken(subscriberId));
+  const b = Buffer.from(token);
+  return a.length === b.length && timingSafeEqual(a, b);
+}

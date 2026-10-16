@@ -3,7 +3,7 @@
  * sans identifiant utilisateur, sans adresse IP. Aucun outil tiers.
  */
 export const CLIENT_EVENTS = ["simulator_view", "simulation_completed", "diagnostic_started", "diagnostic_completed", "paywall_click", "home_view", "cta_click", "blog_view"] as const;
-export const SERVER_EVENTS = ["signup", "listing_generated", "checkout_started", "payment_success"] as const;
+export const SERVER_EVENTS = ["signup", "listing_generated", "checkout_started", "payment_success", "newsletter_confirmed"] as const;
 
 export type ClientEvent = (typeof CLIENT_EVENTS)[number];
 export type ServerEvent = (typeof SERVER_EVENTS)[number];

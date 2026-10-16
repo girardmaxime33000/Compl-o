@@ -1,7 +1,7 @@
 import { LEGAL } from "@/lib/legal";
 import { absoluteUrl } from "@/lib/seo";
 import { eur, TAX_PARAMS } from "@/lib/tax";
-import { unsubscribeToken } from "@/lib/email";
+import { newsletterUnsubscribeToken, unsubscribeToken } from "@/lib/email";
 
 export interface Rendered {
   subject: string;
@@ -14,6 +14,9 @@ const esc = (s: string) =>
 
 export const unsubscribeUrl = (userId: string) =>
   `${absoluteUrl("/api/email/unsubscribe")}?u=${encodeURIComponent(userId)}&t=${unsubscribeToken(userId)}`;
+
+export const newsletterUnsubscribeUrl = (subscriberId: string) =>
+  `${absoluteUrl("/api/newsletter/unsubscribe")}?s=${encodeURIComponent(subscriberId)}&t=${newsletterUnsubscribeToken(subscriberId)}`;
 
 function layout(body: string, footer: string) {
   return `<!doctype html><html lang="fr"><body style="margin:0;background:#f6f7f9;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a">
@@ -77,5 +80,17 @@ export function ceilingAlert(userId: string, kind: CeilingKind, paidTotal: numbe
     subject: isVat ? "Vous approchez du seuil de franchise de TVA" : "Vous approchez du plafond micro-entrepreneur",
     text: `Bonjour,\n\n${sentence}\n\n${caveat}\n\nEn savoir plus : ${link}\n\nSe désinscrire : ${unsubscribeUrl(userId)}`,
     html: layout(`<p>Bonjour,</p><p>${esc(sentence)}</p><p><em>${esc(caveat)}</em></p>${button(link, "Lire le guide")}`, tipsFooter(userId)),
+  };
+}
+
+/** E-mail de confirmation (double opt-in). Sans clic sur le lien, l'adresse n'est pas inscrite et est supprimée sous 7 jours. */
+export function newsletterConfirmationEmail(confirmUrl: string): Rendered {
+  return {
+    subject: "Confirmez votre inscription à la newsletter Compléo",
+    text: `Bonjour,\n\nVous avez demandé à recevoir la newsletter de Compléo (conseils sur le revenu complémentaire et le budget). Pour confirmer, ouvrez ce lien :\n\n${confirmUrl}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez ce message : sans confirmation, votre adresse n'est pas inscrite et sera supprimée sous quelques jours.\n\n${LEGAL.siteName} · ${LEGAL.email}`,
+    html: layout(
+      `<p>Bonjour,</p><p>Vous avez demandé à recevoir la newsletter de Compléo (conseils sur le revenu complémentaire et le budget). Pour confirmer votre inscription, cliquez sur le bouton ci-dessous.</p>${button(confirmUrl, "Confirmer mon inscription")}<p style="font-size:13px;color:#666">Si vous n'êtes pas à l'origine de cette demande, ignorez ce message : sans confirmation, votre adresse n'est pas inscrite et sera supprimée sous quelques jours.</p>`,
+      `${esc(LEGAL.siteName)} · ${esc(LEGAL.email)}`,
+    ),
   };
 }

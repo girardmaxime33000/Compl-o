@@ -11,6 +11,7 @@ import { SiteFooter } from "@/components/marketing/site-footer";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { StickyCta } from "@/components/marketing/sticky-cta";
 import { BlogViewTracker } from "@/components/blog/blog-view-tracker";
+import { NewsletterSignup } from "@/components/blog/newsletter-signup";
 import { PostCta } from "@/components/blog/post-cta";
 import { PostList, formatDate } from "@/components/blog/post-list";
 
@@ -75,6 +76,7 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
         {post.faq && <FaqSection items={post.faq} />}
         <Sources items={post.sources} />
         <PostCta article={post.slug} cta={post.cta ?? DEFAULT_CTA} />
+        <NewsletterSignup source={`blog:${post.slug}`} />
 
         {related.length > 0 && (
           <section className="space-y-3">
