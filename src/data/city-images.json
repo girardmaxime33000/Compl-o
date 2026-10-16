@@ -32,7 +32,8 @@
       "author": "Zhu Yunxiao",
       "authorUrl": "https://unsplash.com/@zhuyx",
       "pageUrl": "https://unsplash.com/photos/a-street-with-buildings-on-either-side-XTsI5i1piDY",
-      "alt": "a street with buildings on either side"
+      "alt": "a street with buildings on either side",
+      "color": "#595940"
     },
     "grenoble": {
       "id": "tdAqAkub1YE",
@@ -42,7 +43,8 @@
       "author": "Romain Girot",
       "authorUrl": "https://unsplash.com/@romaingirot",
       "pageUrl": "https://unsplash.com/photos/a-bridge-over-a-river-tdAqAkub1YE",
-      "alt": "a bridge over a river"
+      "alt": "a bridge over a river",
+      "color": "#0c738c"
     },
     "le-havre": {
       "id": "x-EpDHXZnoQ",
@@ -52,7 +54,8 @@
       "author": "Matthieu VETOIS",
       "authorUrl": "https://unsplash.com/@mvetois",
       "pageUrl": "https://unsplash.com/photos/a-bunch-of-boats-that-are-sitting-in-the-water-x-EpDHXZnoQ",
-      "alt": "a bunch of boats that are sitting in the water"
+      "alt": "a bunch of boats that are sitting in the water",
+      "color": "#c0d9d9"
     },
     "lille": {
       "id": "ac-Kw8EbQVs",
@@ -62,7 +65,8 @@
       "author": "Zhu Yunxiao",
       "authorUrl": "https://unsplash.com/@zhuyx",
       "pageUrl": "https://unsplash.com/photos/a-group-of-people-walking-in-a-city-ac-Kw8EbQVs",
-      "alt": "a group of people walking in a city"
+      "alt": "a group of people walking in a city",
+      "color": "#a6a6a6"
     },
     "lyon": {
       "id": "6tcJQYz--jU",
@@ -72,7 +76,8 @@
       "author": "Nguyen Dang Hoang Nhu",
       "authorUrl": "https://unsplash.com/@nguyendhn",
       "pageUrl": "https://unsplash.com/photos/brown-concrete-building-near-river-during-daytime-6tcJQYz--jU",
-      "alt": "brown concrete building near river during daytime"
+      "alt": "brown concrete building near river during daytime",
+      "color": "#a6c0c0"
     },
     "marseille": {
       "id": "0KdrlrwYlCo",
@@ -82,7 +87,8 @@
       "author": "Carnet de Voyage d'Alex",
       "authorUrl": "https://unsplash.com/@alexisribeyrecarnetdevoyage",
       "pageUrl": "https://unsplash.com/photos/a-bunch-of-boats-that-are-in-the-water-0KdrlrwYlCo",
-      "alt": "A bunch of boats that are in the water"
+      "alt": "A bunch of boats that are in the water",
+      "color": "#a6a6a6"
     },
     "montpellier": {
       "id": "-geEFi_2qAM",
@@ -92,7 +98,8 @@
       "author": "KWON JUNHO",
       "authorUrl": "https://unsplash.com/@juno1412",
       "pageUrl": "https://unsplash.com/photos/people-walking-on-sidewalk-near-building-during-daytime--geEFi_2qAM",
-      "alt": "people walking on sidewalk near building during daytime"
+      "alt": "people walking on sidewalk near building during daytime",
+      "color": "#595959"
     },
     "nantes": {
       "id": "LxJ5FHD495Y",
@@ -102,7 +109,8 @@
       "author": "Pascal Bernardon",
       "authorUrl": "https://unsplash.com/@pbernardon",
       "pageUrl": "https://unsplash.com/photos/a-giant-mechanical-elephant-with-people-riding-on-its-back-LxJ5FHD495Y",
-      "alt": "a giant mechanical elephant with people riding on it's back"
+      "alt": "a giant mechanical elephant with people riding on it's back",
+      "color": "#8ca6c0"
     },
     "nice": {
       "id": "QRXxMSin654",
@@ -112,7 +120,8 @@
       "author": "Constantin",
       "authorUrl": "https://unsplash.com/@switteerr",
       "pageUrl": "https://unsplash.com/photos/an-aerial-view-of-a-city-next-to-the-ocean-QRXxMSin654",
-      "alt": "an aerial view of a city next to the ocean"
+      "alt": "an aerial view of a city next to the ocean",
+      "color": "#598ca6"
     },
     "paris": {
       "id": "R5scocnOOdM",
@@ -122,7 +131,8 @@
       "author": "Léonard Cotte",
       "authorUrl": "https://unsplash.com/@ettocl",
       "pageUrl": "https://unsplash.com/photos/pont-alexandre-iii-bridge-in-paris-R5scocnOOdM",
-      "alt": "The Pont Alexandre III bridge illuminated at night in Paris, France"
+      "alt": "The Pont Alexandre III bridge illuminated at night in Paris, France",
+      "color": "#8c8ca6"
     },
     "reims": {
       "id": "_xAUCK4KtHo",
@@ -132,7 +142,8 @@
       "author": "Reno Laithienne",
       "authorUrl": "https://unsplash.com/@renolaithienne",
       "pageUrl": "https://unsplash.com/photos/people-walking-near-brown-concrete-building-during-daytime-_xAUCK4KtHo",
-      "alt": "people walking near brown concrete building during daytime"
+      "alt": "people walking near brown concrete building during daytime",
+      "color": "#d9d9d9"
     },
     "rennes": {
       "id": "OiCr93OnfLE",
@@ -142,7 +153,8 @@
       "author": "Thanh Ly",
       "authorUrl": "https://unsplash.com/@thanhly",
       "pageUrl": "https://unsplash.com/photos/a-large-building-with-a-clock-tower-in-front-of-it-OiCr93OnfLE",
-      "alt": "A large building with a clock tower in front of it"
+      "alt": "A large building with a clock tower in front of it",
+      "color": "#d9f3f3"
     },
     "saint-denis-reunion": {
       "id": "HXspRi9K9Lk",
@@ -152,7 +164,8 @@
       "author": "Rajavanya Subramaniyan",
       "authorUrl": "https://unsplash.com/@rajavanya",
       "pageUrl": "https://unsplash.com/photos/aerial-view-of-city-buildings-during-daytime-HXspRi9K9Lk",
-      "alt": "aerial view of city buildings during daytime"
+      "alt": "aerial view of city buildings during daytime",
+      "color": "#a6c0c0"
     },
     "saint-etienne": {
       "id": "jG2JOqRSbe0",
@@ -162,7 +175,8 @@
       "author": "le Sixième Rêve",
       "authorUrl": "https://unsplash.com/@le_sixieme_reve",
       "pageUrl": "https://unsplash.com/photos/a-lake-surrounded-by-trees-with-a-house-in-the-middle-jG2JOqRSbe0",
-      "alt": "a lake surrounded by trees with a house in the middle"
+      "alt": "a lake surrounded by trees with a house in the middle",
+      "color": "#264040"
     },
     "strasbourg": {
       "id": "Cq4BqP4IYN4",
@@ -172,7 +186,8 @@
       "author": "Lucile Noiriel",
       "authorUrl": "https://unsplash.com/@lucaju1999",
       "pageUrl": "https://unsplash.com/photos/white-and-brown-concrete-building-beside-river-during-daytime-Cq4BqP4IYN4",
-      "alt": "white and brown concrete building beside river during daytime"
+      "alt": "white and brown concrete building beside river during daytime",
+      "color": "#262626"
     },
     "toulon": {
       "id": "LSntNYbyltk",
@@ -182,7 +197,8 @@
       "author": "Emmanuel Martin",
       "authorUrl": "https://unsplash.com/@emartin6989",
       "pageUrl": "https://unsplash.com/photos/people-walking-near-white-concrete-building-during-daytime-LSntNYbyltk",
-      "alt": "people walking near white concrete building during daytime"
+      "alt": "people walking near white concrete building during daytime",
+      "color": "#59c0f3"
     },
     "toulouse": {
       "id": "F4u8Vm7UdgY",
@@ -192,7 +208,8 @@
       "author": "DAT VO",
       "authorUrl": "https://unsplash.com/@hoangdat302",
       "pageUrl": "https://unsplash.com/photos/people-sitting-beside-lake-F4u8Vm7UdgY",
-      "alt": "people sitting beside lake"
+      "alt": "people sitting beside lake",
+      "color": "#d9d9d9"
     },
     "villeurbanne": {
       "id": "H_ec5QIo1ck",
@@ -202,7 +219,8 @@
       "author": "Lucas Gallone",
       "authorUrl": "https://unsplash.com/@lucasgallone",
       "pageUrl": "https://unsplash.com/photos/a-modern-buildings-exterior-and-architecture-H_ec5QIo1ck",
-      "alt": "A modern building's exterior and architecture"
+      "alt": "A modern building's exterior and architecture",
+      "color": "#d9d9f3"
     }
   }
 }
