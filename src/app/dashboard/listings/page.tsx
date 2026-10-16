@@ -3,7 +3,8 @@ import { getQuota } from "@/lib/quota";
 import { ListingGenerator } from "@/components/listings/generator";
 import { equipmentLabel, recommend } from "@/lib/activities";
 import { suggestedPlatforms } from "@/lib/platforms";
-import type { Listing, UserSkill } from "@/types/database";
+import { TestimonialForm } from "@/components/dashboard/testimonial-form";
+import type { Listing, Testimonial, UserSkill } from "@/types/database";
 
 export const metadata = { title: "Annonces | Compléo" };
 
@@ -11,10 +12,11 @@ export default async function ListingsPage(props: { searchParams: Promise<{ serv
   const searchParams = await props.searchParams;
   const { supabase, user, profile } = await requireUser();
 
-  const [{ data: listings }, quota, { data: skills }] = await Promise.all([
+  const [{ data: listings }, quota, { data: skills }, { data: testimonial }] = await Promise.all([
     supabase.from("listings").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20).returns<Listing[]>(),
     getQuota(supabase, user.id, profile),
     supabase.from("user_skills").select("*").eq("user_id", user.id).returns<UserSkill[]>(),
+    supabase.from("testimonials").select("body, status").eq("user_id", user.id).maybeSingle<Pick<Testimonial, "body" | "status">>(),
   ]);
 
   // Réponses du diagnostic réutilisées pour préremplir le formulaire : la personne les relit et les corrige.
@@ -39,6 +41,7 @@ export default async function ListingsPage(props: { searchParams: Promise<{ serv
         <p className="text-muted-foreground">Dites ce que vous savez faire. Vous choisissez vos sites, vous recevez une annonce adaptée à chacun, prête à copier.</p>
       </div>
       <ListingGenerator prefill={prefill} initialListings={listings ?? []} quota={quota} />
+      {(listings?.length ?? 0) > 0 && <TestimonialForm initial={testimonial ?? null} />}
     </div>
   );
 }

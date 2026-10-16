@@ -337,6 +337,15 @@ where created_at > now() - interval '30 days' and name in ('home_view', 'cta_cli
 
 Un clic n'est pas rattaché à une visite (aucun identifiant) : le rapport clics / vues est une approximation, fiable seulement sur des périodes de comparaison de même durée et de trafic comparable.
 
+## Preuve sociale
+
+Uniquement des données réelles. Rien ne s'affiche tant qu'il n'y a rien de réel : pas de note, pas d'étoile, pas de logo de média, pas de chiffre saisi à la main.
+
+- **Compteur d'annonces** (accueil) : nombre de lignes `listings` créées depuis `SOCIAL_PROOF_SINCE` (jour d'ouverture au public, `AAAA-MM-JJ`), affiché seulement s'il atteint `SOCIAL_PROOF_MIN_LISTINGS` (100 par défaut). Sans `SOCIAL_PROOF_SINCE`, aucun compteur : les annonces des essais ne comptent pas. La page d'accueil se régénère toutes les heures.
+- **Témoignages** : formulaire « Votre avis sur Compléo » sur `/dashboard/listings`, après une première annonce, avec case de consentement obligatoire, sans contrepartie. Table `testimonials` (migration `0009_testimonials.sql`) : un témoignage par compte, statut `pending` à l'envoi, lecture publique des seuls `approved`, retrait possible par l'auteur, effacement en cascade avec le compte, inclus dans l'export RGPD.
+- **Modération** : dans l'éditeur SQL ou le Table Editor de Supabase, passer `status` à `approved` (ou `rejected`) après relecture. Ne pas modifier le texte d'un avis ; si besoin, le refuser. Aucune interface d'administration n'existe.
+- Pas de balisage `Review` ni `AggregateRating` : les avis d'un site sur lui-même ne sont pas éligibles aux résultats enrichis de Google, et aucune note n'est collectée.
+
 ## Exploitation et maintenance
 
 Environnements, branches, intégration continue, procédure de déploiement et de retour arrière, supervision, sauvegardes, calendrier de maintenance (dont la mise à jour fiscale du 1er janvier) et marche à suivre en cas d'incident : `docs/deploiement-et-maintenance.md`. Variables d'environnement de prévisualisation : `docs/preview-env-checklist.md`. Migration Next 16 : `docs/migration-next-16.md`.
@@ -375,4 +384,5 @@ Commandes utiles : `npm run check:env -- --env production|preview|development [-
 - Envoi d'un devis ou d'une facture à un client : bouton enveloppe dans `/dashboard/invoices` (`POST /api/invoices/[id]/send`, PDF en pièce jointe, réponse du client adressée à l'utilisateur, 20 envois par 24 h et par utilisateur, adresse du client non conservée).
 - Séquence d'accueil (J+1 simulateur, J+3 première annonce si aucune) et alertes à 80 % du seuil de TVA ou du plafond micro (calculées sur les factures « Payé » de l'année, hypothèse prestations de services) : cron quotidien `vercel.json` → `/api/cron/emails`. Réservés aux comptes ayant activé le réglage dans Mon compte (désactivé par défaut) ; désinscription en un clic (`/api/email/unsubscribe`, `List-Unsubscribe`).
 - Appliquer la migration `0006_email.sql`. Dans Resend : vérifier le domaine d'envoi (DNS SPF/DKIM chez Cloudflare), créer une clé API.
+- Témoignages (T24) : appliquer la migration `0009_testimonials.sql` avant de déployer le code (sinon la page Annonces du tableau de bord échoue à lire `testimonials`). Voir « Preuve sociale ».
 - Annonces multi-sites (T20) : appliquer la migration `0007_listing_variants.sql` (colonne `listings.variants`, additive) avant de déployer le code, sinon l'enregistrement des annonces échoue (500, crédit remboursé). Une génération produit jusqu'à 5 versions (une par site choisi) et compte pour un seul quota ou crédit. Appliquer aussi `0008_listing_platforms.sql` (valeurs ajoutées au type énuméré `listing_platform`). Compléo ne publie rien sur ces sites.

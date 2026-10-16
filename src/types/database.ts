@@ -54,6 +54,18 @@ export interface Listing {
   created_at: string;
 }
 
+export type TestimonialStatus = "pending" | "approved" | "rejected";
+
+export interface Testimonial {
+  id: string;
+  user_id: string;
+  first_name: string;
+  city: string | null;
+  body: string;
+  status: TestimonialStatus;
+  created_at: string;
+}
+
 export interface Invoice {
   id: string;
   user_id: string;
