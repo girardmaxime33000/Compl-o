@@ -2,6 +2,7 @@ import { ACTIVITIES, activitySlug, formatRate } from "@/lib/activities";
 import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityPath } from "@/lib/cities";
 import { publishedUrbanActivities } from "@/lib/urban-activities";
 import { GUIDES, guidePath } from "@/lib/guides";
+import { indexablePosts, postPath } from "@/lib/blog";
 import { LEGAL } from "@/lib/legal";
 import { formatCents, OFFERS } from "@/lib/offers";
 import { FREE_MONTHLY_LISTINGS } from "@/lib/platforms";
@@ -38,6 +39,9 @@ export function buildLlmsTxt(): string {
     "## Guides",
     ...GUIDES.map((g) => link(g.title, guidePath(g), `${g.description} (mis à jour le ${g.updated})`)),
     "",
+    ...(indexablePosts().length > 0
+      ? ["## Blog", ...indexablePosts().map((p) => link(p.title, postPath(p), `${p.description} (mis à jour le ${p.updated})`)), ""]
+      : []),
     "## Activités",
     link("Toutes les activités", "/activites", "catalogue des activités complémentaires de services avec tarifs et complément de salaire estimé"),
     ...ACTIVITIES.map((a) => link(a.title, `/activites/${activitySlug(a)}`, `${a.pitch} Tarif moyen ${formatRate(a)}`)),

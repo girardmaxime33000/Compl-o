@@ -2,13 +2,16 @@ import Link from "next/link";
 import { Menu, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TrackedLink } from "@/components/marketing/tracked-link";
+import { indexablePosts } from "@/lib/blog";
 
-const LINKS = [
+/** Le lien Blog n'apparaît que lorsqu'au moins un article relu est public (pas de lien vers une page vide). */
+const LINKS: { href: string; label: string }[] = [
   { href: "/simulateur-micro-entrepreneur", label: "Simulateur" },
   { href: "/activites", label: "Activités" },
   { href: "/guides", label: "Guides" },
+  ...(indexablePosts().length > 0 ? [{ href: "/blog", label: "Blog" }] : []),
   { href: "/pricing", label: "Tarifs" },
-] as const;
+];
 
 /**
  * En-tête commun des pages publiques. Le diagnostic gratuit est l'unique action principale ; « Connexion » reste

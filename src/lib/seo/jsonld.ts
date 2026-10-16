@@ -90,6 +90,8 @@ export function articleJsonLd(args: {
   published: string;
   updated: string;
   imagePath?: string;
+  /** Auteur nommé (blog). Sans lui, l'auteur est l'organisation (guides). */
+  authorName?: string;
 }): JsonLdObject {
   return {
     "@context": CONTEXT,
@@ -99,7 +101,7 @@ export function articleJsonLd(args: {
     inLanguage: "fr-FR",
     datePublished: args.published,
     dateModified: args.updated,
-    author: organizationRef(),
+    author: args.authorName ? { "@type": "Person", name: args.authorName } : organizationRef(),
     publisher: organizationRef(),
     image: absoluteUrl(args.imagePath ?? DEFAULT_IMAGE_PATH),
     mainEntityOfPage: { "@type": "WebPage", "@id": absoluteUrl(args.path) },

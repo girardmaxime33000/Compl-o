@@ -299,9 +299,17 @@ Conformité aux directives de l'API : les images ne sont pas copiées dans le d�
 - **llms.txt** (`src/app/llms.txt/route.ts`, contenu généré par `src/lib/seo/llms.ts`) : résumé du site, outils, guides, activités et villes pour les assistants d'IA (GEO), au format llmstxt.org. Les chiffres viennent de `tax.ts` et `offers.ts`, les listes du catalogue, des guides et des villes : rien à mettre à jour à la main. Il n'est pas déclaré dans `robots.txt` (le format ne le prévoit pas).
 - **Tests** : `npm test` couvre les builders JSON-LD, le sitemap, robots, llms.txt, les FAQ, `tax.ts` et `activities.ts`.
 
+## Blog
+
+Routes : `/blog`, `/blog/[slug]`, `/blog/categorie/[cat]`, flux RSS `/blog/rss.xml`. Même modèle que les guides : chaque article est un composant dans `src/content/blog/` déclaré dans `BLOG_POSTS` (`src/lib/blog.ts`) avec titre, description (50 à 200 caractères), catégorie, dates, sources officielles et appel à l'action. Pas de MDX : les chiffres fiscaux sont importés de `tax.ts`. Signature : `BLOG_AUTHOR` (Maxime Girard), balisée `Person` dans le JSON-LD `Article`. Catégories : `BLOG_CATEGORIES`.
+
+**Règle de relecture (décision du propriétaire).** Un article n'est public qu'une fois relu : renseigner `reviewedOn` (date AAAA-MM-JJ de la relecture ciblée des chiffres, du juridique et des sources) dans `BLOG_POSTS`. Sans `reviewedOn`, l'article reste accessible par son URL mais en `noindex, follow`, et il est absent du sitemap, de `/blog`, des pages catégorie, du flux RSS, de `llms.txt` et des liens de navigation. Une catégorie sans article relu n'a pas de page (404) ; `/blog` est en `noindex` tant qu'aucun article n'est relu ; le lien « Blog » de l'en-tête et du pied de page n'apparaît qu'à partir du premier article relu.
+
+Pour publier un article : créer le composant, l'ajouter à `BLOG_POSTS` (slug en minuscules, chiffres et tirets, 50 caractères maximum : le slug est la valeur de `article` dans la mesure), puis renseigner `reviewedOn` après relecture. `npm test` vérifie les slugs, les dates, les catégories, les sources, le sitemap et le flux RSS. Mesure : `blog_view` et `cta_click` portent le slug de l'article (voir « Mesure d'audience »).
+
 ## Mesure d'audience
 
-Deux mesures coexistent. (1) Umami Cloud (`https://cloud.umami.is/script.js`, `src/app/layout.tsx`) : fréquentation générale, sans cookie ; chargé uniquement si `VERCEL_ENV=production`, avec `data-exclude-search` (aucun paramètre d'URL transmis) et `data-do-not-track`. L'identifiant du site est public. Les statistiques se consultent sur cloud.umami.is. (2) Mesure interne, sans cookie : table `analytics_events` (migration `0004_analytics_events.sql`), écrite uniquement par le service role. Un événement = nom, page, propriétés non personnelles (`source`, `offer`, `platform`, `activity`, `target`, `visual`). Aucun identifiant utilisateur, aucune adresse IP, aucun agent utilisateur. Les signaux « Do Not Track » et « Global Privacy Control » désactivent l'envoi navigateur.
+Deux mesures coexistent. (1) Umami Cloud (`https://cloud.umami.is/script.js`, `src/app/layout.tsx`) : fréquentation générale, sans cookie ; chargé uniquement si `VERCEL_ENV=production`, avec `data-exclude-search` (aucun paramètre d'URL transmis) et `data-do-not-track`. L'identifiant du site est public. Les statistiques se consultent sur cloud.umami.is. (2) Mesure interne, sans cookie : table `analytics_events` (migration `0004_analytics_events.sql`), écrite uniquement par le service role. Un événement = nom, page, propriétés non personnelles (`source`, `offer`, `platform`, `activity`, `target`, `visual`, `article`). Aucun identifiant utilisateur, aucune adresse IP, aucun agent utilisateur. Les signaux « Do Not Track » et « Global Privacy Control » désactivent l'envoi navigateur.
 
 | Événement | Origine | Déclencheur |
 |---|---|---|
@@ -311,13 +319,14 @@ Deux mesures coexistent. (1) Umami Cloud (`https://cloud.umami.is/script.js`, `s
 | `diagnostic_completed` | navigateur | diagnostic terminé (recommandations affichées) |
 | `home_view` | navigateur | chargement de l'accueil (`visual` : `photo` ou `none`, version du hero) |
 | `cta_click` | navigateur | clic sur un bouton d'action : `source` = `header`, `hero`, `final`, `sticky` (barre fixe mobile), `encart` (encart des pages de contenu) ou `page`, `target` = `diagnostic`, `simulateur` ou `login` |
+| `blog_view` | navigateur | chargement d'un article du blog (`article` = slug) ; les clics vers les outils sont des `cta_click` avec `source` = `blog` et le même `article` |
 | `paywall_click` | navigateur | clic sur « Voir les packs et abonnements » depuis la limite d'annonces |
 | `signup` | serveur | retour d'authentification d'un compte créé depuis moins de 2 minutes |
 | `listing_generated` | serveur | annonce enregistrée |
 | `checkout_started` | serveur | session Stripe Checkout créée |
 | `payment_success` | serveur | webhook Stripe de paiement confirmé |
 
-`/api/track` n'accepte que les sept événements navigateur. Entonnoir accueil → clic → diagnostic → inscription → 1ʳᵉ annonce → paiement : `home_view`, `cta_click`, `diagnostic_started`, `diagnostic_completed`, `signup`, `listing_generated`, `payment_success`. Seules les vues de l'accueil sont comptées (dénominateur des clics) ; les autres visites de pages ne sont pas mesurées (aucun traceur) ; l'entonnoir interne ci-dessous ne dépend pas d'Umami. Umami Cloud est chargé sans cookie ni paramètre d'URL ; le besoin éventuel d'un bandeau de consentement reste à confirmer au regard des conditions d'exemption de la CNIL (réglages du compte Umami, absence de recoupement). Entonnoir sur 30 jours :
+`/api/track` n'accepte que les huit événements navigateur. Entonnoir accueil → clic → diagnostic → inscription → 1ʳᵉ annonce → paiement : `home_view`, `cta_click`, `diagnostic_started`, `diagnostic_completed`, `signup`, `listing_generated`, `payment_success`. Seules les vues de l'accueil sont comptées (dénominateur des clics) ; les autres visites de pages ne sont pas mesurées (aucun traceur) ; l'entonnoir interne ci-dessous ne dépend pas d'Umami. Umami Cloud est chargé sans cookie ni paramètre d'URL ; le besoin éventuel d'un bandeau de consentement reste à confirmer au regard des conditions d'exemption de la CNIL (réglages du compte Umami, absence de recoupement). Entonnoir sur 30 jours :
 
 ```sql
 select name, count(*) from analytics_events
@@ -336,6 +345,16 @@ where created_at > now() - interval '30 days' and name in ('home_view', 'cta_cli
 ```
 
 Un clic n'est pas rattaché à une visite (aucun identifiant) : le rapport clics / vues est une approximation, fiable seulement sur des périodes de comparaison de même durée et de trafic comparable.
+
+Articles d'entrée du blog qui mènent à un clic vers un outil (nécessite `blog_view` pour le dénominateur) :
+
+```sql
+select props->>'article' as article,
+       count(*) filter (where name = 'blog_view') as vues,
+       count(*) filter (where name = 'cta_click' and props->>'source' = 'blog') as clics_outil
+from analytics_events
+where created_at > now() - interval '30 days' and props ? 'article' group by 1 order by vues desc;
+```
 
 ## Preuve sociale
 

@@ -2,7 +2,7 @@
  * Mesure d'audience interne : événements anonymes (nom, chemin, propriétés non personnelles), sans cookie,
  * sans identifiant utilisateur, sans adresse IP. Aucun outil tiers.
  */
-export const CLIENT_EVENTS = ["simulator_view", "simulation_completed", "diagnostic_started", "diagnostic_completed", "paywall_click", "home_view", "cta_click"] as const;
+export const CLIENT_EVENTS = ["simulator_view", "simulation_completed", "diagnostic_started", "diagnostic_completed", "paywall_click", "home_view", "cta_click", "blog_view"] as const;
 export const SERVER_EVENTS = ["signup", "listing_generated", "checkout_started", "payment_success"] as const;
 
 export type ClientEvent = (typeof CLIENT_EVENTS)[number];
@@ -10,9 +10,9 @@ export type ServerEvent = (typeof SERVER_EVENTS)[number];
 
 /**
  * Propriétés autorisées : valeurs courtes et non personnelles (offre, source, plateforme, activité, cible du clic, version
- * du visuel `photo` ou `none` pour comparer avant/après l'ajout de photos).
+ * du visuel `photo` ou `none` pour comparer avant/après l'ajout de photos, slug de l'article de blog d'entrée).
  */
-export const ALLOWED_PROPS = ["source", "offer", "platform", "activity", "target", "visual"] as const;
+export const ALLOWED_PROPS = ["source", "offer", "platform", "activity", "target", "visual", "article"] as const;
 
 export function sanitizeProps(input: unknown): Record<string, string> {
   const out: Record<string, string> = {};

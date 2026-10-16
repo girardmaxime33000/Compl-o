@@ -4,6 +4,7 @@ import { ACTIVITIES, activitySlug } from "@/lib/activities";
 import { publishedUrbanActivities } from "@/lib/urban-activities";
 import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityActivityPath, cityPath } from "@/lib/cities";
 import { GUIDES, guidePath } from "@/lib/guides";
+import { activeCategories, categoryPath, indexablePosts, latestBlogUpdate, postPath, postsInCategory } from "@/lib/blog";
 
 /** Pages publiques (fil d'Ariane). `indexable: false` : `noindex, follow` et absente du sitemap (pages légales). */
 export const PUBLIC_PAGES = [
@@ -35,6 +36,17 @@ export const BUILD_DATE = isoDay(new Date());
 /** Date de dernière modification du guide le plus récent. */
 const latestGuideUpdate = () => GUIDES.map((g) => g.updated).sort().at(-1) ?? BUILD_DATE;
 
+/** Blog : uniquement les articles relus, leurs catégories non vides et la page /blog si elle a du contenu. */
+function blogEntries(): SitemapEntry[] {
+  const posts = indexablePosts();
+  if (posts.length === 0) return [];
+  return [
+    { path: "/blog", lastModified: latestBlogUpdate() ?? BUILD_DATE },
+    ...activeCategories().map((c) => ({ path: categoryPath(c), lastModified: postsInCategory(c.slug).map((p) => p.updated).sort().at(-1) ?? BUILD_DATE })),
+    ...posts.map((p) => ({ path: postPath(p), lastModified: p.updated })),
+  ];
+}
+
 /**
  * Entrées du sitemap, chacune avec un `lastModified` réel :
  * - pages ville et hubs ville : date de téléchargement des données France Travail / INSEE ;
@@ -51,6 +63,7 @@ export function sitemapEntries(): SitemapEntry[] {
     ...ACTIVITIES.map((a) => ({ path: `/activites/${activitySlug(a)}`, lastModified: BUILD_DATE })),
     ...publishedUrbanActivities().map((a) => ({ path: `/activites/${a.slug}`, lastModified: BUILD_DATE })),
     ...GUIDES.map((g) => ({ path: guidePath(g), lastModified: g.updated })),
+    ...blogEntries(),
     ...CITIES.filter((c) => activitiesForCity(c).length > 0).map((c) => ({ path: cityPath(c), lastModified: dataDate })),
     ...CITY_ACTIVITY_PAIRS.map(({ city, activity }) => ({ path: cityActivityPath(city, activity), lastModified: dataDate })),
   ];
