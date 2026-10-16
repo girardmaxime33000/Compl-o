@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { track } from "@/lib/analytics";
 
 /** Une vue d'accueil par chargement : dénominateur des taux de clic. `visual` distingue le hero avec ou sans photo. */
-export function HomeViewTracker({ visual }: { visual: "photo" | "none" | "avant-apres" }) {
+export function HomeViewTracker({ visual }: { visual: "photo" | "none" | "avant-apres" | "estimation" }) {
   useEffect(() => {
     track("home_view", { visual });
   }, [visual]);

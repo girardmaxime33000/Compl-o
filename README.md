@@ -361,7 +361,7 @@ Deux mesures coexistent. (1) Umami Cloud (`https://cloud.umami.is/script.js`, `s
 | `simulation_completed` | navigateur | première modification d'un paramètre du simulateur |
 | `diagnostic_started` | navigateur | première interaction avec le diagnostic (`/onboarding`) |
 | `diagnostic_completed` | navigateur | diagnostic terminé (recommandations affichées) |
-| `home_view` | navigateur | chargement de l'accueil (`visual` : `photo` ou `none`, version du hero) |
+| `home_view` | navigateur | chargement de l'accueil (`visual` : `photo`, `none`, `avant-apres` ou `estimation`, version du hero ; `estimation` = carte d'estimation et illustration de quartier depuis le 16 octobre 2026) |
 | `cta_click` | navigateur | clic sur un bouton d'action : `source` = `header`, `hero`, `final`, `sticky` (barre fixe mobile), `encart` (encart des pages de contenu) ou `page`, `target` = `diagnostic`, `simulateur` ou `login` |
 | `blog_view` | navigateur | chargement d'un article du blog (`article` = slug) ; les clics vers les outils sont des `cta_click` avec `source` = `blog` et le même `article` |
 | `paywall_click` | navigateur | clic sur « Voir les packs et abonnements » depuis la limite d'annonces |

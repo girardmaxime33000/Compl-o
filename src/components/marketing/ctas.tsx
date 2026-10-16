@@ -16,7 +16,7 @@ export function PublicCtas({
 }: {
   className?: string;
   source?: string;
-  visual?: "photo" | "none" | "avant-apres";
+  visual?: "photo" | "none" | "avant-apres" | "estimation";
   /** Second bouton (simulateur) : retiré là où un seul geste doit rester évident. */
   secondary?: boolean;
 }) {
