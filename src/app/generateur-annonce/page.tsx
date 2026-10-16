@@ -8,7 +8,7 @@ import { SiteHeader } from "@/components/marketing/site-header";
 
 const TITLE = "Exemples d'annonces de services pour micro-activité";
 const DESCRIPTION =
-  "Découvrez des exemples d'annonces pour LeBonCoin, AlloVoisins ou GensDeConfiance. Créez un compte gratuit pour générer la vôtre avec l'IA.";
+  "Découvrez des exemples d'annonces de services. Avec un compte gratuit, l'IA rédige la vôtre pour LeBonCoin, AlloVoisins, Yoojo, NeedHelp et d'autres sites. Créez un compte gratuit pour générer la vôtre avec l'IA.";
 
 export const metadata = pageMetadata({ title: TITLE, description: DESCRIPTION, path: "/generateur-annonce" });
 

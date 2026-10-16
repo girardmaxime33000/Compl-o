@@ -48,7 +48,7 @@ const call = (body: Record<string, unknown> = { service: "Petit bricolage", city
 
 const version = (title: string) => ({ title, intro: "i", advantages: ["a", "b", "c"], skills: ["a", "b", "c"], pricing: "p", callToAction: "c", hashtags: ["#a", "#b", "#c"] });
 const generated = {
-  object: { leboncoin: version("LBC"), allovoisins: version("AV"), gensdeconfiance: version("GDC"), priceSuggested: 20 },
+  object: { versions: { leboncoin: version("LBC"), allovoisins: version("AV"), gensdeconfiance: version("GDC"), yoojo: version("YOO"), geev: version("GEEV") }, priceSuggested: 20 },
 };
 
 beforeEach(() => {
@@ -117,7 +117,7 @@ describe("POST /api/generate-listing : quotas", () => {
 });
 
 describe("POST /api/generate-listing : annonce multi-sites et personnalisation", () => {
-  it("enregistre une seule ligne avec les trois versions", async () => {
+  it("sans choix de sites, génère les trois sites par défaut dans une seule ligne", async () => {
     expect((await call()).status).toBe(200);
     expect(h.inserted).toHaveLength(1);
     const row = h.inserted[0] as { title: string; platform: string; variants: { platform: string; title: string }[] };
@@ -150,5 +150,29 @@ describe("POST /api/generate-listing : annonce multi-sites et personnalisation",
   it("rejette un tarif hors limites et un ton inconnu", async () => {
     expect((await call({ service: "Bricolage", city: "Lyon", rate: 1 })).status).toBe(400);
     expect((await call({ service: "Bricolage", city: "Lyon", tone: "agressif" })).status).toBe(400);
+  });
+
+  it("génère uniquement les sites choisis et garde la première version comme version de la ligne", async () => {
+    expect((await call({ service: "Ménage", city: "Lyon", platforms: ["yoojo", "geev"] })).status).toBe(200);
+    const row = h.inserted[0] as { title: string; platform: string; variants: { platform: string }[] };
+    expect(row.variants.map((v) => v.platform)).toEqual(["yoojo", "geev"]);
+    expect(row.platform).toBe("yoojo");
+    expect(row.title).toBe("YOO");
+    expect(h.generate).toHaveBeenCalledTimes(1);
+    const prompt = (h.generate.mock.calls[0]?.[0] as { prompt: string }).prompt;
+    expect(prompt).toContain("[yoojo]");
+    expect(prompt).not.toContain("[leboncoin]");
+  });
+
+  it("rejette plus de 5 sites, un site inconnu et une liste vide", async () => {
+    const six = ["leboncoin", "allovoisins", "yoojo", "needhelp", "stootie", "geev"];
+    expect((await call({ service: "Ménage", city: "Lyon", platforms: six })).status).toBe(400);
+    expect((await call({ service: "Ménage", city: "Lyon", platforms: ["facebook"] })).status).toBe(400);
+    expect((await call({ service: "Ménage", city: "Lyon", platforms: [] })).status).toBe(400);
+  });
+
+  it("ignore les doublons de sites", async () => {
+    await call({ service: "Ménage", city: "Lyon", platforms: ["yoojo", "yoojo"] });
+    expect((h.inserted[0] as { variants: unknown[] }).variants).toHaveLength(1);
   });
 });

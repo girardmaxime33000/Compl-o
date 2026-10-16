@@ -3,9 +3,9 @@ import { generateObject } from "ai";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getModel } from "@/lib/ai";
-import { GENERATOR_PLATFORMS } from "@/lib/platforms";
+import { DEFAULT_PLATFORMS, GENERATOR_PLATFORMS, MAX_PLATFORMS_PER_LISTING } from "@/lib/platforms";
 import { buildListingPrompt, formatListingBody, SYSTEM_PROMPT } from "@/lib/listing";
-import type { ListingVariant } from "@/types/database";
+import type { ListingVariant, Platform } from "@/types/database";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getQuota, quotaExhausted } from "@/lib/quota";
 import { recordEvent } from "@/lib/analytics-server";
@@ -23,6 +23,12 @@ const requestSchema = z.object({
   zone: optionalText(150),
   rate: z.number().min(5).max(300).optional(),
   tone: z.enum(["chaleureux", "professionnel"]).optional(),
+  platforms: z
+    .array(z.enum(GENERATOR_PLATFORMS))
+    .min(1)
+    .max(MAX_PLATFORMS_PER_LISTING)
+    .transform((list) => [...new Set(list)])
+    .default(DEFAULT_PLATFORMS as typeof GENERATOR_PLATFORMS),
 });
 
 const versionSchema = z.object({
@@ -35,12 +41,12 @@ const versionSchema = z.object({
   hashtags: z.array(z.string()).length(3).describe("3 hashtags pertinents, sans espaces, commençant par #"),
 });
 
-const outputSchema = z.object({
-  leboncoin: versionSchema,
-  allovoisins: versionSchema,
-  gensdeconfiance: versionSchema,
-  priceSuggested: z.number().describe("Tarif horaire moyen suggéré en euros"),
-});
+/** Une version par plateforme demandée, plus le tarif horaire moyen suggéré. */
+const outputSchemaFor = (platforms: Platform[]) =>
+  z.object({
+    versions: z.object(Object.fromEntries(platforms.map((p) => [p, versionSchema]))),
+    priceSuggested: z.number().describe("Tarif horaire moyen suggéré en euros"),
+  });
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -51,7 +57,7 @@ export async function POST(request: Request) {
 
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Paramètres invalides." }, { status: 400 });
-  const input = parsed.data;
+  const { platforms, ...input } = parsed.data;
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -81,13 +87,13 @@ export async function POST(request: Request) {
     if (creditConsumed) await createAdminClient().rpc("grant_listing_credits", { p_user: user.id, p_amount: 1 });
   };
 
-  let object: z.infer<typeof outputSchema>;
+  let object: { versions: Record<string, z.infer<typeof versionSchema>>; priceSuggested: number };
   try {
     ({ object } = await generateObject({
       model: getModel(),
-      schema: outputSchema,
+      schema: outputSchemaFor(platforms),
       system: SYSTEM_PROMPT,
-      prompt: buildListingPrompt(input),
+      prompt: buildListingPrompt(input, platforms),
     }));
   } catch (error) {
     console.error("generate-listing", error);
@@ -96,8 +102,8 @@ export async function POST(request: Request) {
   }
 
   // Une génération = une ligne, donc une seule unité de quota ou un seul crédit, quel que soit le nombre de plateformes.
-  const variants: ListingVariant[] = GENERATOR_PLATFORMS.map((platform) => {
-    const version = object[platform as "leboncoin" | "allovoisins" | "gensdeconfiance"];
+  const variants: ListingVariant[] = platforms.map((platform) => {
+    const version = object.versions[platform] as z.infer<typeof versionSchema>;
     return { platform, title: version.title, description: formatListingBody(version) };
   });
   const [first] = variants as [ListingVariant, ...ListingVariant[]];

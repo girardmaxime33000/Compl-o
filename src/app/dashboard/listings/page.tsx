@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/auth";
 import { getQuota } from "@/lib/quota";
 import { ListingGenerator } from "@/components/listings/generator";
 import { equipmentLabel, recommend } from "@/lib/activities";
+import { suggestedPlatforms } from "@/lib/platforms";
 import type { Listing, UserSkill } from "@/types/database";
 
 export const metadata = { title: "Annonces | Compléo" };
@@ -27,6 +28,7 @@ export default async function ListingsPage(props: { searchParams: Promise<{ serv
     service: searchParams.service ?? top?.activity.title ?? "",
     skills: equipment.length > 0 ? `Matériel : ${equipment.map(equipmentLabel).join(", ")}` : "",
     availability: weeklyHours ? `Environ ${weeklyHours} h par semaine` : "",
+    platforms: suggestedPlatforms(top?.activity.category),
     rate: top ? Math.round((top.activity.rateMin + top.activity.rateMax) / 2) : undefined,
   };
 
@@ -34,7 +36,7 @@ export default async function ListingsPage(props: { searchParams: Promise<{ serv
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Générateur d'annonces</h1>
-        <p className="text-muted-foreground">Dites ce que vous savez faire. Vous recevez une annonce adaptée à chaque site, prête à copier.</p>
+        <p className="text-muted-foreground">Dites ce que vous savez faire. Vous choisissez vos sites, vous recevez une annonce adaptée à chacun, prête à copier.</p>
       </div>
       <ListingGenerator prefill={prefill} initialListings={listings ?? []} quota={quota} />
     </div>

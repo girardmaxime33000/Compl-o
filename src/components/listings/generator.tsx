@@ -14,9 +14,9 @@ import { track } from "@/lib/analytics";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
-import { PLATFORMS, PUBLISH_GUIDE } from "@/lib/platforms";
+import { MAX_PLATFORMS_PER_LISTING, PLATFORM_GROUPS, PLATFORMS, publishSteps } from "@/lib/platforms";
 import { TONES, variantsOf, type Tone } from "@/lib/listing";
-import type { Listing, ListingVariant } from "@/types/database";
+import type { Listing, ListingVariant, Platform } from "@/types/database";
 
 function CopyButton({ variant }: { variant: Pick<ListingVariant, "title" | "description"> }) {
   const [copied, setCopied] = useState(false);
@@ -65,25 +65,26 @@ function ListingCard({ listing }: { listing: Listing }) {
             ))}
           </TabsList>
           {variants.map((v) => {
-            const guide = PUBLISH_GUIDE[v.platform];
+            const info = PLATFORMS[v.platform];
             return (
               <TabsContent key={v.platform} value={v.platform} className="space-y-4">
                 <h3 className="text-lg font-semibold leading-snug">{v.title}</h3>
                 <p className="whitespace-pre-wrap text-sm leading-relaxed">{v.description}</p>
                 <p className="text-xs text-muted-foreground">Annonce rédigée pour vous : relisez-la avant de la publier.</p>
                 <CopyButton variant={v} />
-                {guide && (
-                  <div className="space-y-2 rounded-lg border bg-muted/40 p-4">
-                    <p className="text-sm font-semibold">Publier sur {PLATFORMS[v.platform].label}</p>
-                    <ol className="list-decimal space-y-1 pl-5 text-sm">
-                      {guide.steps.map((step) => <li key={step}>{step}</li>)}
-                    </ol>
-                    <a href={guide.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-medium text-primary underline">
-                      Ouvrir {PLATFORMS[v.platform].label} <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                <div className="space-y-2 rounded-lg border bg-muted/40 p-4">
+                  <p className="text-sm font-semibold">Publier sur {info.label}</p>
+                  {info.note && <p className="text-sm font-medium text-amber-700">{info.note}</p>}
+                  <ol className="list-decimal space-y-1 pl-5 text-sm">
+                    {publishSteps(v.platform).map((step) => <li key={step}>{step}</li>)}
+                  </ol>
+                  {info.url && (
+                    <a href={info.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-medium text-primary underline">
+                      Ouvrir {info.label} <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                     </a>
-                    <p className="text-xs text-muted-foreground">Compléo ne publie rien à votre place. Le site peut avoir changé : suivez ses indications.</p>
-                  </div>
-                )}
+                  )}
+                  <p className="text-xs text-muted-foreground">Compléo ne publie rien à votre place. Le site peut avoir changé : suivez ses indications.</p>
+                </div>
               </TabsContent>
             );
           })}
@@ -98,6 +99,8 @@ export interface ListingPrefill {
   skills: string;
   availability: string;
   rate?: number;
+  /** Sites conseillés pour l'activité du diagnostic, cochés au départ. */
+  platforms: Platform[];
 }
 
 export function ListingGenerator({
@@ -118,12 +121,16 @@ export function ListingGenerator({
   const [zone, setZone] = useState("");
   const [rate, setRate] = useState(prefill.rate ? String(prefill.rate) : "");
   const [tone, setTone] = useState<Tone>("chaleureux");
+  const [platforms, setPlatforms] = useState<Platform[]>(prefill.platforms);
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState(initialListings);
   const [used, setUsed] = useState(quota.used);
   const [credits, setCredits] = useState(quota.credits);
   const [fresh, setFresh] = useState<Listing | null>(null);
   const { toast } = useToast();
+
+  const togglePlatform = (p: Platform) =>
+    setPlatforms((prev) => (prev.includes(p) ? prev.filter((x) => x !== p) : prev.length < MAX_PLATFORMS_PER_LISTING ? [...prev, p] : prev));
 
   const limitReached = limit !== null && used >= limit;
   const blocked = limitReached && credits <= 0;
@@ -145,6 +152,7 @@ export function ListingGenerator({
           availability,
           zone,
           tone,
+          platforms,
           ...(Number.isFinite(rateValue) ? { rate: rateValue } : {}),
         }),
       });
@@ -201,7 +209,7 @@ export function ListingGenerator({
         <CardHeader>
           <CardTitle>Votre annonce sur mesure</CardTitle>
           <CardDescription>
-            Plus vous en dites sur vous, plus l'annonce vous ressemble. Une seule demande vous donne une version pour LeBonCoin, AlloVoisins et GensDeConfiance.
+            Plus vous en dites sur vous, plus l'annonce vous ressemble. Une seule demande vous donne une version pour chaque site choisi.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -250,11 +258,43 @@ export function ListingGenerator({
                 </select>
               </div>
             </div>
-            <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={loading || blocked}>
+            <fieldset className="space-y-3">
+              <legend className="text-sm font-medium">Où voulez-vous publier ?</legend>
+              <p className="text-xs text-muted-foreground">
+                Choisissez jusqu'à {MAX_PLATFORMS_PER_LISTING} sites. Nous avons coché ceux qui conviennent le mieux à votre activité. {platforms.length} choisi{platforms.length > 1 ? "s" : ""} sur {MAX_PLATFORMS_PER_LISTING}.
+              </p>
+              {PLATFORM_GROUPS.map((group) => {
+                const items = (Object.keys(PLATFORMS) as Platform[]).filter((p) => PLATFORMS[p].group === group.id);
+                return (
+                  <div key={group.id} className="space-y-1.5">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.label}</p>
+                    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                      {items.map((p) => {
+                        const on = platforms.includes(p);
+                        const full = !on && platforms.length >= MAX_PLATFORMS_PER_LISTING;
+                        return (
+                          <label
+                            key={p}
+                            className={`flex min-h-[44px] cursor-pointer items-start gap-2 rounded-md border px-3 py-2 text-sm ${on ? "border-primary bg-accent" : "bg-card"} ${full ? "cursor-not-allowed opacity-50" : "hover:bg-accent/50"}`}
+                          >
+                            <input type="checkbox" checked={on} disabled={full} onChange={() => togglePlatform(p)} className="mt-1 h-4 w-4 shrink-0" />
+                            <span>
+                              <span className="font-medium">{PLATFORMS[p].label}</span>
+                              {PLATFORMS[p].note && <span className="block text-xs text-muted-foreground">{PLATFORMS[p].note}</span>}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </fieldset>
+            <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={loading || blocked || platforms.length === 0}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {loading ? "Rédaction en cours…" : "Écrire mon annonce pour les 3 sites"}
+              {loading ? "Rédaction en cours…" : platforms.length > 1 ? `Écrire mon annonce pour ${platforms.length} sites` : "Écrire mon annonce"}
             </Button>
-            <p className="text-xs text-muted-foreground">Compte pour une seule annonce de votre quota, même avec trois versions.</p>
+            <p className="text-xs text-muted-foreground">Compte pour une seule annonce de votre quota, quel que soit le nombre de sites choisis.</p>
           </form>
         </CardContent>
       </Card>

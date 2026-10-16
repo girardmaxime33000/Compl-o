@@ -1,6 +1,12 @@
 export type SubscriptionStatus = "free" | "active" | "canceled";
 export type SubscriptionPlan = "monthly" | "annual";
-export type Platform = "leboncoin" | "allovoisins" | "gensdeconfiance" | "vinted" | "taskrabbit";
+export type Platform =
+  | "leboncoin" | "allovoisins" | "gensdeconfiance" | "vinted" | "taskrabbit"
+  | "needhelp" | "yoojo" | "stootie" | "luludansmarue" | "nextdoor" | "pap"
+  | "blablacar" | "karos" | "klaxit" | "getaround"
+  | "animaute" | "holidog" | "rover"
+  | "cocolis" | "jestocke" | "ouistock"
+  | "geev" | "trocservices";
 export type InvoiceStatus = "draft" | "sent" | "paid";
 export type DocumentType = "devis" | "facture";
 

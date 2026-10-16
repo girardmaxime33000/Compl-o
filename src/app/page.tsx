@@ -46,7 +46,7 @@ const STEPS = [
   {
     icon: Megaphone,
     title: "2. Rédigez votre annonce",
-    text: "L'IA propose un titre, un texte structuré et des hashtags pour LeBonCoin, AlloVoisins ou GensDeConfiance.",
+    text: "L'IA propose un titre, un texte structuré et des hashtags, adaptés à chaque site que vous choisissez (LeBonCoin, AlloVoisins, Yoojo, NeedHelp et bien d'autres).",
     details: ["À relire avant publication", "Adaptée à votre ville", "Copiable en un clic"],
   },
   {
