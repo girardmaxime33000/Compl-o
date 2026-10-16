@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Info } from "lucide-react";
 import { activitySlug, findActivityBySlug, formatRate, monthlyIncomeRange } from "@/lib/activities";
 import {
-  activitiesForCity, BMO_PREVIOUS_YEAR, BMO_YEAR, bmoEvolution, bmoFor, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA,
+  activitiesForCity, BMO_PREVIOUS_YEAR, BMO_YEAR, bmoEvolution, bmoFor, CITY_ACTIVITY_PAIRS, CITY_DATA,
   cityActivityPath, cityPath, findCity, hasLocalData, inseeRows, neighbourCities,
 } from "@/lib/cities";
 import { LEGAL } from "@/lib/legal";
@@ -39,7 +39,8 @@ function resolve(params: { slug: string; ville: string }) {
   return { activity, city };
 }
 
-export function generateMetadata({ params }: { params: { slug: string; ville: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string; ville: string }> }) {
+  const params = await props.params;
   const found = resolve(params);
   if (!found) return {};
   const { activity, city } = found;
@@ -51,7 +52,8 @@ export function generateMetadata({ params }: { params: { slug: string; ville: st
   });
 }
 
-export default function CityActivityPage({ params }: { params: { slug: string; ville: string } }) {
+export default async function CityActivityPage(props: { params: Promise<{ slug: string; ville: string }> }) {
+  const params = await props.params;
   const found = resolve(params);
   if (!found) notFound();
   const { activity, city } = found;

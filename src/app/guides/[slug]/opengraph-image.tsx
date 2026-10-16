@@ -10,9 +10,10 @@ export function generateStaticParams() {
   return GUIDES.map((g) => ({ slug: g.slug }));
 }
 
-export default function Image({ params }: { params: { slug: string } }) {
-  const guide = findGuide(params.slug);
-  const theme = GUIDE_THEMES[params.slug];
+export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const guide = findGuide(slug);
+  const theme = GUIDE_THEMES[slug];
   return ogCard({
     kicker: "Guide",
     title: guide?.title ?? "Guide",

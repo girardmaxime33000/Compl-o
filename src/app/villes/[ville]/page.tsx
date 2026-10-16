@@ -22,7 +22,8 @@ export function generateStaticParams() {
 
 const nf = new Intl.NumberFormat("fr-FR");
 
-export function generateMetadata({ params }: { params: { ville: string } }) {
+export async function generateMetadata(props: { params: Promise<{ ville: string }> }) {
+  const params = await props.params;
   const city = findCity(params.ville);
   if (!city) return {};
   const count = activitiesForCity(city).length;
@@ -33,7 +34,8 @@ export function generateMetadata({ params }: { params: { ville: string } }) {
   });
 }
 
-export default function CityHubPage({ params }: { params: { ville: string } }) {
+export default async function CityHubPage(props: { params: Promise<{ ville: string }> }) {
+  const params = await props.params;
   const city = findCity(params.ville);
   if (!city) notFound();
   const activities = activitiesForCity(city);

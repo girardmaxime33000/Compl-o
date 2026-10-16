@@ -4,7 +4,7 @@ import type { Profile } from "@/types/database";
 
 /** Retourne l'utilisateur connecté et son profil, ou redirige vers /login. */
 export async function requireUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

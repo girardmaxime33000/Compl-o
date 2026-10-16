@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 
 /** Export RGPD (portabilité) : toutes les données du compte connecté, lues avec sa session (RLS). */
 export async function GET() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

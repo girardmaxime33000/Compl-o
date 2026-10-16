@@ -16,13 +16,14 @@ const DAILY_SEND_LIMIT = 20;
 
 const bodySchema = z.object({ to: z.email().max(254) });
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!z.uuid().safeParse(params.id).success) return NextResponse.json({ error: "Identifiant invalide." }, { status: 400 });
   const body = bodySchema.safeParse(await req.json().catch(() => null));
   if (!body.success) return NextResponse.json({ error: "Adresse e-mail invalide." }, { status: 400 });
   if (!isEmailConfigured()) return NextResponse.json({ error: "L'envoi par e-mail n'est pas disponible pour le moment." }, { status: 503 });
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

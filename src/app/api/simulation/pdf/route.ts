@@ -21,7 +21,7 @@ const bodySchema = z.object({
 
 /** Export PDF d'une simulation, réservé aux comptes. Le résultat est recalculé côté serveur. */
 export async function POST(request: Request) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

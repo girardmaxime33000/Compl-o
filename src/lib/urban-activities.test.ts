@@ -5,7 +5,7 @@ import { buildLlmsTxt } from "@/lib/seo/llms";
 import { absoluteUrl } from "@/lib/seo";
 import { getFiscalParams, TAX_PARAMS } from "@/lib/tax";
 import {
-  emergingUrbanActivities, findPublishedUrbanActivity, publishedUrbanActivities, URBAN_ACTIVITIES, type Profile,
+  emergingUrbanActivities, findPublishedUrbanActivity, publishedUrbanActivities, URBAN_ACTIVITIES,
 } from "@/lib/urban-activities";
 import {
   AD_LENGTH, CMA_NOTICE, cmaNotice, computeMonthlyNetIncome, hasSapConflict, renderAd, SAP_CONFLICT_MESSAGE, vatAlert,

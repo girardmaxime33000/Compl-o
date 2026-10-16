@@ -17,13 +17,11 @@ const nextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: SECURITY_HEADERS }];
   },
-  experimental: {
-    serverComponentsExternalPackages: ["@react-pdf/renderer"],
-    outputFileTracingIncludes: {
-      "/api/invoices/[id]/pdf": PDFKIT_FILES,
-      "/api/invoices/[id]/send": PDFKIT_FILES,
-      "/api/simulation/pdf": PDFKIT_FILES,
-    },
+  serverExternalPackages: ["@react-pdf/renderer"],
+  outputFileTracingIncludes: {
+    "/api/invoices/[id]/pdf": PDFKIT_FILES,
+    "/api/invoices/[id]/send": PDFKIT_FILES,
+    "/api/simulation/pdf": PDFKIT_FILES,
   },
 };
 

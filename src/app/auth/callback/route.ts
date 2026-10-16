@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   const next = safeNext(searchParams.get("next"));
 
   if (code) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       // Inscription = premier passage : compte créé il y a moins de 2 minutes. Aucune donnée personnelle enregistrée.

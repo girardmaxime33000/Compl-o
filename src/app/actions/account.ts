@@ -15,7 +15,7 @@ export async function deleteAccount(confirmation: string): Promise<{ ok: boolean
     return { ok: false, error: `Saisissez « ${DELETE_CONFIRMATION} » pour confirmer.` };
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -46,7 +46,7 @@ export async function deleteAccount(confirmation: string): Promise<{ ok: boolean
 
 /** Active ou retire le consentement aux e-mails de conseils et d'alerte de plafond. */
 export async function setEmailTips(enabled: boolean): Promise<{ ok: boolean }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
