@@ -1,6 +1,6 @@
 import { NOINDEX } from "@/lib/seo";
 import Link from "next/link";
-import { Rocket } from "lucide-react";
+import { LogoMark } from "@/components/brand/logo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoginForm } from "@/components/marketing/login-form";
 import { safeNext } from "@/lib/auth";
@@ -17,7 +17,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ next?: 
     <main className={cn("container min-h-screen py-10", photo ? "grid items-center gap-10 lg:grid-cols-2" : "flex flex-col items-center justify-center")}>
       <div className="flex flex-col items-center">
         <Link href="/" className="mb-6 flex items-center gap-2 text-xl font-bold text-primary">
-          <Rocket className="h-6 w-6" /> Compléo
+          <LogoMark className="h-8 w-8" /> Compléo
         </Link>
         <Card className="w-full max-w-md">
           <CardHeader>

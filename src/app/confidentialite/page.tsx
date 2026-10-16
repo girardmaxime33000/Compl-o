@@ -21,6 +21,7 @@ export default function PrivacyPage() {
           <li>Abonnement : identifiant client Stripe, statut ; finalité : gérer l'offre Premium. Aucun numéro de carte n'est conservé.</li>
           <li>Témoignage (facultatif) : prénom, ville et texte que vous écrivez, avec votre autorisation de les publier sur le site ; publié seulement après relecture, retirable à tout moment depuis la page Annonces de votre tableau de bord, effacé avec le compte ; finalité : informer les visiteurs (consentement).</li>
           <li>E-mails : votre consentement aux e-mails de conseils (désactivé par défaut, retirable dans Mon compte ou par le lien de désinscription) et un journal des envois (type, date) ; finalité : éviter les doublons et limiter les abus.</li>
+          <li>Newsletter du blog (facultative) : adresse e-mail, origine de l'inscription (blog ou article), date et version du texte de consentement accepté. Double confirmation par e-mail ; sans confirmation sous 7 jours, l'adresse est supprimée. Finalité : vous envoyer la newsletter (consentement). Désinscription en un clic depuis chaque e-mail ; l'adresse est alors conservée avec le statut « désinscrit » pour ne plus vous solliciter, et supprimée sur simple demande. Aucune adresse IP n'est conservée avec l'inscription.</li>
           <li>Données techniques de sécurité (journaux, limitation d'usage) ; finalité : sécurité du service (intérêt légitime).</li>
         </ul>
       </LegalSection>
@@ -29,7 +30,7 @@ export default function PrivacyPage() {
           <li>Supabase : base de données et authentification (données hébergées dans l'Union européenne).</li>
           <li>Vercel : hébergement de l'application.</li>
           <li>Stripe : paiement et gestion des abonnements.</li>
-          <li>Resend : envoi des e-mails (documents envoyés à vos clients à votre demande, e-mails de conseils si vous les avez acceptés). L'adresse e-mail de votre client n'est pas conservée par Compléo.</li>
+          <li>Resend : envoi des e-mails (documents envoyés à vos clients à votre demande, e-mails de conseils et newsletter si vous les avez acceptés). L'adresse e-mail de votre client n'est pas conservée par Compléo.</li>
           <li>Umami Cloud : mesure de fréquentation sans cookie (voir section 6).</li>
           <li>Visiteurs du site : les prénoms, villes et textes des témoignages que vous avez autorisés sont publics.</li>
           <li>Fournisseur du modèle d'IA : reçoit le service, la ville et la plateforme saisis pour générer une annonce.</li>

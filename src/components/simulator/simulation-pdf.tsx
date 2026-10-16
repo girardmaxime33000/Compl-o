@@ -1,8 +1,11 @@
-import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { Document, Page, Path, StyleSheet, Svg, Text, View } from "@react-pdf/renderer";
+import { BRAND_BLUE, LOGO_ARC, LOGO_PLUS, LOGO_VIEWBOX } from "@/lib/brand";
 import { TAX_PARAMS, type SimulatorResult } from "@/lib/tax";
 
 const styles = StyleSheet.create({
   page: { padding: 48, fontSize: 10, fontFamily: "Helvetica", color: "#0f172a" },
+  brand: { flexDirection: "row", alignItems: "center", marginBottom: 16 },
+  brandName: { marginLeft: 6, fontSize: 13, fontFamily: "Helvetica-Bold", color: "#2563eb" },
   title: { fontSize: 20, fontFamily: "Helvetica-Bold", color: "#2563eb" },
   muted: { color: "#64748b" },
   bold: { fontFamily: "Helvetica-Bold" },
@@ -31,8 +34,15 @@ export function SimulationPdf({ result, regime, date = new Date() }: { result: S
   return (
     <Document title="Simulation Net dans la poche">
       <Page size="A4" style={styles.page}>
+        <View style={styles.brand}>
+          <Svg width={26} height={26} viewBox={LOGO_VIEWBOX}>
+            <Path d={LOGO_ARC.d} stroke={BRAND_BLUE} strokeWidth={LOGO_ARC.strokeWidth} strokeLinecap="round" fill="none" />
+            <Path d={LOGO_PLUS.d} stroke={BRAND_BLUE} strokeWidth={LOGO_PLUS.strokeWidth} strokeLinecap="round" fill="none" />
+          </Svg>
+          <Text style={styles.brandName}>Compléo</Text>
+        </View>
         <Text style={styles.title}>Simulation : net dans la poche</Text>
-        <Text style={styles.muted}>Compléo · édité le {fmtDate(date)}</Text>
+        <Text style={styles.muted}>Édité le {fmtDate(date)}</Text>
 
         <View style={styles.section}>
           <Text style={styles.h2}>Hypothèses</Text>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ACTIVITIES, activitySlug } from "@/lib/activities";
 import { activitiesForCity, CITIES, cityPath } from "@/lib/cities";
+import { indexablePosts } from "@/lib/blog";
 
 /** Villes affichées dans le footer : les plus peuplées parmi celles qui ont une page. */
 const FOOTER_CITIES = CITIES.filter((c) => activitiesForCity(c).length > 0)
@@ -21,6 +22,7 @@ export function SiteFooter() {
             <li><Link href="/generateur-annonce" className={linkClass}>Exemples d'annonces</Link></li>
             <li><Link href="/activites" className={linkClass}>Toutes les activités</Link></li>
             <li><Link href="/guides" className={linkClass}>Guides</Link></li>
+            {indexablePosts().length > 0 && <li><Link href="/blog" className={linkClass}>Blog</Link></li>}
             <li><Link href="/pricing" className={linkClass}>Tarifs</Link></li>
           </ul>
         </nav>

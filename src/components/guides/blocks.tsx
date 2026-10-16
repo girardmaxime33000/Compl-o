@@ -97,8 +97,10 @@ export function Checklist({ items }: { items: string[] }) {
 export interface Source {
   label: string;
   url: string;
-  /** Date "Vérifié le" affichée sur la fiche officielle. */
+  /** Date "Vérifié le" affichée sur la fiche officielle (ou "mis à jour le" pour une actualité). */
   verified: string;
+  /** `actualite` : article d'actualité d'un site officiel, daté « mis à jour le » plutôt que « vérifié le ». */
+  kind?: "fiche" | "actualite";
 }
 
 export function Sources({ items }: { items: Source[] }) {
@@ -108,7 +110,7 @@ export function Sources({ items }: { items: Source[] }) {
       <ul className="list-disc space-y-1 pl-5 text-sm">
         {items.map((s) => (
           <li key={s.url}>
-            <a href={s.url} className="text-primary underline" rel="noopener noreferrer" target="_blank">{s.label}</a>, fiche vérifiée le {s.verified}
+            <a href={s.url} className="text-primary underline" rel="noopener noreferrer" target="_blank">{s.label}</a>, {s.kind === "actualite" ? "actualité mise à jour le" : "fiche vérifiée le"} {s.verified}
           </li>
         ))}
       </ul>
@@ -116,13 +118,17 @@ export function Sources({ items }: { items: Source[] }) {
   );
 }
 
-export function Disclaimer() {
+export function Disclaimer({ variant = "guide" }: { variant?: "guide" | "article" | "sources" }) {
   return (
     <Callout kind="attention">
       <p>
-        Ce guide est une information générale tirée de fiches officielles, à la date indiquée. Il ne constitue ni un
-        conseil fiscal, ni un conseil juridique. Pour votre situation précise, vérifiez sur urssaf.fr et
-        service-public.fr ou demandez conseil à un professionnel.
+        {variant === "guide"
+          ? "Ce guide est une information générale tirée de fiches officielles, à la date indiquée. "
+          : variant === "sources"
+            ? "Cet article est une information générale tirée de pages officielles de service-public.gouv.fr, aux dates indiquées dans les sources ; les règles peuvent avoir évolué depuis. Les montants des exemples sont fictifs. "
+            : "Cet article est une information générale, à la date indiquée ; les montants donnés sont des estimations ou des exemples fictifs, calculés avec les paramètres du simulateur Compléo. "}
+        Il ne constitue ni un conseil fiscal, ni un conseil juridique. Pour votre situation précise, vérifiez sur
+        urssaf.fr et service-public.fr ou demandez conseil à un professionnel.
       </p>
     </Callout>
   );

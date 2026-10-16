@@ -1,6 +1,6 @@
 import { PUBLIC_PAGES } from "@/lib/seo";
 import {
-  articleJsonLd, breadcrumbJsonLd, faqPageJsonLd, organizationJsonLd, serializeJsonLd, softwareApplicationJsonLd,
+  articleJsonLd, breadcrumbJsonLd, faqPageJsonLd, organizationJsonLd, personJsonLd, serializeJsonLd, softwareApplicationJsonLd,
   webApplicationJsonLd, type BreadcrumbItem, type FaqItem, type JsonLdObject,
 } from "@/lib/seo/jsonld";
 
@@ -26,6 +26,10 @@ export function BreadcrumbJsonLd({ path, items }: { path: string; items?: Breadc
 
 export function ArticleJsonLd(props: Parameters<typeof articleJsonLd>[0]) {
   return <JsonLd data={articleJsonLd(props)} />;
+}
+
+export function PersonJsonLd(props: Parameters<typeof personJsonLd>[0]) {
+  return <JsonLd data={personJsonLd(props)} />;
 }
 
 export function FaqJsonLd({ items }: { items: FaqItem[] }) {

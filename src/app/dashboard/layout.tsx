@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { LogOut, Rocket, UserCog } from "lucide-react";
+import { LogOut, UserCog } from "lucide-react";
+import { LogoMark } from "@/components/brand/logo";
 import { requireUser, isPremium } from "@/lib/auth";
 import { signOut } from "@/app/actions/auth";
 import { DashboardNav } from "@/components/dashboard/nav";
@@ -16,7 +17,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <header className="sticky top-0 z-30 border-b bg-card/95 backdrop-blur">
         <div className="container flex h-14 items-center justify-between gap-4">
           <Link href="/dashboard" className="flex items-center gap-2 font-bold text-primary">
-            <Rocket className="h-5 w-5" /> Compléo
+            <LogoMark className="h-7 w-7" /> Compléo
           </Link>
           <DashboardNav />
           <div className="flex items-center gap-2">

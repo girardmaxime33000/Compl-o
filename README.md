@@ -188,6 +188,7 @@ Elles se renseignent uniquement dans `.env.local` (ignoré par git) et dans les 
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clé publique (publishable) Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | Clé secrète Supabase : serveur uniquement, contourne la RLS |
 | `STRIPE_SECRET_KEY` | Clé secrète Stripe |
+| `NEWSLETTER_ENABLED` | `true` : affiche le formulaire d'inscription du blog et ouvre `/api/newsletter/subscribe`. Vide par défaut. À activer seulement après relecture juridique de la politique de confidentialité et du texte de consentement. Valeur lue au build : redéployer après changement |
 | `RESEND_API_KEY`, `EMAIL_FROM` | Envoi d'e-mails via Resend (documents, séquence d'accueil, alertes). `EMAIL_FROM` : adresse d'un domaine vérifié dans Resend. Sans ces variables, l'envoi est désactivé (503) |
 | `CRON_SECRET` | Secret du cron quotidien `/api/cron/emails` (envoyé par Vercel en `Authorization: Bearer`) et des liens de désinscription |
 | `EMAIL_UNSUBSCRIBE_SECRET` | Optionnel : secret dédié aux liens de désinscription (défaut : `CRON_SECRET`) |
@@ -265,6 +266,17 @@ Segment `URBAN`, ajouté sans modifier le catalogue `src/lib/activities.ts` (les
 
 **Régénérer les données** : (1) télécharger les fichiers listés dans `sources` de `src/data/cities.json` (INSEE populations légales : https://www.insee.fr/fr/statistiques/6683035 ; INSEE Dossier complet : https://www.insee.fr/fr/statistiques/5359146 ; France Travail BMO : https://statistiques.francetravail.org/bmo) dans `data/raw/` sous les noms attendus par `scripts/build-city-data.py` ; (2) `python3 scripts/extract-dossier-complet.py` si le Dossier complet change ; (3) `pip install openpyxl && python3 scripts/build-city-data.py`. Le script est déterministe : relancé sur les fichiers actuels, il reproduit le JSON à l'identique. La date de téléchargement (`downloadedOn`) est affichée sur chaque page ville et sert de `lastmod` au sitemap : la mettre à jour dans le script lors d'un nouveau téléchargement. Pour ajouter une ville, il faut une donnée locale réelle (population, Dossier complet, bassin BMO) ; une combinaison activité × ville sans projet de recrutement répond `404` et est absente du sitemap.
 
+## Identité visuelle
+
+Logo : symbole « C + » (un arc ouvert complété par un plus), bleu `#2563eb` (`BRAND_BLUE`), bleu nuit `#1e3a8a` pour les dégradés. Fourni par le propriétaire le 16 octobre 2026 (image générée par IA), reconstruit en SVG exact (recouvrement de 98,3 % avec l'image d'origine). Géométrie unique dans `src/lib/brand.ts` ; `public/logo/logo-mark.svg` (bleu) et `logo-mark-white.svg` (blanc) et `src/app/icon.svg` la reprennent, `src/lib/brand.test.ts` vérifie qu'ils restent identiques. Le nom « Compléo » s'écrit en texte dans le site (police Inter) ; les logos horizontaux `public/logo/logo.svg` (bleu) et `logo-white.svg` (blanc, pour fonds foncés) contiennent le nom dessiné en tracés (Inter SemiBold, licence SIL OFL 1.1) et se régénèrent avec `python3 scripts/build-wordmark.py` (`pip install fonttools uharfbuzz`).
+
+- Composant `LogoMark` (`src/components/brand/logo.tsx`) : en-tête public, page de connexion, en-tête du tableau de bord.
+- Icône du site : `src/app/icon.svg` ; icône iOS : `src/app/apple-icon.tsx` (générée) ; symbole PNG pour les e-mails : route `/logo/mark.png` (générée, 192 × 192, fond transparent). Aucun fichier binaire n'est versionné.
+- Cartes de partage (`src/lib/og.tsx`) : symbole blanc à côté du nom. E-mails (`src/lib/email-templates.ts`) : symbole et nom en tête. PDF de simulation : symbole vectoriel et nom en tête.
+- **Factures et devis** (décision du propriétaire, 16 octobre 2026 : marque sur tous les documents, tous plans confondus) : PDF (`src/components/invoices/invoice-pdf.tsx`) et aperçu public (`/modele-facture-auto-entrepreneur`) portent en pied de page, sous les mentions légales de l'émetteur, le symbole et la mention « Document créé avec Compléo » (`BRAND_FOOTER_TEXT`, avec lien vers le site dans le PDF). La marque ne remplace aucune mention de l'émetteur et n'apparaît pas en en-tête : l'identité en haut du document reste celle de l'utilisateur. Un utilisateur qui souhaiterait retirer la mention n'a pas d'option aujourd'hui (à décider, par exemple un plan payant).
+- `/favicon.ico` : route générée (16, 32 et 48 px, `src/lib/ico.ts`), aucun fichier `.ico` versionné.
+- Droits : vérifier les conditions d'utilisation commerciale du générateur d'images utilisé et faire une recherche d'antériorité avant tout dépôt de marque.
+
 ## Photos (Unsplash)
 
 Les photos sont sélectionnées à l'avance par `scripts/fetch-unsplash-images.py` et lues par le site dans deux fichiers JSON (aucun appel à l'API à l'exécution). Chaque emplacement sans photo garde son visuel généré.
@@ -299,9 +311,49 @@ Conformité aux directives de l'API : les images ne sont pas copiées dans le d�
 - **llms.txt** (`src/app/llms.txt/route.ts`, contenu généré par `src/lib/seo/llms.ts`) : résumé du site, outils, guides, activités et villes pour les assistants d'IA (GEO), au format llmstxt.org. Les chiffres viennent de `tax.ts` et `offers.ts`, les listes du catalogue, des guides et des villes : rien à mettre à jour à la main. Il n'est pas déclaré dans `robots.txt` (le format ne le prévoit pas).
 - **Tests** : `npm test` couvre les builders JSON-LD, le sitemap, robots, llms.txt, les FAQ, `tax.ts` et `activities.ts`.
 
+## Blog
+
+Routes : `/blog`, `/blog/[slug]`, `/blog/categorie/[cat]`, flux RSS `/blog/rss.xml`. Même modèle que les guides : chaque article est un composant dans `src/content/blog/` déclaré dans `BLOG_POSTS` (`src/lib/blog.ts`) avec titre, description (50 à 200 caractères), catégorie, dates, sources officielles et appel à l'action. Pas de MDX : les chiffres fiscaux sont importés de `tax.ts`. Signature : `BLOG_AUTHOR` (Maxime Girard, biographie et chemin de la page `/blog/auteur/maxime-girard`), nom cliquable dans chaque article, balisée `Person` dans le JSON-LD `Article` et sur la page auteur. La biographie est celle fournie par l'auteur ; la modifier dans `src/lib/blog.ts`. Catégories : `BLOG_CATEGORIES`.
+
+**Règle de relecture (décision du propriétaire).** Un article n'est public qu'une fois relu : renseigner `reviewedOn` (date AAAA-MM-JJ de la relecture ciblée des chiffres, du juridique et des sources) dans `BLOG_POSTS`. Sans `reviewedOn`, l'article reste accessible par son URL mais en `noindex, follow`, et il est absent du sitemap, de `/blog`, des pages catégorie, du flux RSS, de `llms.txt` et des liens de navigation. Une catégorie sans article relu n'a pas de page (404) ; `/blog` est en `noindex` tant qu'aucun article n'est relu ; le lien « Blog » de l'en-tête et du pied de page n'apparaît qu'à partir du premier article relu.
+
+Pour publier un article : créer le composant, l'ajouter à `BLOG_POSTS` (slug en minuscules, chiffres et tirets, 50 caractères maximum : le slug est la valeur de `article` dans la mesure), puis renseigner `reviewedOn` après relecture. `npm test` vérifie les slugs, les dates, les catégories, les sources, le sitemap et le flux RSS. Mesure : `blog_view` et `cta_click` portent le slug de l'article (voir « Mesure d'audience »).
+
+### Newsletter du blog (capture d'e-mail)
+
+Double opt-in, sans compte. Migration `0010_newsletter.sql` (table `newsletter_subscribers`, RLS activée, aucun droit pour `anon` et `authenticated` : service role uniquement). **Désactivée par défaut** : tant que `NEWSLETTER_ENABLED` n'est pas `true`, aucun formulaire n'est affiché et `/api/newsletter/subscribe` répond 503.
+
+- **Parcours.** Formulaire en bas de chaque article et de `/blog` (`src/components/blog/newsletter-form.tsx`) : e-mail + case de consentement non cochée par défaut, validée aussi côté serveur (`consent` strictement `true`). `POST /api/newsletter/subscribe` crée une ligne `pending` et envoie un e-mail avec un lien de confirmation. `GET /api/newsletter/confirm?t=…` affiche un bouton (il n'enregistre rien : les messageries ouvrent souvent les liens) ; le clic envoie un `POST` qui passe la ligne en `confirmed` et enregistre `newsletter_confirmed`. `GET` ou `POST /api/newsletter/unsubscribe?s=…&t=…` désinscrit en un clic (lien signé HMAC, `List-Unsubscribe-Post` géré).
+- **Preuve de consentement.** Date, version du texte (`NEWSLETTER_CONSENT_VERSION` dans `src/lib/newsletter-consent.ts`, à changer à chaque modification du texte) et origine (`blog` ou `blog:<slug>`). Ni adresse IP ni agent utilisateur. Le jeton de confirmation n'est jamais stocké (empreinte SHA-256).
+- **Protection contre les abus.** Champ piège (honeypot), réponse identique que l'adresse existe ou non, délai de 10 minutes entre deux e-mails pour une même adresse en attente, 3 e-mails par 24 h et par adresse, 100 e-mails de confirmation par heure au total (429 au-delà), jeton valable 48 h, lignes `pending` de plus de 7 jours supprimées à chaque inscription. Pas de limitation par adresse IP (aucune IP n'est conservée).
+- **Désinscrits.** La ligne reste avec le statut `unsubscribed` pour ne plus solliciter la personne ; suppression sur demande (adresse de contact de la politique de confidentialité). Une réinscription explicite repasse en `pending` avec une nouvelle confirmation.
+- **Envoi des newsletters.** Migration `0011_newsletter_campaigns.sql` (tables `newsletter_campaigns` et `newsletter_deliveries`, service role uniquement). Route `POST /api/newsletter/send`, protégée par `Authorization: Bearer $NEWSLETTER_SEND_SECRET` (secret distinct de `CRON_SECRET`, 16 caractères minimum : sinon 401), pilotée par `scripts/send-newsletter.mjs`. Le message est une introduction facultative suivie d'une carte par article (titre, catégorie, résumé, lien) ; **seuls les articles relus (`reviewedOn`) sont acceptés**. Trois modes :
+  1. `preview` : rendu du message et compteurs (abonnés confirmés, déjà servis, restants), rien n'est envoyé ni écrit.
+  2. `test` : un seul message, préfixé `[TEST]`, à l'adresse `--to`, sans écriture en base. À faire avant le premier envoi réel : il valide aussi la clé Resend et l'endpoint d'envoi groupé.
+  3. `send` : abonnés `confirmed` uniquement, par lots de 50 (`/emails/batch` de Resend), le script rappelle la route jusqu'à `remaining = 0`.
+  
+  ```bash
+  export NEWSLETTER_SEND_SECRET=…   # jamais en argument de commande
+  node scripts/send-newsletter.mjs --campaign 2026-11-a --subject "Objet" --posts slug-un,slug-deux --intro "Texte" --mode preview
+  node scripts/send-newsletter.mjs --campaign 2026-11-a --subject "Objet" --posts slug-un,slug-deux --intro "Texte" --mode test --to moi@exemple.fr
+  node scripts/send-newsletter.mjs --campaign 2026-11-a --subject "Objet" --posts slug-un,slug-deux --intro "Texte" --mode send
+  ```
+  
+  Garanties : une livraison est **réservée avant l'envoi** (clé unique campagne × abonné) : personne ne reçoit deux fois la même campagne, même si deux appels se chevauchent ; un lot en échec libère ses réservations et se reprend en relançant la même commande ; le contenu d'une campagne est figé à son premier lot (même identifiant avec un autre objet, une autre introduction ou d'autres articles : 409). Chaque message porte son lien de désinscription signé et les en-têtes `List-Unsubscribe`. Limites : la liste est lue en entier à chaque lot (pagination de 1 000 lignes), prévu pour quelques milliers d'abonnés ; quelqu'un qui se désinscrit pendant un lot en cours peut encore recevoir ce lot ; pas de suivi d'ouverture ni de clic (aucun traceur) ; pas de planification (envoi lancé à la main).
+- **Mentions du message.** Le pied de page indique l'éditeur (`LEGAL.publisherName`) et l'adresse de contact. L'adresse postale de l'éditeur (`LEGAL.address`) est vide tant que T01 n'est pas terminée : à renseigner et à ajouter au pied de page avant d'envoyer à de vrais abonnés si votre conseil juridique l'exige.
+- **Avant d'activer.** Appliquer `0010_newsletter.sql`, vérifier `RESEND_API_KEY`, `EMAIL_FROM` et `CRON_SECRET` (ou `EMAIL_UNSUBSCRIBE_SECRET`), faire relire par un juriste la section « Newsletter » de la politique de confidentialité et le texte de consentement (brouillons), puis définir `NEWSLETTER_ENABLED=true` et redéployer. `npm run check:env` signale une activation sans e-mail configuré.
+
+Articles d'entrée des inscriptions confirmées :
+
+```sql
+select props->>'article' as article, count(*) as inscriptions_confirmees
+from analytics_events
+where name = 'newsletter_confirmed' and created_at > now() - interval '30 days' group by 1 order by 2 desc;
+```
+
 ## Mesure d'audience
 
-Deux mesures coexistent. (1) Umami Cloud (`https://cloud.umami.is/script.js`, `src/app/layout.tsx`) : fréquentation générale, sans cookie ; chargé uniquement si `VERCEL_ENV=production`, avec `data-exclude-search` (aucun paramètre d'URL transmis) et `data-do-not-track`. L'identifiant du site est public. Les statistiques se consultent sur cloud.umami.is. (2) Mesure interne, sans cookie : table `analytics_events` (migration `0004_analytics_events.sql`), écrite uniquement par le service role. Un événement = nom, page, propriétés non personnelles (`source`, `offer`, `platform`, `activity`, `target`, `visual`). Aucun identifiant utilisateur, aucune adresse IP, aucun agent utilisateur. Les signaux « Do Not Track » et « Global Privacy Control » désactivent l'envoi navigateur.
+Deux mesures coexistent. (1) Umami Cloud (`https://cloud.umami.is/script.js`, `src/app/layout.tsx`) : fréquentation générale, sans cookie ; chargé uniquement si `VERCEL_ENV=production`, avec `data-exclude-search` (aucun paramètre d'URL transmis) et `data-do-not-track`. L'identifiant du site est public. Les statistiques se consultent sur cloud.umami.is. (2) Mesure interne, sans cookie : table `analytics_events` (migration `0004_analytics_events.sql`), écrite uniquement par le service role. Un événement = nom, page, propriétés non personnelles (`source`, `offer`, `platform`, `activity`, `target`, `visual`, `article`). Aucun identifiant utilisateur, aucune adresse IP, aucun agent utilisateur. Les signaux « Do Not Track » et « Global Privacy Control » désactivent l'envoi navigateur.
 
 | Événement | Origine | Déclencheur |
 |---|---|---|
@@ -311,13 +363,15 @@ Deux mesures coexistent. (1) Umami Cloud (`https://cloud.umami.is/script.js`, `s
 | `diagnostic_completed` | navigateur | diagnostic terminé (recommandations affichées) |
 | `home_view` | navigateur | chargement de l'accueil (`visual` : `photo` ou `none`, version du hero) |
 | `cta_click` | navigateur | clic sur un bouton d'action : `source` = `header`, `hero`, `final`, `sticky` (barre fixe mobile), `encart` (encart des pages de contenu) ou `page`, `target` = `diagnostic`, `simulateur` ou `login` |
+| `blog_view` | navigateur | chargement d'un article du blog (`article` = slug) ; les clics vers les outils sont des `cta_click` avec `source` = `blog` et le même `article` |
 | `paywall_click` | navigateur | clic sur « Voir les packs et abonnements » depuis la limite d'annonces |
 | `signup` | serveur | retour d'authentification d'un compte créé depuis moins de 2 minutes |
 | `listing_generated` | serveur | annonce enregistrée |
 | `checkout_started` | serveur | session Stripe Checkout créée |
 | `payment_success` | serveur | webhook Stripe de paiement confirmé |
+| `newsletter_confirmed` | serveur | inscription à la newsletter confirmée par le lien de l'e-mail (`article` = slug de l'article d'origine) |
 
-`/api/track` n'accepte que les sept événements navigateur. Entonnoir accueil → clic → diagnostic → inscription → 1ʳᵉ annonce → paiement : `home_view`, `cta_click`, `diagnostic_started`, `diagnostic_completed`, `signup`, `listing_generated`, `payment_success`. Seules les vues de l'accueil sont comptées (dénominateur des clics) ; les autres visites de pages ne sont pas mesurées (aucun traceur) ; l'entonnoir interne ci-dessous ne dépend pas d'Umami. Umami Cloud est chargé sans cookie ni paramètre d'URL ; le besoin éventuel d'un bandeau de consentement reste à confirmer au regard des conditions d'exemption de la CNIL (réglages du compte Umami, absence de recoupement). Entonnoir sur 30 jours :
+`/api/track` n'accepte que les huit événements navigateur. Entonnoir accueil → clic → diagnostic → inscription → 1ʳᵉ annonce → paiement : `home_view`, `cta_click`, `diagnostic_started`, `diagnostic_completed`, `signup`, `listing_generated`, `payment_success`. Seules les vues de l'accueil sont comptées (dénominateur des clics) ; les autres visites de pages ne sont pas mesurées (aucun traceur) ; l'entonnoir interne ci-dessous ne dépend pas d'Umami. Umami Cloud est chargé sans cookie ni paramètre d'URL ; le besoin éventuel d'un bandeau de consentement reste à confirmer au regard des conditions d'exemption de la CNIL (réglages du compte Umami, absence de recoupement). Entonnoir sur 30 jours :
 
 ```sql
 select name, count(*) from analytics_events
@@ -336,6 +390,16 @@ where created_at > now() - interval '30 days' and name in ('home_view', 'cta_cli
 ```
 
 Un clic n'est pas rattaché à une visite (aucun identifiant) : le rapport clics / vues est une approximation, fiable seulement sur des périodes de comparaison de même durée et de trafic comparable.
+
+Articles d'entrée du blog qui mènent à un clic vers un outil (nécessite `blog_view` pour le dénominateur) :
+
+```sql
+select props->>'article' as article,
+       count(*) filter (where name = 'blog_view') as vues,
+       count(*) filter (where name = 'cta_click' and props->>'source' = 'blog') as clics_outil
+from analytics_events
+where created_at > now() - interval '30 days' and props ? 'article' group by 1 order by vues desc;
+```
 
 ## Preuve sociale
 
@@ -383,6 +447,7 @@ Commandes utiles : `npm run check:env -- --env production|preview|development [-
 
 - Envoi d'un devis ou d'une facture à un client : bouton enveloppe dans `/dashboard/invoices` (`POST /api/invoices/[id]/send`, PDF en pièce jointe, réponse du client adressée à l'utilisateur, 20 envois par 24 h et par utilisateur, adresse du client non conservée).
 - Séquence d'accueil (J+1 simulateur, J+3 première annonce si aucune) et alertes à 80 % du seuil de TVA ou du plafond micro (calculées sur les factures « Payé » de l'année, hypothèse prestations de services) : cron quotidien `vercel.json` → `/api/cron/emails`. Réservés aux comptes ayant activé le réglage dans Mon compte (désactivé par défaut) ; désinscription en un clic (`/api/email/unsubscribe`, `List-Unsubscribe`).
+- Newsletter du blog : appliquer les migrations `0010_newsletter.sql` (avant de définir `NEWSLETTER_ENABLED=true`) et `0011_newsletter_campaigns.sql` (avant le premier envoi, avec `NEWSLETTER_SEND_SECRET`). Voir « Newsletter du blog ».
 - Appliquer la migration `0006_email.sql`. Dans Resend : vérifier le domaine d'envoi (DNS SPF/DKIM chez Cloudflare), créer une clé API.
 - Témoignages (T24) : appliquer la migration `0009_testimonials.sql` avant de déployer le code (sinon la page Annonces du tableau de bord échoue à lire `testimonials`). Voir « Preuve sociale ».
 - Annonces multi-sites (T20) : appliquer la migration `0007_listing_variants.sql` (colonne `listings.variants`, additive) avant de déployer le code, sinon l'enregistrement des annonces échoue (500, crédit remboursé). Une génération produit jusqu'à 5 versions (une par site choisi) et compte pour un seul quota ou crédit. Appliquer aussi `0008_listing_platforms.sql` (valeurs ajoutées au type énuméré `listing_platform`). Compléo ne publie rien sur ces sites.

@@ -1,14 +1,18 @@
 import Link from "next/link";
-import { Menu, Rocket } from "lucide-react";
+import { Menu } from "lucide-react";
+import { LogoMark } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { TrackedLink } from "@/components/marketing/tracked-link";
+import { indexablePosts } from "@/lib/blog";
 
-const LINKS = [
+/** Le lien Blog n'apparaît que lorsqu'au moins un article relu est public (pas de lien vers une page vide). */
+const LINKS: { href: string; label: string }[] = [
   { href: "/simulateur-micro-entrepreneur", label: "Simulateur" },
   { href: "/activites", label: "Activités" },
   { href: "/guides", label: "Guides" },
+  ...(indexablePosts().length > 0 ? [{ href: "/blog", label: "Blog" }] : []),
   { href: "/pricing", label: "Tarifs" },
-] as const;
+];
 
 /**
  * En-tête commun des pages publiques. Le diagnostic gratuit est l'unique action principale ; « Connexion » reste
@@ -19,7 +23,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-30 border-b bg-card/95 backdrop-blur">
       <div className="container flex h-14 items-center justify-between gap-2">
         <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-primary" aria-label="Compléo, accueil">
-          <Rocket className="h-5 w-5" aria-hidden="true" /> Compléo
+          <LogoMark className="h-7 w-7" /> Compléo
         </Link>
         <nav aria-label="Navigation principale" className="flex items-center gap-1">
           {LINKS.map(({ href, label }) => (

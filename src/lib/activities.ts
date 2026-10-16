@@ -152,9 +152,9 @@ export interface Recommendation {
   missingEquipment: string[];
 }
 
-const WEEKS_PER_MONTH = 4;
+export const WEEKS_PER_MONTH = 4;
 /** Part du temps disponible réellement facturable (démarchage, trajets, annulations). */
-const BILLABLE_RATIO = 0.6;
+export const BILLABLE_RATIO = 0.6;
 
 /** Chiffre d'affaires mensuel indicatif (€) d'une activité pour un nombre d'heures par semaine. */
 export function monthlyIncomeRange(activity: Activity, weeklyHours: number) {

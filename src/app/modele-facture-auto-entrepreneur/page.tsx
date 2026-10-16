@@ -4,6 +4,8 @@ import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import Link from "next/link";
 import { Info } from "lucide-react";
 import { TVA_MENTION } from "@/lib/invoice-number";
+import { BRAND_FOOTER_TEXT } from "@/lib/brand";
+import { LogoMark } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SiteHeader } from "@/components/marketing/site-header";
@@ -74,6 +76,9 @@ export default function InvoiceTemplatePage() {
                 de 40 EUR.
               </p>
             </div>
+            <p className="flex items-center gap-1 border-t pt-3 text-xs text-slate-400">
+              <LogoMark className="h-3 w-3" color="#2563eb" /> {BRAND_FOOTER_TEXT}
+            </p>
           </div>
         </section>
 
