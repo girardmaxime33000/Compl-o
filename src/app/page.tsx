@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaqSection } from "@/components/marketing/faq";
 import { PublicCtas } from "@/components/marketing/ctas";
-import { ActivityVisual } from "@/components/marketing/visuals";
+import { ActivityVisual, GuideVisual } from "@/components/marketing/visuals";
 import { HeroShowcase } from "@/components/marketing/hero-showcase";
 import { Photo } from "@/components/marketing/photo";
 import { cityPhoto } from "@/lib/city-images";
@@ -261,14 +261,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="container space-y-4 pb-16" aria-labelledby="guides">
-        <h2 id="guides" className="text-2xl font-bold">Nos guides pratiques</h2>
-        <ul className="grid gap-3 md:grid-cols-2">
+      <section className="container space-y-6 pb-16" aria-labelledby="guides">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <h2 id="guides" className="text-2xl font-bold">Nos guides pratiques</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Annonces, micro-entreprise, TVA, devis, cumul avec l&apos;ARE : l&apos;essentiel pour démarrer.</p>
+          </div>
+          <Link href="/guides" className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline">
+            Tous les guides <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {GUIDES.map((g) => (
             <li key={g.slug}>
-              <Link href={guidePath(g)} className="block h-full rounded-md border p-3 text-sm hover:bg-accent/50">
-                <p className="font-medium">{g.title}</p>
-                <p className="mt-1 text-muted-foreground">{g.description}</p>
+              <Link href={guidePath(g)} className="group flex h-full flex-col overflow-hidden rounded-lg border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+                <GuideVisual slug={g.slug} size="card" />
+                <div className="flex flex-1 flex-col gap-2 p-4">
+                  <h3 className="font-semibold leading-snug">{g.title}</h3>
+                  <p className="line-clamp-3 text-sm text-muted-foreground">{g.description}</p>
+                  <span className="mt-auto inline-flex items-center gap-1 pt-1 text-sm font-medium text-primary">
+                    Lire le guide <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                  </span>
+                </div>
               </Link>
             </li>
           ))}
