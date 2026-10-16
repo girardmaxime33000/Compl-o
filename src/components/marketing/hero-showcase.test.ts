@@ -30,10 +30,10 @@ describe("<HeroShowcase>", () => {
     expect(render()).toContain(net);
   });
 
-  it("avec photo : image prioritaire décorative (alt vide) et crédit", () => {
+  it("avec photo : image prioritaire décorative (alt vide), crédit sur /credits-photos uniquement", () => {
     const html = render(photo);
     expect(html).toContain('alt=""');
     expect(html).toContain('fetchPriority="high"');
-    expect(html).toContain("Camille Martin");
+    expect(html).not.toContain("Camille Martin");
   });
 });

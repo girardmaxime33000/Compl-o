@@ -37,7 +37,7 @@ export function HeroShowcase({ photo, activity, example, className }: HeroShowca
           ratio="hero"
           sizes="(min-width: 768px) 560px, 100vw"
           priority
-          credit="overlay"
+          credit="page"
           className="rounded-2xl"
         />
       ) : (

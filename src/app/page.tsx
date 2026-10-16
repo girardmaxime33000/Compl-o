@@ -182,7 +182,7 @@ export default function HomePage() {
           {TOP_ACTIVITIES.map(({ activity, monthlyMin, monthlyMax }) => (
             <Link key={activity.id} href={`/activites/${activitySlug(activity)}`} className="block">
               <Card className="h-full overflow-hidden transition-colors hover:bg-accent/50">
-                <ActivityVisual activityId={activity.id} />
+                <ActivityVisual activityId={activity.id} credit="page" />
                 <CardHeader>
                   <CardTitle>{activity.title}</CardTitle>
                   <CardDescription>Tarif moyen : {formatRate(activity)}</CardDescription>
@@ -236,7 +236,7 @@ export default function HomePage() {
                 {TILE_CITIES.map((c) => (
                   <li key={c.slug}>
                     <Link href={cityPath(c)} className="block overflow-hidden rounded-lg border bg-card transition-colors hover:bg-accent/50">
-                      <Photo photo={cityPhoto(c)} alt="" ratio="card" sizes="(min-width: 1024px) 140px, (min-width: 640px) 25vw, 50vw" credit="text" phrasing />
+                      <Photo photo={cityPhoto(c)} alt="" ratio="card" sizes="(min-width: 1024px) 140px, (min-width: 640px) 25vw, 50vw" credit="page" phrasing />
                       <span className="block px-2 py-1.5 text-sm font-medium">{c.name}</span>
                     </Link>
                   </li>
@@ -275,7 +275,7 @@ export default function HomePage() {
           {GUIDES.map((g) => (
             <li key={g.slug}>
               <Link href={guidePath(g)} className="group flex h-full flex-col overflow-hidden rounded-lg border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
-                <GuideVisual slug={g.slug} size="card" />
+                <GuideVisual slug={g.slug} size="card" credit="page" />
                 <div className="flex flex-1 flex-col gap-2 p-4">
                   <h3 className="font-semibold leading-snug">{g.title}</h3>
                   <p className="line-clamp-3 text-sm text-muted-foreground">{g.description}</p>
@@ -295,6 +295,7 @@ export default function HomePage() {
         <p className="text-sm text-muted-foreground">
           Sources : taux et plafonds fiscaux, fiches Entreprendre Service Public ; repères locaux, {CITY_DATA.sources.bmo.label} et{" "}
           {CITY_DATA.sources.insee.label}. Données locales téléchargées le {CITY_DATA.downloadedOn}.
+          {" "}Photos : <Link href="/credits-photos" className="underline">crédits des photographes (Unsplash)</Link>.
         </p>
       </section>
 
