@@ -29,6 +29,13 @@ export interface UserSkill {
   created_at: string;
 }
 
+/** Version d'une annonce adaptée à une plateforme. */
+export interface ListingVariant {
+  platform: Platform;
+  title: string;
+  description: string;
+}
+
 export interface Listing {
   id: string;
   user_id: string;
@@ -36,6 +43,8 @@ export interface Listing {
   platform: Platform;
   description: string;
   price_suggested: number | null;
+  /** Versions par plateforme (annonce multi-sites) ; null pour les annonces d'une seule plateforme. */
+  variants: ListingVariant[] | null;
   created_at: string;
 }
 
