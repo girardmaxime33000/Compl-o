@@ -12,7 +12,7 @@ const render = (props: Parameters<typeof ActivityVisual>[0]) => renderToStaticMa
 
 describe("<ActivityVisual>", () => {
   it("sans photo : dégradé décoratif, aucune image", () => {
-    const html = render({ activityId: "bricolage" });
+    const html = render({ activityId: "activite-sans-photo" });
     expect(html).toContain("linear-gradient");
     expect(html).not.toContain("<img");
   });
@@ -44,7 +44,7 @@ describe("<ActivityVisual>", () => {
 describe("<GuideVisual>", () => {
   it("sans photo : dégradé ; avec photo : image 16:9 et crédit lié en bandeau", async () => {
     const { GuideVisual } = await import("@/components/marketing/visuals");
-    const plain = renderToStaticMarkup(createElement(GuideVisual, { slug: "annonces-efficaces" }));
+    const plain = renderToStaticMarkup(createElement(GuideVisual, { slug: "guide-sans-photo" }));
     expect(plain).toContain("linear-gradient");
     const hero = renderToStaticMarkup(createElement(GuideVisual, { slug: "annonces-efficaces", size: "hero", photo }));
     expect(hero).toContain("<img");
