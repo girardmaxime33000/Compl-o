@@ -47,7 +47,10 @@ for (;;) {
   const { res, data } = await call();
   if (!res.ok) { console.error(`Erreur ${res.status} :`, data.error ?? data, data.details ?? ""); process.exit(1); }
   if (mode !== "send") {
-    const { html, text, ...summary } = data;
+    const summary = { ...data };
+    const text = summary.text;
+    delete summary.html; // le HTML n'est pas affiché dans le terminal
+    delete summary.text;
     console.log(JSON.stringify(summary, null, 2));
     if (text) console.log(`\n--- Aperçu texte ---\n${text}`);
     break;
