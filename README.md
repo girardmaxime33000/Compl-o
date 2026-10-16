@@ -56,7 +56,7 @@ Formulaire en trois étapes : domaines qui plaisent, matériel disponible, temps
 
 ### 2. Générateur d'annonces par IA (`/dashboard/listings`)
 
-À partir du service, de la ville et de la plateforme cible (LeBonCoin, AlloVoisins, GensDeConfiance), l'IA produit un titre optimisé, un texte structuré (avantages, compétences, tarifs, appel à l'action) et 3 hashtags. Chaque annonce est enregistrée en base et copiable en un clic.
+À partir du service, de la ville, des compétences et des plateformes choisies (21 sites répartis en 6 groupes : services, vie de quartier, transport, animaux, colis et stockage, troc et don ; jusqu'à 5 par génération), l'IA produit, pour chaque site, un titre optimisé, un texte structuré (avantages, compétences, tarifs, appel à l'action) et 3 hashtags. Chaque annonce est enregistrée en base et copiable en un clic.
 
 L'offre gratuite est limitée à **2 annonces par mois** ; la limite est appliquée côté serveur.
 
@@ -375,3 +375,4 @@ Commandes utiles : `npm run check:env -- --env production|preview|development [-
 - Envoi d'un devis ou d'une facture à un client : bouton enveloppe dans `/dashboard/invoices` (`POST /api/invoices/[id]/send`, PDF en pièce jointe, réponse du client adressée à l'utilisateur, 20 envois par 24 h et par utilisateur, adresse du client non conservée).
 - Séquence d'accueil (J+1 simulateur, J+3 première annonce si aucune) et alertes à 80 % du seuil de TVA ou du plafond micro (calculées sur les factures « Payé » de l'année, hypothèse prestations de services) : cron quotidien `vercel.json` → `/api/cron/emails`. Réservés aux comptes ayant activé le réglage dans Mon compte (désactivé par défaut) ; désinscription en un clic (`/api/email/unsubscribe`, `List-Unsubscribe`).
 - Appliquer la migration `0006_email.sql`. Dans Resend : vérifier le domaine d'envoi (DNS SPF/DKIM chez Cloudflare), créer une clé API.
+- Annonces multi-sites (T20) : appliquer la migration `0007_listing_variants.sql` (colonne `listings.variants`, additive) avant de déployer le code, sinon l'enregistrement des annonces échoue (500, crédit remboursé). Une génération produit jusqu'à 5 versions (une par site choisi) et compte pour un seul quota ou crédit. Appliquer aussi `0008_listing_platforms.sql` (valeurs ajoutées au type énuméré `listing_platform`). Compléo ne publie rien sur ces sites.

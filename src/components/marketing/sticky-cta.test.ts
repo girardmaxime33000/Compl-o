@@ -13,9 +13,9 @@ describe("<StickyCta>", () => {
     expect(html.match(/md:hidden/g)?.length).toBe(2); // espace réservé + barre
   });
 
-  it("pointe vers le diagnostic gratuit", () => {
+  it("pointe vers le parcours gratuit (diagnostic puis annonce)", () => {
     expect(html).toContain('href="/onboarding"');
-    expect(html).toContain("Faire mon diagnostic gratuit");
+    expect(html).toContain("Écrire mon annonce gratuitement");
   });
 
   it("tient compte de la zone de sécurité des iPhone", () => {

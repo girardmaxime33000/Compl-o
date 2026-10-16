@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import { PHOTO_RATIOS, photoSrcSet, UNSPLASH_URL, unsplashSrc, withUtm, type UnsplashPhoto } from "@/lib/unsplash";
+import { PHOTO_RATIOS, photoSrcSet, unsplashSrc, type UnsplashPhoto } from "@/lib/unsplash";
 import { cn } from "@/lib/utils";
 
 /**
  * Bandeau dont la hauteur suit le contenu, avec une photo en fond sous un voile sombre (contraste du texte blanc).
- * Sans photo : cadre à bordure d'origine, texte aux couleurs du site. Le contenu doit rester lisible dans les deux cas.
+ * Crédit : /credits-photos, aucune pastille sur le bandeau. Sans photo : cadre à bordure d'origine, texte aux couleurs du site. Le contenu doit rester lisible dans les deux cas.
  */
 export function PhotoBanner({ photo, children, className }: { photo: UnsplashPhoto | undefined; children: ReactNode; className?: string }) {
   if (!photo) {
@@ -25,11 +25,6 @@ export function PhotoBanner({ photo, children, className }: { photo: UnsplashPho
       />
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-slate-950/65" />
       {children}
-      <p className="relative mt-4 text-right text-[11px] text-white/80">
-        Photo :{" "}
-        <a href={withUtm(photo.authorUrl)} className="underline" rel="noopener noreferrer">{photo.author}</a> sur{" "}
-        <a href={UNSPLASH_URL} className="underline" rel="noopener noreferrer">Unsplash</a>
-      </p>
     </div>
   );
 }

@@ -38,16 +38,17 @@ vi.mock("ai", () => ({ generateObject: h.generate }));
 import { POST } from "@/app/api/generate-listing/route";
 import { FREE_MONTHLY_LISTINGS, MONTHLY_PLAN_DAILY_LISTINGS } from "@/lib/platforms";
 
-const call = () =>
+const call = (body: Record<string, unknown> = { service: "Petit bricolage", city: "Lyon" }) =>
   POST(
     new Request("http://localhost/api/generate-listing", {
       method: "POST",
-      body: JSON.stringify({ service: "Petit bricolage", city: "Lyon", platform: "leboncoin" }),
+      body: JSON.stringify(body),
     }),
   );
 
+const version = (title: string) => ({ title, intro: "i", advantages: ["a", "b", "c"], skills: ["a", "b", "c"], pricing: "p", callToAction: "c", hashtags: ["#a", "#b", "#c"] });
 const generated = {
-  object: { title: "T", intro: "i", advantages: ["a", "b", "c"], skills: ["a", "b", "c"], pricing: "p", callToAction: "c", hashtags: ["#a", "#b", "#c"], priceSuggested: 20 },
+  object: { versions: { leboncoin: version("LBC"), allovoisins: version("AV"), gensdeconfiance: version("GDC"), yoojo: version("YOO"), geev: version("GEEV") }, priceSuggested: 20 },
 };
 
 beforeEach(() => {
@@ -112,5 +113,66 @@ describe("POST /api/generate-listing : quotas", () => {
     h.profile = { subscription_status: "active", subscription_plan: "annual" };
     h.dayCount = 500;
     expect((await call()).status).toBe(200);
+  });
+});
+
+describe("POST /api/generate-listing : annonce multi-sites et personnalisation", () => {
+  it("sans choix de sites, génère les trois sites par défaut dans une seule ligne", async () => {
+    expect((await call()).status).toBe(200);
+    expect(h.inserted).toHaveLength(1);
+    const row = h.inserted[0] as { title: string; platform: string; variants: { platform: string; title: string }[] };
+    expect(row.variants.map((v) => v.platform)).toEqual(["leboncoin", "allovoisins", "gensdeconfiance"]);
+    expect(row.variants.map((v) => v.title)).toEqual(["LBC", "AV", "GDC"]);
+    expect(row.title).toBe("LBC");
+    expect(row.platform).toBe("leboncoin");
+  });
+
+  it("consomme un seul crédit pour les trois versions", async () => {
+    h.monthCount = FREE_MONTHLY_LISTINGS;
+    h.rpc.mockResolvedValue({ data: 3, error: null });
+    await call();
+    expect(h.rpc).toHaveBeenCalledTimes(1);
+  });
+
+  it("transmet les informations de la personne au modèle", async () => {
+    await call({ service: "Bricolage", city: "Lyon", skills: "Perceuse et niveau laser", experience: "10 ans en famille", rate: 28, tone: "professionnel" });
+    const prompt = (h.generate.mock.calls[0]?.[0] as { prompt: string }).prompt;
+    expect(prompt).toContain("Perceuse et niveau laser");
+    expect(prompt).toContain("10 ans en famille");
+    expect(prompt).toContain("28 €");
+  });
+
+  it("utilise le tarif saisi plutôt que la suggestion du modèle", async () => {
+    await call({ service: "Bricolage", city: "Lyon", rate: 28 });
+    expect((h.inserted[0] as { price_suggested: number }).price_suggested).toBe(28);
+  });
+
+  it("rejette un tarif hors limites et un ton inconnu", async () => {
+    expect((await call({ service: "Bricolage", city: "Lyon", rate: 1 })).status).toBe(400);
+    expect((await call({ service: "Bricolage", city: "Lyon", tone: "agressif" })).status).toBe(400);
+  });
+
+  it("génère uniquement les sites choisis et garde la première version comme version de la ligne", async () => {
+    expect((await call({ service: "Ménage", city: "Lyon", platforms: ["yoojo", "geev"] })).status).toBe(200);
+    const row = h.inserted[0] as { title: string; platform: string; variants: { platform: string }[] };
+    expect(row.variants.map((v) => v.platform)).toEqual(["yoojo", "geev"]);
+    expect(row.platform).toBe("yoojo");
+    expect(row.title).toBe("YOO");
+    expect(h.generate).toHaveBeenCalledTimes(1);
+    const prompt = (h.generate.mock.calls[0]?.[0] as { prompt: string }).prompt;
+    expect(prompt).toContain("[yoojo]");
+    expect(prompt).not.toContain("[leboncoin]");
+  });
+
+  it("rejette plus de 5 sites, un site inconnu et une liste vide", async () => {
+    const six = ["leboncoin", "allovoisins", "yoojo", "needhelp", "stootie", "geev"];
+    expect((await call({ service: "Ménage", city: "Lyon", platforms: six })).status).toBe(400);
+    expect((await call({ service: "Ménage", city: "Lyon", platforms: ["facebook"] })).status).toBe(400);
+    expect((await call({ service: "Ménage", city: "Lyon", platforms: [] })).status).toBe(400);
+  });
+
+  it("ignore les doublons de sites", async () => {
+    await call({ service: "Ménage", city: "Lyon", platforms: ["yoojo", "yoojo"] });
+    expect((h.inserted[0] as { variants: unknown[] }).variants).toHaveLength(1);
   });
 });

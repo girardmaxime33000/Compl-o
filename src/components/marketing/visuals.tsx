@@ -2,7 +2,7 @@ import {
   Armchair, Bike, BookOpen, Calculator, Hammer, Languages, Laptop, Megaphone, PawPrint, Receipt, Scale, SprayCan, Sprout,
   Tag, Landmark, Percent, GraduationCap, type LucideIcon,
 } from "lucide-react";
-import { Photo } from "@/components/marketing/photo";
+import { Photo, type PhotoCredit } from "@/components/marketing/photo";
 import type { PhotoRatio, UnsplashPhoto } from "@/lib/unsplash";
 import { activityPhoto, guidePhoto } from "@/lib/site-images";
 import { cn } from "@/lib/utils";
@@ -59,12 +59,12 @@ const SIZES = {
   },
 } as const;
 
-function Visual({ theme, size, className, photo }: { theme: Theme; size: keyof typeof SIZES; className?: string; photo?: UnsplashPhoto }) {
+function Visual({ theme, size, className, photo, credit }: { theme: Theme; size: keyof typeof SIZES; className?: string; photo?: UnsplashPhoto; credit?: PhotoCredit }) {
   const { icon: Icon, from, to } = theme;
   const s = SIZES[size];
   if (photo) {
     // Photo décorative : le titre de l'activité est toujours affiché à côté, donc alt vide.
-    return <Photo photo={photo} alt="" priority={size === "hero"} className={cn(s.photo.className, className)} ratio={s.photo.ratio} sizes={s.photo.sizes} credit={s.photo.credit} />;
+    return <Photo photo={photo} alt="" priority={size === "hero"} className={cn(s.photo.className, className)} ratio={s.photo.ratio} sizes={s.photo.sizes} credit={credit ?? s.photo.credit} />;
   }
   return (
     <div
@@ -80,11 +80,11 @@ function Visual({ theme, size, className, photo }: { theme: Theme; size: keyof t
 }
 
 /** Photo Unsplash de l'activité si elle a été sélectionnée (`activity:<id>`), sinon dégradé et pictogramme. `photo` force une photo. */
-export function ActivityVisual({ activityId, size = "card", className, photo }: { activityId: string; size?: keyof typeof SIZES; className?: string; photo?: UnsplashPhoto }) {
-  return <Visual theme={ACTIVITY_THEMES[activityId] ?? FALLBACK} size={size} className={className} photo={photo ?? activityPhoto(activityId)} />;
+export function ActivityVisual({ activityId, size = "card", className, photo, credit }: { activityId: string; size?: keyof typeof SIZES; className?: string; photo?: UnsplashPhoto; credit?: PhotoCredit }) {
+  return <Visual theme={ACTIVITY_THEMES[activityId] ?? FALLBACK} size={size} className={className} photo={photo ?? activityPhoto(activityId)} credit={credit} />;
 }
 
 /** Photo Unsplash du guide si elle a été sélectionnée (`guide:<slug>`), sinon dégradé et pictogramme. `photo` force une photo. */
-export function GuideVisual({ slug, size = "card", className, photo }: { slug: string; size?: keyof typeof SIZES; className?: string; photo?: UnsplashPhoto }) {
-  return <Visual theme={GUIDE_THEMES[slug] ?? FALLBACK} size={size} className={className} photo={photo ?? guidePhoto(slug)} />;
+export function GuideVisual({ slug, size = "card", className, photo, credit }: { slug: string; size?: keyof typeof SIZES; className?: string; photo?: UnsplashPhoto; credit?: PhotoCredit }) {
+  return <Visual theme={GUIDE_THEMES[slug] ?? FALLBACK} size={size} className={className} photo={photo ?? guidePhoto(slug)} credit={credit} />;
 }

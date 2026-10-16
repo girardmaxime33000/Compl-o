@@ -20,12 +20,11 @@ describe("<PhotoBanner>", () => {
     expect(html).toContain("Titre");
   });
 
-  it("avec photo : image décorative, voile sombre, crédit lié avec UTM et couleur de fond", () => {
+  it("avec photo : image décorative, voile sombre, couleur de fond, aucune pastille de crédit (crédit sur /credits-photos)", () => {
     const html = render(photo);
     expect(html).toContain('alt=""');
     expect(html).toContain("bg-slate-950/65");
-    expect(html).toContain("Sam Petit");
-    expect(html).toContain("utm_source=compleo");
+    expect(html).not.toContain("Sam Petit");
     expect(html).toContain("background-color:#223344");
   });
 });

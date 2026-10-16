@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 /** Largeur maximale demandée au CDN pour l'attribut `src` (repli des navigateurs sans `srcset`). */
 const MAX_WIDTH = 1280;
 
+export type PhotoCredit = "caption" | "overlay" | "text" | "page";
+
 interface PhotoProps {
   /** Photo sélectionnée. Absente : `fallback` est rendu (ou rien). */
   photo: UnsplashPhoto | undefined;
@@ -20,7 +22,7 @@ interface PhotoProps {
    * `text` : pastille sans lien, pour une photo placée dans un lien (les liens imbriqués sont invalides) ; le crédit lié
    * figure sur /credits-photos. `page` : crédit uniquement sur /credits-photos (miniatures où aucune pastille ne tient).
    */
-  credit?: "caption" | "overlay" | "text" | "page";
+  credit?: PhotoCredit;
   /** Voile dégradé sous le contenu `children` pour garantir le contraste d'un texte en surimpression. */
   overlay?: boolean;
   /** Rendu quand `photo` est absente (p. ex. le dégradé de `visuals.tsx`). */

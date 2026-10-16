@@ -10,7 +10,8 @@
       "author": "Pedro Lastra",
       "authorUrl": "https://unsplash.com/@peterlaster",
       "pageUrl": "https://unsplash.com/photos/aerial-photography-of-lighted-concrete-buildings-at-night-time-5g8dJvtYRYA",
-      "alt": "aerial photography of lighted concrete buildings at night time"
+      "alt": "aerial photography of lighted concrete buildings at night time",
+      "color": "#262640"
     },
     "bordeaux": {
       "id": "ulhxvMjzI_4",
@@ -20,7 +21,8 @@
       "author": "Juan Di Nella",
       "authorUrl": "https://unsplash.com/@juandinella",
       "pageUrl": "https://unsplash.com/photos/low-angle-photo-of-white-concrete-building-ulhxvMjzI_4",
-      "alt": "low angle photo of white concrete building"
+      "alt": "low angle photo of white concrete building",
+      "color": "#0c73a6"
     },
     "dijon": {
       "id": "XTsI5i1piDY",

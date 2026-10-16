@@ -1,7 +1,9 @@
 import { requireUser } from "@/lib/auth";
 import { getQuota } from "@/lib/quota";
 import { ListingGenerator } from "@/components/listings/generator";
-import type { Listing } from "@/types/database";
+import { equipmentLabel, recommend } from "@/lib/activities";
+import { suggestedPlatforms } from "@/lib/platforms";
+import type { Listing, UserSkill } from "@/types/database";
 
 export const metadata = { title: "Annonces | Compléo" };
 
@@ -9,18 +11,34 @@ export default async function ListingsPage(props: { searchParams: Promise<{ serv
   const searchParams = await props.searchParams;
   const { supabase, user, profile } = await requireUser();
 
-  const [{ data: listings }, quota] = await Promise.all([
+  const [{ data: listings }, quota, { data: skills }] = await Promise.all([
     supabase.from("listings").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20).returns<Listing[]>(),
     getQuota(supabase, user.id, profile),
+    supabase.from("user_skills").select("*").eq("user_id", user.id).returns<UserSkill[]>(),
   ]);
+
+  // Réponses du diagnostic réutilisées pour préremplir le formulaire : la personne les relit et les corrige.
+  const answered = skills ?? [];
+  const weeklyHours = answered[0]?.weekly_availability_hours;
+  const equipment = answered[0]?.equipment_available ?? [];
+  const top = answered.length > 0 && weeklyHours != null
+    ? recommend({ categories: answered.map((s) => s.category), equipment, weeklyHours }, 1)[0]
+    : undefined;
+  const prefill = {
+    service: searchParams.service ?? top?.activity.title ?? "",
+    skills: equipment.length > 0 ? `Matériel : ${equipment.map(equipmentLabel).join(", ")}` : "",
+    availability: weeklyHours ? `Environ ${weeklyHours} h par semaine` : "",
+    platforms: suggestedPlatforms(top?.activity.category),
+    rate: top ? Math.round((top.activity.rateMin + top.activity.rateMax) / 2) : undefined,
+  };
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Générateur d'annonces</h1>
-        <p className="text-muted-foreground">Une annonce optimisée pour la plateforme de votre choix, prête à copier.</p>
+        <p className="text-muted-foreground">Dites ce que vous savez faire. Vous choisissez vos sites, vous recevez une annonce adaptée à chacun, prête à copier.</p>
       </div>
-      <ListingGenerator initialService={searchParams.service ?? ""} initialListings={listings ?? []} quota={quota} />
+      <ListingGenerator prefill={prefill} initialListings={listings ?? []} quota={quota} />
     </div>
   );
 }
