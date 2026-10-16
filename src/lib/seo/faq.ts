@@ -5,7 +5,9 @@ import {
   activitiesForCity, BMO_PREVIOUS_YEAR, BMO_YEAR, bmoEvolution, bmoFor, CITIES, CITY_DATA, inseeRows,
   type City,
 } from "@/lib/cities";
-import { FREE_MONTHLY_LISTINGS, MONTHLY_PLAN_DAILY_LISTINGS, PACK_LISTING_CREDITS, PLATFORMS } from "@/lib/platforms";
+import {
+  FREE_MONTHLY_LISTINGS, GENERATOR_PLATFORMS, MAX_PLATFORMS_PER_LISTING, MONTHLY_PLAN_DAILY_LISTINGS, PACK_LISTING_CREDITS, PLATFORMS,
+} from "@/lib/platforms";
 import { formatCents, OFFERS } from "@/lib/offers";
 import { simulate, TAX_PARAMS } from "@/lib/tax";
 import type { FaqItem } from "@/lib/seo/jsonld";
@@ -22,36 +24,40 @@ const pick = <T,>(variants: T[], seed: number): T => variants[Math.abs(seed) % v
 
 const REGIME_LABEL = { bnc: "BNC", bic: "BIC" } as const;
 
+/**
+ * FAQ de l'accueil, écrite pour des personnes peu à l'aise avec l'informatique et la fiscalité : phrases courtes, mots du
+ * quotidien. Les chiffres viennent de `tax.ts`, `offers.ts` et `platforms.ts`.
+ */
 export function homeFaq(): FaqItem[] {
   const { bnc, bic } = TAX_PARAMS.urssafRate;
   return [
     {
-      question: "Le diagnostic est-il vraiment gratuit ?",
-      answer: `Oui. Le diagnostic d'activité se fait sans inscription ni carte bancaire, et le simulateur « Net dans la poche » est accessible sans compte. Avec un compte gratuit, vous disposez de ${FREE_MONTHLY_LISTINGS} annonces rédigées par IA par mois et de devis et factures PDF sans TVA.`,
+      question: "Est-ce vraiment gratuit ?",
+      answer: `Oui, pour commencer. Les trois questions pour trouver votre activité et le calcul de ce qu'il vous reste se font sans compte et sans carte bancaire. Pour écrire votre annonce, il faut créer un compte gratuit : vous avez alors ${FREE_MONTHLY_LISTINGS} annonces par mois, plus des devis et des factures en PDF. Au-delà, des offres payantes existent, mais rien ne se paie sans votre accord.`,
     },
     {
-      question: "Quel complément de salaire peut-on espérer avec une activité complémentaire ?",
-      answer: `Cela dépend de l'activité, de votre ville, de votre temps disponible et de votre clientèle. Compléo affiche pour chaque activité un tarif moyen et un chiffre d'affaires mensuel estimé selon vos heures par semaine (60 % du temps est considéré comme facturable). Ce sont des estimations selon profil et temps disponible, sans garantie de revenu.`,
+      question: "Faut-il être à l'aise avec l'informatique ?",
+      answer: "Non. Vous répondez à quelques questions avec vos mots, Compléo écrit l'annonce, et un bouton la copie pour vous. Il vous reste à la coller sur le site de votre choix : pour chaque site, Compléo vous indique les trois gestes à faire. Si vous savez copier et coller, vous savez vous en servir.",
     },
     {
-      question: "Faut-il créer une micro-entreprise pour un complément de salaire ?",
-      answer: "Une activité de services rémunérée, exercée de façon régulière, relève en principe d'une déclaration d'activité, et le régime de la micro-entreprise est l'option la plus courante pour un complément de salaire ou de revenu. Votre situation (statut, cumul avec un emploi, le chômage ou une retraite) peut changer la réponse : vérifiez-la sur entreprendre.service-public.fr et autoentrepreneur.urssaf.fr.",
+      question: "Sur quels sites mon annonce peut-elle être publiée ?",
+      answer: `Compléo rédige pour ${GENERATOR_PLATFORMS.length} sites, par exemple ${["leboncoin", "allovoisins", "yoojo", "needhelp", "stootie"].map((p) => PLATFORMS[p as keyof typeof PLATFORMS].label).join(", ")}. Vous en choisissez jusqu'à ${MAX_PLATFORMS_PER_LISTING} à la fois : chaque site reçoit une version écrite pour lui, et cela ne compte que pour une seule annonce. Attention : Compléo ne publie rien à votre place. C'est vous qui collez le texte sur chaque site, et certains sites demandent d'abord de créer un compte chez eux.`,
     },
     {
-      question: "Comment est calculé le net après cotisations ?",
-      answer: `Le simulateur applique les taux de cotisations du micro-social en vigueur en 2026 au chiffre d'affaires encaissé : ${pct(bic)} pour les prestations de services commerciales ou artisanales (BIC) et ${pct(bnc)} pour les professions libérales non réglementées (BNC). Le résultat est un net avant impôt sur le revenu, à titre indicatif.`,
+      question: "Mon annonce me ressemblera-t-elle ? Dois-je la relire ?",
+      answer: "Elle repose sur ce que vous écrivez : ce que vous savez faire, votre matériel, votre expérience, vos disponibilités, votre zone, votre prix et le style que vous préférez. Compléo a pour consigne de ne rien inventer : ni diplôme, ni expérience, ni avis de clients. Relisez toujours l'annonce avant de la publier : c'est vous qui en êtes responsable, et elle doit être vraie.",
     },
     {
-      question: "D'où viennent les données locales des pages ville ?",
-      answer: `Les pages par ville s'appuient sur des données ouvertes : l'enquête Besoins en main-d'œuvre de France Travail (${CITY_DATA.years.join(" et ")}) et les statistiques de l'INSEE (recensement, revenus). Elles couvrent ${CITIES.length} villes ; une page n'existe que si une donnée locale est disponible pour l'activité. Données téléchargées le ${CITY_DATA.downloadedOn}.`,
+      question: "Combien peut-on gagner, et combien reste-t-il ?",
+      answer: `Cela dépend de l'activité, de votre ville et du temps que vous y consacrez. Pour chaque activité, Compléo indique un prix moyen et ce que vous pourriez facturer par mois selon vos heures par semaine, en comptant que 60 % de votre temps est réellement payé. Ce sont des estimations, sans garantie de revenu. Sur ce que vous facturez, il faut ensuite payer des charges sociales : environ ${pct(bic)} pour la plupart des services (bricolage, ménage, jardinage) et ${pct(bnc)} pour les cours et le conseil, en général, taux 2026. Il reste le reste, avant impôt sur le revenu : le simulateur le calcule pour vous, à titre indicatif.`,
     },
     {
-      question: "Les annonces générées par l'IA sont-elles prêtes à publier ?",
-      answer: "Non, elles sont à relire avant publication. L'IA propose un titre, un texte structuré et des hashtags à partir de votre service, de votre ville et de la plateforme visée ; vous restez responsable du contenu publié, qui doit refléter vos compétences réelles.",
+      question: "Dois-je déclarer mon activité ?",
+      answer: "En principe oui : un service payé et rendu régulièrement doit être déclaré. Pour un petit complément, le statut de micro-entrepreneur est le plus simple et le plus courant. Votre situation (salarié, au chômage, retraité) peut changer la réponse. Vérifiez-la sur entreprendre.service-public.fr et sur autoentrepreneur.urssaf.fr avant de vous lancer.",
     },
     {
-      question: "Que comprennent les offres payantes ?",
-      answer: `Trois offres complètent l'offre gratuite : un pack ponctuel de ${PACK_LISTING_CREDITS} annonces à ${formatCents(OFFERS.pack.cents)} €, un pack mensuel jusqu'à ${MONTHLY_PLAN_DAILY_LISTINGS} annonces par jour à ${formatCents(OFFERS.monthly.cents)} € par mois, et un abonnement annuel d'annonces illimitées à ${formatCents(OFFERS.annual.cents)} € par an. Le détail figure sur la page Tarifs.`,
+      question: "Combien coûtent les offres payantes ?",
+      answer: `L'offre gratuite suffit pour essayer. Si vous voulez plus d'annonces : un pack de ${PACK_LISTING_CREDITS} annonces à ${formatCents(OFFERS.pack.cents)} €, payé une seule fois ; un abonnement mensuel à ${formatCents(OFFERS.monthly.cents)} € par mois, jusqu'à ${MONTHLY_PLAN_DAILY_LISTINGS} annonces par jour ; ou un abonnement annuel à ${formatCents(OFFERS.annual.cents)} € par an, annonces illimitées. Les abonnements s'arrêtent quand vous voulez. Le détail est sur la page Tarifs.`,
     },
   ];
 }
