@@ -266,6 +266,16 @@ Segment `URBAN`, ajouté sans modifier le catalogue `src/lib/activities.ts` (les
 
 **Régénérer les données** : (1) télécharger les fichiers listés dans `sources` de `src/data/cities.json` (INSEE populations légales : https://www.insee.fr/fr/statistiques/6683035 ; INSEE Dossier complet : https://www.insee.fr/fr/statistiques/5359146 ; France Travail BMO : https://statistiques.francetravail.org/bmo) dans `data/raw/` sous les noms attendus par `scripts/build-city-data.py` ; (2) `python3 scripts/extract-dossier-complet.py` si le Dossier complet change ; (3) `pip install openpyxl && python3 scripts/build-city-data.py`. Le script est déterministe : relancé sur les fichiers actuels, il reproduit le JSON à l'identique. La date de téléchargement (`downloadedOn`) est affichée sur chaque page ville et sert de `lastmod` au sitemap : la mettre à jour dans le script lors d'un nouveau téléchargement. Pour ajouter une ville, il faut une donnée locale réelle (population, Dossier complet, bassin BMO) ; une combinaison activité × ville sans projet de recrutement répond `404` et est absente du sitemap.
 
+## Identité visuelle
+
+Logo : symbole « C + » (un arc ouvert complété par un plus), bleu `#2563eb` (`BRAND_BLUE`), bleu nuit `#1e3a8a` pour les dégradés. Fourni par le propriétaire le 16 octobre 2026 (image générée par IA), reconstruit en SVG exact (recouvrement de 98,3 % avec l'image d'origine). Géométrie unique dans `src/lib/brand.ts` ; `public/logo/logo-mark.svg` (bleu) et `logo-mark-white.svg` (blanc) et `src/app/icon.svg` la reprennent, `src/lib/brand.test.ts` vérifie qu'ils restent identiques. Le nom « Compléo » s'écrit en texte (police Inter du site), pas dans l'image.
+
+- Composant `LogoMark` (`src/components/brand/logo.tsx`) : en-tête public, page de connexion, en-tête du tableau de bord.
+- Icône du site : `src/app/icon.svg` ; icône iOS : `src/app/apple-icon.tsx` (générée) ; symbole PNG pour les e-mails : route `/logo/mark.png` (générée, 192 × 192, fond transparent). Aucun fichier binaire n'est versionné.
+- Cartes de partage (`src/lib/og.tsx`) : symbole blanc à côté du nom. E-mails (`src/lib/email-templates.ts`) : symbole et nom en tête. PDF de simulation : symbole vectoriel et nom en tête.
+- Les PDF de factures et de devis restent volontairement neutres : ce sont les documents de l'utilisateur (voir T17).
+- Non fait : version horizontale avec le nom, fichier favicon `.ico`, déclinaisons PNG versionnées. Droits : vérifier les conditions d'utilisation commerciale du générateur d'images utilisé et faire une recherche d'antériorité avant tout dépôt de marque.
+
 ## Photos (Unsplash)
 
 Les photos sont sélectionnées à l'avance par `scripts/fetch-unsplash-images.py` et lues par le site dans deux fichiers JSON (aucun appel à l'API à l'exécution). Chaque emplacement sans photo garde son visuel généré.

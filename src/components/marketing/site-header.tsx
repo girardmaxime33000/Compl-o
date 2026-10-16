@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Menu, Rocket } from "lucide-react";
+import { Menu } from "lucide-react";
+import { LogoMark } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { TrackedLink } from "@/components/marketing/tracked-link";
 import { indexablePosts } from "@/lib/blog";
@@ -22,7 +23,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-30 border-b bg-card/95 backdrop-blur">
       <div className="container flex h-14 items-center justify-between gap-2">
         <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-primary" aria-label="Compléo, accueil">
-          <Rocket className="h-5 w-5" aria-hidden="true" /> Compléo
+          <LogoMark className="h-7 w-7" /> Compléo
         </Link>
         <nav aria-label="Navigation principale" className="flex items-center gap-1">
           {LINKS.map(({ href, label }) => (

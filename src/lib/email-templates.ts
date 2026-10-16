@@ -21,7 +21,7 @@ export const newsletterUnsubscribeUrl = (subscriberId: string) =>
 
 function layout(body: string, footer: string) {
   return `<!doctype html><html lang="fr"><body style="margin:0;background:#f6f7f9;font-family:Arial,Helvetica,sans-serif;color:#1a1a1a">
-<div style="max-width:560px;margin:0 auto;padding:24px"><div style="background:#fff;border-radius:8px;padding:24px;line-height:1.5;font-size:15px">${body}</div>
+<div style="max-width:560px;margin:0 auto;padding:24px"><table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 12px"><tr><td><img src="${esc(absoluteUrl("/logo/mark.png"))}" width="32" height="32" alt="" style="display:block;border:0"></td><td style="padding-left:8px;font-size:20px;font-weight:bold;color:#2563eb">${esc(LEGAL.siteName)}</td></tr></table><div style="background:#fff;border-radius:8px;padding:24px;line-height:1.5;font-size:15px">${body}</div>
 <p style="font-size:12px;color:#666;margin-top:16px">${footer}</p></div></body></html>`;
 }
 
