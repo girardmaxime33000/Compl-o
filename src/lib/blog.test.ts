@@ -141,3 +141,36 @@ describe("contenu des articles", () => {
     expect(simulate({ monthlyRevenue: required - 1, regime: "bic" }).netMonthly).toBeLessThan(TARGET_NET);
   });
 });
+
+describe("articles économies : exemples chiffrés", () => {
+  const text = (slug: string) => {
+    const p = BLOG_POSTS.find((x) => x.slug === slug);
+    if (!p) throw new Error(slug);
+    return renderToStaticMarkup(createElement(p.Content)).replace(/<[^>]+>/g, " ").replace(/[  ]/g, " ");
+  };
+
+  it("prix au kilo et hausse de la shrinkflation recalculés à la main", () => {
+    const t = text("comparer-prix-au-kilo-shrinkflation");
+    expect(t).toContain("4,80 €"); // 2,40 € / 500 g
+    expect(t).toContain("4,40 €"); // 3,30 € / 750 g
+    expect(t).toContain("5,33 €"); // 2,40 € / 450 g
+    expect(t).toContain("11,1 %"); // 5,333 / 4,8 - 1
+  });
+
+  it("total des abonnements : 53,38 € par mois, 640,56 € par an", () => {
+    const t = text("resilier-abonnement-en-ligne-trois-clics");
+    expect(t).toContain("53,38 €");
+    expect(t).toContain("640,56 €");
+  });
+
+  it("chaque article économies cite une source service-public.gouv.fr datée et un CTA vers le diagnostic", () => {
+    for (const p of BLOG_POSTS.filter((x) => x.category === "economies")) {
+      expect(p.sources.length).toBeGreaterThan(0);
+      for (const s of p.sources) {
+        expect(s.url).toMatch(/^https:\/\/(www|entreprendre)\.service-public\.gouv\.fr\//);
+        expect(s.verified).toMatch(/20\d\d/);
+      }
+      expect(p.cta?.href).toBe("/onboarding");
+    }
+  });
+});

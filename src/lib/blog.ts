@@ -1,8 +1,11 @@
 import type { ComponentType } from "react";
 import type { Source } from "@/components/guides/blocks";
+import { ComparerPrix, faq as comparerFaq } from "@/content/blog/comparer-prix-au-kilo-shrinkflation";
 import { CalculerNetMicro, faq as calculerNetFaq } from "@/content/blog/calculer-net-micro-entrepreneur";
+import { DlcDdm, faq as dlcFaq } from "@/content/blog/dlc-ddm-jeter-moins-produits-alimentaires";
 import { ObjectifRevenuBudget, faq as objectifFaq } from "@/content/blog/objectif-revenu-complementaire-budget";
 import { PremiersPasComplement } from "@/content/blog/premiers-pas-revenu-complementaire";
+import { ResilierTroisClics, faq as resilierFaq } from "@/content/blog/resilier-abonnement-en-ligne-trois-clics";
 import { QuelTarifFixer, faq as tarifFaq } from "@/content/blog/quel-tarif-fixer-activite-services";
 
 /**
@@ -90,8 +93,8 @@ export const BLOG_POSTS: BlogPost[] = [
     description:
       "La formule du net avant impôt en micro-entreprise, trois exemples chiffrés avec les taux 2026 et les seuils à surveiller, calculés avec le simulateur de Compléo.",
     category: "revenu-complementaire",
-    published: "2026-10-17",
-    updated: "2026-10-17",
+    published: "2026-10-16",
+    updated: "2026-10-16",
     sources: [
       {
         label: "Régime micro-social",
@@ -109,8 +112,8 @@ export const BLOG_POSTS: BlogPost[] = [
     description:
       "Du tarif affiché au net par heure : cotisations 2026, temps non facturé et repères de tarifs du catalogue Compléo pour chaque activité de services.",
     category: "revenu-complementaire",
-    published: "2026-10-17",
-    updated: "2026-10-17",
+    published: "2026-10-16",
+    updated: "2026-10-16",
     sources: [
       {
         label: "Régime micro-social",
@@ -128,8 +131,8 @@ export const BLOG_POSTS: BlogPost[] = [
     description:
       "Mesurer l'écart de budget, convertir un objectif net en chiffre d'affaires puis en heures de travail, avec un exemple chiffré fictif et les taux 2026.",
     category: "budget",
-    published: "2026-10-17",
-    updated: "2026-10-17",
+    published: "2026-10-16",
+    updated: "2026-10-16",
     sources: [
       {
         label: "Régime micro-social",
@@ -140,6 +143,88 @@ export const BLOG_POSTS: BlogPost[] = [
     faq: objectifFaq,
     related: ["calculer-net-micro-entrepreneur", "quel-tarif-fixer-activite-services"],
     Content: ObjectifRevenuBudget,
+  },
+  {
+    slug: "dlc-ddm-jeter-moins-produits-alimentaires",
+    title: "DLC ou DDM : quelles dates respecter pour jeter moins",
+    description:
+      "Différence entre date limite de consommation et date de durabilité minimale, mentions sur l'étiquette et gestes simples pour ne pas jeter des produits encore consommables.",
+    category: "economies",
+    published: "2026-10-16",
+    updated: "2026-10-16",
+    sources: [
+      {
+        label: "Date limite de consommation (DLC), de durabilité minimale (DDM), de congélation",
+        url: "https://www.service-public.gouv.fr/particuliers/vosdroits/F10990",
+        verified: "6 février 2026",
+      },
+    ],
+    faq: dlcFaq,
+    related: ["comparer-prix-au-kilo-shrinkflation", "resilier-abonnement-en-ligne-trois-clics"],
+    cta: {
+      title: "Et si vous ajoutiez un revenu complémentaire ?",
+      text: "Trois questions, sans inscription : 3 activités recommandées et un revenu estimé selon votre temps disponible.",
+      label: "Faire mon diagnostic",
+      href: "/onboarding",
+    },
+    Content: DlcDdm,
+  },
+  {
+    slug: "comparer-prix-au-kilo-shrinkflation",
+    title: "Comparer les prix en magasin : prix au kilo et shrinkflation",
+    description:
+      "Lire le prix à l'unité de mesure, calculer un prix au kilo et repérer la mention de baisse de quantité imposée aux grandes surfaces, avec des exemples chiffrés fictifs.",
+    category: "economies",
+    published: "2026-10-16",
+    updated: "2026-10-16",
+    sources: [
+      {
+        label: "Affichage des prix : règles à respecter",
+        url: "https://www.service-public.gouv.fr/particuliers/vosdroits/F34344",
+        verified: "2 juillet 2024",
+      },
+      {
+        label: "Shrinkflation : obligation d'informer les consommateurs sur les produits concernés",
+        url: "https://entreprendre.service-public.gouv.fr/actualites/A17378",
+        verified: "29 juillet 2024",
+        kind: "actualite",
+      },
+    ],
+    faq: comparerFaq,
+    related: ["dlc-ddm-jeter-moins-produits-alimentaires", "resilier-abonnement-en-ligne-trois-clics"],
+    cta: {
+      title: "Et si vous ajoutiez un revenu complémentaire ?",
+      text: "Trois questions, sans inscription : 3 activités recommandées et un revenu estimé selon votre temps disponible.",
+      label: "Faire mon diagnostic",
+      href: "/onboarding",
+    },
+    Content: ComparerPrix,
+  },
+  {
+    slug: "resilier-abonnement-en-ligne-trois-clics",
+    title: "Résilier un abonnement en ligne : la règle des trois clics",
+    description:
+      "Contrats concernés, étapes de la résiliation en ligne, ce que le professionnel doit confirmer et méthode pour faire l'inventaire de ses abonnements.",
+    category: "economies",
+    published: "2026-10-16",
+    updated: "2026-10-16",
+    sources: [
+      {
+        label: "Résiliation « en 3 clics » : application et étapes",
+        url: "https://entreprendre.service-public.gouv.fr/actualites/A16599",
+        verified: "14 septembre 2023",
+        kind: "actualite",
+      },
+    ],
+    faq: resilierFaq,
+    related: ["comparer-prix-au-kilo-shrinkflation", "objectif-revenu-complementaire-budget"],
+    cta: {
+      title: "Et si vous ajoutiez un revenu complémentaire ?",
+      text: "Trois questions, sans inscription : 3 activités recommandées et un revenu estimé selon votre temps disponible.",
+      label: "Faire mon diagnostic",
+      href: "/onboarding",
+    },
+    Content: ResilierTroisClics,
   },
 ];
 
