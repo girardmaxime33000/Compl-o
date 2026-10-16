@@ -13,6 +13,7 @@ import { cityPhoto } from "@/lib/city-images";
 import { PhotoBanner } from "@/components/marketing/photo-banner";
 import { HomeViewTracker } from "@/components/marketing/home-view-tracker";
 import { BenefitStats, type BenefitStat } from "@/components/marketing/benefit-stats";
+import { SocialProof } from "@/components/marketing/testimonials";
 import { SimulatorPreview } from "@/components/marketing/simulator-preview";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { SiteFooter } from "@/components/marketing/site-footer";
@@ -22,11 +23,15 @@ import { GUIDES, guidePath } from "@/lib/guides";
 import { sitePhoto } from "@/lib/site-images";
 import { homeFaq } from "@/lib/seo/faq";
 import { FREE_MONTHLY_LISTINGS, GENERATOR_PLATFORMS, MAX_PLATFORMS_PER_LISTING, PLATFORMS } from "@/lib/platforms";
+import { getApprovedTestimonials, getUsageProof } from "@/lib/social-proof-server";
 import { eur, simulate, TAX_PARAMS } from "@/lib/tax";
 
 const HOME_TITLE = "Complément de salaire : activité près de chez vous | Compléo";
 const HOME_DESCRIPTION =
   "Trouvez une activité près de chez vous pour arrondir vos fins de mois : bricolage, ménage, cours, jardinage. Questionnaire gratuit, sans inscription.";
+
+/** Régénération horaire : le compteur et les témoignages approuvés se mettent à jour sans redéploiement. */
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: { absolute: HOME_TITLE },
@@ -59,6 +64,9 @@ const TOP_ACTIVITIES = [...ACTIVITIES]
   .sort((a, b) => b.monthlyMax - a.monthlyMax)
   .slice(0, 3);
 
+/** Villes ayant au moins une page activité avec donnée locale. */
+const MAIN_COVERED_CITIES = CITIES.filter((c) => activitiesForCity(c).length > 0).length;
+
 const POPULAR_ACTIVITIES = ACTIVITIES.slice(0, 6);
 const MAIN_CITIES = CITIES.filter((c) => activitiesForCity(c).length > 0)
   .sort((a, b) => a.rank - b.rank)
@@ -84,11 +92,17 @@ const SIM_EXAMPLE_REVENUE = 500;
 const SIM_EXAMPLE_REGIME = "bic" as const;
 const SIM_EXAMPLE_RATE = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 }).format(TAX_PARAMS.urssafRate[SIM_EXAMPLE_REGIME] * 100);
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [usage, testimonials] = await Promise.all([getUsageProof(), getApprovedTestimonials()]);
   const example = simulate({ monthlyRevenue: SIM_EXAMPLE_REVENUE, regime: SIM_EXAMPLE_REGIME });
   const faq = homeFaq();
   const nf = new Intl.NumberFormat("fr-FR");
   const topActivity = TOP_ACTIVITIES[0];
+  const coverage: BenefitStat[] = [
+    { value: nf.format(ACTIVITIES.length), label: "activités décrites", note: "Avec tarif moyen et revenu estimé selon votre temps. Estimation, sans garantie." },
+    { value: nf.format(GENERATOR_PLATFORMS.length), label: "sites pour lesquels Compléo écrit votre annonce", note: "Vous copiez, vous publiez : rien n'est envoyé à votre place." },
+    { value: nf.format(MAIN_COVERED_CITIES), label: "villes avec des repères locaux", note: "Données France Travail et INSEE, citées sur chaque page ville." },
+  ];
   const benefits: BenefitStat[] = [
     {
       value: `≈ ${Math.round((1 - TAX_PARAMS.urssafRate[SIM_EXAMPLE_REGIME]) * 100)} %`,
@@ -170,6 +184,13 @@ export default function HomePage() {
           ))}
         </ul>
       </section>
+
+      <section className="container space-y-4 pb-16" aria-labelledby="couverture">
+        <h2 id="couverture" className="text-3xl font-bold">Ce que Compléo couvre</h2>
+        <BenefitStats items={coverage} />
+      </section>
+
+      <SocialProof usage={usage} testimonials={testimonials} />
 
       <section className="container space-y-4 pb-16" aria-labelledby="apercu">
         <h2 id="apercu" className="text-3xl font-bold">Ce que vous pouvez proposer près de chez vous</h2>

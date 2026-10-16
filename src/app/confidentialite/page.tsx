@@ -19,6 +19,7 @@ export default function PrivacyPage() {
           <li>Profil et facturation saisis par l'utilisateur : SIRET, adresse, clients, devis et factures ; finalité : émettre les documents demandés.</li>
           <li>Annonces et diagnostic : service, ville, plateforme, réponses au diagnostic ; finalité : générer et conserver les contenus.</li>
           <li>Abonnement : identifiant client Stripe, statut ; finalité : gérer l'offre Premium. Aucun numéro de carte n'est conservé.</li>
+          <li>Témoignage (facultatif) : prénom, ville et texte que vous écrivez, avec votre autorisation de les publier sur le site ; publié seulement après relecture, retirable à tout moment depuis la page Annonces de votre tableau de bord, effacé avec le compte ; finalité : informer les visiteurs (consentement).</li>
           <li>E-mails : votre consentement aux e-mails de conseils (désactivé par défaut, retirable dans Mon compte ou par le lien de désinscription) et un journal des envois (type, date) ; finalité : éviter les doublons et limiter les abus.</li>
           <li>Données techniques de sécurité (journaux, limitation d'usage) ; finalité : sécurité du service (intérêt légitime).</li>
         </ul>
@@ -30,6 +31,7 @@ export default function PrivacyPage() {
           <li>Stripe : paiement et gestion des abonnements.</li>
           <li>Resend : envoi des e-mails (documents envoyés à vos clients à votre demande, e-mails de conseils si vous les avez acceptés). L'adresse e-mail de votre client n'est pas conservée par Compléo.</li>
           <li>Umami Cloud : mesure de fréquentation sans cookie (voir section 6).</li>
+          <li>Visiteurs du site : les prénoms, villes et textes des témoignages que vous avez autorisés sont publics.</li>
           <li>Fournisseur du modèle d'IA : reçoit le service, la ville et la plateforme saisis pour générer une annonce.</li>
         </ul>
         <p>
