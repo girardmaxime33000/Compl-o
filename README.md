@@ -301,7 +301,7 @@ Conformité aux directives de l'API : les images ne sont pas copiées dans le d�
 
 ## Mesure d'audience
 
-Mesure interne, sans cookie, sans outil tiers : table `analytics_events` (migration `0004_analytics_events.sql`), écrite uniquement par le service role. Un événement = nom, page, propriétés non personnelles (`source`, `offer`, `platform`, `activity`, `target`, `visual`). Aucun identifiant utilisateur, aucune adresse IP, aucun agent utilisateur. Les signaux « Do Not Track » et « Global Privacy Control » désactivent l'envoi navigateur.
+Deux mesures coexistent. (1) Umami Cloud (`https://cloud.umami.is/script.js`, `src/app/layout.tsx`) : fréquentation générale, sans cookie ; chargé uniquement si `VERCEL_ENV=production`, avec `data-exclude-search` (aucun paramètre d'URL transmis) et `data-do-not-track`. L'identifiant du site est public. Les statistiques se consultent sur cloud.umami.is. (2) Mesure interne, sans cookie : table `analytics_events` (migration `0004_analytics_events.sql`), écrite uniquement par le service role. Un événement = nom, page, propriétés non personnelles (`source`, `offer`, `platform`, `activity`, `target`, `visual`). Aucun identifiant utilisateur, aucune adresse IP, aucun agent utilisateur. Les signaux « Do Not Track » et « Global Privacy Control » désactivent l'envoi navigateur.
 
 | Événement | Origine | Déclencheur |
 |---|---|---|
@@ -317,7 +317,7 @@ Mesure interne, sans cookie, sans outil tiers : table `analytics_events` (migrat
 | `checkout_started` | serveur | session Stripe Checkout créée |
 | `payment_success` | serveur | webhook Stripe de paiement confirmé |
 
-`/api/track` n'accepte que les sept événements navigateur. Entonnoir accueil → clic → diagnostic → inscription → 1ʳᵉ annonce → paiement : `home_view`, `cta_click`, `diagnostic_started`, `diagnostic_completed`, `signup`, `listing_generated`, `payment_success`. Seules les vues de l'accueil sont comptées (dénominateur des clics) ; les autres visites de pages ne sont pas mesurées (aucun traceur) ; aucun outil d'analytics tiers n'est chargé, donc aucun bandeau de consentement n'est requis. Entonnoir sur 30 jours :
+`/api/track` n'accepte que les sept événements navigateur. Entonnoir accueil → clic → diagnostic → inscription → 1ʳᵉ annonce → paiement : `home_view`, `cta_click`, `diagnostic_started`, `diagnostic_completed`, `signup`, `listing_generated`, `payment_success`. Seules les vues de l'accueil sont comptées (dénominateur des clics) ; les autres visites de pages ne sont pas mesurées (aucun traceur) ; l'entonnoir interne ci-dessous ne dépend pas d'Umami. Umami Cloud est chargé sans cookie ni paramètre d'URL ; le besoin éventuel d'un bandeau de consentement reste à confirmer au regard des conditions d'exemption de la CNIL (réglages du compte Umami, absence de recoupement). Entonnoir sur 30 jours :
 
 ```sql
 select name, count(*) from analytics_events
