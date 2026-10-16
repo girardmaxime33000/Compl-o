@@ -3,14 +3,15 @@ import { ACTIVITIES, formatRate, type Activity } from "@/lib/activities";
 /**
  * Exemples d'annonces pré-rédigés pour la démo publique (aucun appel IA anonyme).
  * Titre, accroche et tarif viennent du catalogue `activities.ts` ; seuls avantages et compétences sont propres à la démo.
+ * Règle : aucun équipement, véhicule, logement ni service annexe affirmé qui ne découle pas de l'activité (le générateur a pour consigne de ne rien inventer, ses exemples aussi).
  */
 const DETAILS: Record<string, { advantages: string[]; skills: string[] }> = {
   bricolage: {
-    advantages: ["Intervention rapide près de chez vous", "Matériel apporté", "Devis annoncé avant de commencer"],
+    advantages: ["Intervention près de chez vous", "Rendez-vous selon vos disponibilités", "Devis annoncé avant de commencer"],
     skills: ["Fixations et pose d'étagères", "Montage de luminaires simples", "Petites réparations du quotidien"],
   },
   montage_meubles: {
-    advantages: ["Montage soigné, notice respectée", "Forfait à la pièce ou à l'heure", "Évacuation des cartons sur demande"],
+    advantages: ["Montage soigné, notice respectée", "Forfait à la pièce ou à l'heure", "Créneaux à convenir ensemble"],
     skills: ["Meubles en kit de toutes marques", "Fixation murale de sécurité", "Réglage des portes et tiroirs"],
   },
   soutien_scolaire: {
@@ -26,15 +27,15 @@ const DETAILS: Record<string, { advantages: string[]; skills: string[] }> = {
     skills: ["Courses alimentaires", "Retrait et dépôt de colis", "Livraisons locales"],
   },
   garde_animaux: {
-    advantages: ["Promenades régulières", "Nouvelles et photos pendant la garde", "Respect des habitudes de l'animal"],
+    advantages: ["Promenades régulières", "Nouvelles pendant la garde", "Respect des habitudes de l'animal"],
     skills: ["Promenade de chiens", "Passages à domicile pour les chats", "Garde pendant vos absences"],
   },
   menage: {
-    advantages: ["Soin et discrétion", "Créneaux réguliers ou ponctuels", "Produits selon vos préférences"],
+    advantages: ["Soin et discrétion", "Créneaux réguliers ou ponctuels", "Consignes de ménage respectées"],
     skills: ["Ménage courant", "Repassage", "Remise en état avant ou après un déménagement"],
   },
   jardinage: {
-    advantages: ["Jardin propre à chaque passage", "Évacuation des déchets verts sur demande", "Entretien ponctuel ou régulier"],
+    advantages: ["Jardin propre à chaque passage", "Passages à la fréquence de votre choix", "Entretien ponctuel ou régulier"],
     skills: ["Tonte et taille de haies", "Désherbage", "Entretien des massifs"],
   },
   aide_informatique: {

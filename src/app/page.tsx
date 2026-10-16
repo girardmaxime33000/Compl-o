@@ -7,7 +7,8 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { FaqSection } from "@/components/marketing/faq";
 import { PublicCtas } from "@/components/marketing/ctas";
 import { ActivityVisual, GuideVisual } from "@/components/marketing/visuals";
-import { BeforeAfter } from "@/components/marketing/before-after";
+import { HeroEstimate } from "@/components/marketing/hero-estimate";
+import { HeroIllustration } from "@/components/marketing/hero-illustration";
 import { Photo } from "@/components/marketing/photo";
 import { cityPhoto } from "@/lib/city-images";
 import { PhotoBanner } from "@/components/marketing/photo-banner";
@@ -82,11 +83,12 @@ const TOP_PAIRS = [...CITY_ACTIVITY_PAIRS]
   .filter((p, i, all) => all.findIndex((q) => q.city.slug === p.city.slug) === i)
   .slice(0, 12);
 
-/** Activité de l'exemple d'annonce du hero : la première du catalogue. */
+/** Activité et temps hebdomadaire de la carte d'estimation du hero : la première activité du catalogue, 5 heures (exemple). */
 const HERO_ACTIVITY = ACTIVITIES[0];
+const HERO_WEEKLY_HOURS = 5;
 
 /** Version du visuel du hero, jointe aux événements pour comparer avec les versions précédentes (photo, panneau coloré). */
-const HERO_VISUAL = "avant-apres" as const;
+const HERO_VISUAL = "estimation" as const;
 
 const SIM_EXAMPLE_REVENUE = 500;
 const SIM_EXAMPLE_REGIME = "bic" as const;
@@ -153,7 +155,16 @@ export default async function HomePage() {
             ))}
           </ul>
         </div>
-        {HERO_ACTIVITY && <BeforeAfter activity={HERO_ACTIVITY} />}
+        <div className="relative mx-auto w-full max-w-xl md:max-w-none">
+          <HeroIllustration className="h-auto w-full rounded-3xl" />
+          {HERO_ACTIVITY && (
+            <HeroEstimate
+              activity={HERO_ACTIVITY}
+              weeklyHours={HERO_WEEKLY_HOURS}
+              className="relative z-10 -mt-16 w-[94%] sm:w-[82%] md:-mt-20 md:w-[78%]"
+            />
+          )}
+        </div>
       </section>
 
       <section className="container space-y-8 pb-16" aria-labelledby="comment">
