@@ -29,6 +29,7 @@ export default function PrivacyPage() {
           <li>Vercel : hébergement de l'application.</li>
           <li>Stripe : paiement et gestion des abonnements.</li>
           <li>Resend : envoi des e-mails (documents envoyés à vos clients à votre demande, e-mails de conseils si vous les avez acceptés). L'adresse e-mail de votre client n'est pas conservée par Compléo.</li>
+          <li>Umami Cloud : mesure de fréquentation sans cookie (voir section 6).</li>
           <li>Fournisseur du modèle d'IA : reçoit le service, la ville et la plateforme saisis pour générer une annonce.</li>
         </ul>
         <p>
@@ -55,6 +56,12 @@ export default function PrivacyPage() {
           déposé. Une mesure d'audience interne enregistre des événements anonymes (nom de l'événement, page, offre ou
           plateforme concernée) sans cookie, sans identifiant utilisateur, sans adresse IP et sans transmission à un
           tiers. Elle est désactivée si votre navigateur envoie « Do Not Track » ou « Global Privacy Control ».
+        </p>
+        <p>
+          Le site utilise en complément Umami Cloud (Umami Software, Inc.) pour mesurer la fréquentation : pages vues,
+          provenance, type d'appareil et de navigateur. Cet outil ne dépose aucun cookie, n'enregistre pas l'adresse IP
+          et ne transmet pas les paramètres d'URL. Il est désactivé si votre navigateur envoie « Do Not Track ».
+          Informations de l'éditeur : <a className="text-primary underline" href="https://umami.is/privacy" rel="noopener noreferrer">umami.is/privacy</a>.
         </p>
       </LegalSection>
     </LegalPage>
