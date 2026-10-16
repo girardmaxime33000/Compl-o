@@ -4,8 +4,8 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getModel } from "@/lib/ai";
 import { DEFAULT_PLATFORMS, GENERATOR_PLATFORMS, MAX_PLATFORMS_PER_LISTING } from "@/lib/platforms";
-import { buildListingPrompt, formatListingBody, SYSTEM_PROMPT } from "@/lib/listing";
-import type { ListingVariant, Platform } from "@/types/database";
+import { buildListingPrompt, formatListingBody, outputSchemaFor, SYSTEM_PROMPT, type ListingVersion } from "@/lib/listing";
+import type { ListingVariant } from "@/types/database";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getQuota, quotaExhausted } from "@/lib/quota";
 import { recordEvent } from "@/lib/analytics-server";
@@ -30,23 +30,6 @@ const requestSchema = z.object({
     .transform((list) => [...new Set(list)])
     .default(DEFAULT_PLATFORMS as typeof GENERATOR_PLATFORMS),
 });
-
-const versionSchema = z.object({
-  title: z.string().describe("Titre accrocheur et optimisé SEO, 70 caractères maximum"),
-  intro: z.string().describe("Une à deux phrases d'accroche"),
-  advantages: z.array(z.string()).min(3).max(5).describe("Avantages pour le client"),
-  skills: z.array(z.string()).min(3).max(5).describe("Compétences et expérience, sans inventer de diplôme"),
-  pricing: z.string().describe("Tarif indicatif, ex. « À partir de 22 €/h, devis gratuit »"),
-  callToAction: z.string().describe("Appel à l'action court"),
-  hashtags: z.array(z.string()).length(3).describe("3 hashtags pertinents, sans espaces, commençant par #"),
-});
-
-/** Une version par plateforme demandée, plus le tarif horaire moyen suggéré. */
-const outputSchemaFor = (platforms: Platform[]) =>
-  z.object({
-    versions: z.object(Object.fromEntries(platforms.map((p) => [p, versionSchema]))),
-    priceSuggested: z.number().describe("Tarif horaire moyen suggéré en euros"),
-  });
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -87,7 +70,7 @@ export async function POST(request: Request) {
     if (creditConsumed) await createAdminClient().rpc("grant_listing_credits", { p_user: user.id, p_amount: 1 });
   };
 
-  let object: { versions: Record<string, z.infer<typeof versionSchema>>; priceSuggested: number };
+  let object: { versions: Record<string, ListingVersion>; priceSuggested: number };
   try {
     ({ object } = await generateObject({
       model: getModel(),
@@ -103,7 +86,7 @@ export async function POST(request: Request) {
 
   // Une génération = une ligne, donc une seule unité de quota ou un seul crédit, quel que soit le nombre de plateformes.
   const variants: ListingVariant[] = platforms.map((platform) => {
-    const version = object.versions[platform] as z.infer<typeof versionSchema>;
+    const version = object.versions[platform] as ListingVersion;
     return { platform, title: version.title, description: formatListingBody(version) };
   });
   const [first] = variants as [ListingVariant, ...ListingVariant[]];

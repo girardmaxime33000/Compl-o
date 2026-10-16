@@ -13,3 +13,6 @@ next-env.d.ts
 /data/unsplash
 
 __pycache__/
+
+# Rapport de l'essai en conditions réelles (src/lib/listing.live.test.ts)
+listing-eval-report.md

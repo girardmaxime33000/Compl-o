@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { PLATFORMS } from "@/lib/platforms";
 import type { Listing, ListingVariant, Platform } from "@/types/database";
 
@@ -48,6 +49,25 @@ export function buildListingPrompt(input: ListingInput, platformIds: Platform[])
     `(ne recopie pas le même texte plusieurs fois). La clé de chaque version est l'identifiant entre crochets :\n${platforms}`
   );
 }
+
+/** Une version d'annonce telle que le modèle doit la renvoyer (structure et consignes de chaque champ). */
+export const versionSchema = z.object({
+  title: z.string().describe("Titre accrocheur et optimisé SEO, 70 caractères maximum"),
+  intro: z.string().describe("Une à deux phrases d'accroche"),
+  advantages: z.array(z.string()).min(3).max(5).describe("Avantages pour le client"),
+  skills: z.array(z.string()).min(3).max(5).describe("Compétences et expérience, sans inventer de diplôme"),
+  pricing: z.string().describe("Tarif indicatif, ex. « À partir de 22 €/h, devis gratuit »"),
+  callToAction: z.string().describe("Appel à l'action court"),
+  hashtags: z.array(z.string()).length(3).describe("3 hashtags pertinents, sans espaces, commençant par #"),
+});
+export type ListingVersion = z.infer<typeof versionSchema>;
+
+/** Une version par plateforme demandée, plus le tarif horaire moyen suggéré. */
+export const outputSchemaFor = (platforms: Platform[]) =>
+  z.object({
+    versions: z.object(Object.fromEntries(platforms.map((p) => [p, versionSchema]))),
+    priceSuggested: z.number().describe("Tarif horaire moyen suggéré en euros"),
+  });
 
 /** Texte final d'une version : accroche, avantages, compétences, tarif, appel à l'action, mots-clés. */
 export function formatListingBody(v: {
