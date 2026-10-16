@@ -21,7 +21,7 @@ export function PremiersPasComplement() {
         ]}
       />
 
-      <Disclaimer />
+      <Disclaimer variant="article" />
 
       <Section title="1. Choisir une activité réaliste">
         <p>

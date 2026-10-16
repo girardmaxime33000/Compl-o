@@ -1,3 +1,5 @@
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import {
   activeCategories, BLOG_CATEGORIES, BLOG_POSTS, indexablePosts, isIndexable, latestBlogUpdate, postsInCategory, relatedPosts,
@@ -7,6 +9,9 @@ import { buildBlogRss } from "@/lib/blog-rss";
 import { absoluteUrl, sitemapEntries } from "@/lib/seo";
 import { articleJsonLd } from "@/lib/seo/jsonld";
 import { sanitizeProps, CLIENT_EVENTS } from "@/lib/analytics";
+import { GUIDES } from "@/lib/guides";
+import { simulate, TAX_PARAMS } from "@/lib/tax";
+import { TARGET_NET } from "@/content/blog/objectif-revenu-complementaire-budget";
 
 const stub = (over: Partial<BlogPost>): BlogPost => ({
   slug: "x", title: "T", description: "D", category: "budget", published: "2026-01-01", updated: "2026-01-01",
@@ -95,5 +100,44 @@ describe("JSON-LD Article", () => {
   it("auteur nommé (Person) pour le blog, organisation par défaut pour les guides", () => {
     expect(articleJsonLd({ ...base, authorName: "Maxime Girard" }).author).toEqual({ "@type": "Person", name: "Maxime Girard" });
     expect((articleJsonLd(base).author as { "@type": string })["@type"]).toBe("Organization");
+  });
+});
+
+describe("contenu des articles", () => {
+  const html = (p: BlogPost) => renderToStaticMarkup(createElement(p.Content));
+
+  it("se rend sans valeur manquante (NaN, undefined, null, [object])", () => {
+    for (const p of BLOG_POSTS) {
+      const out = html(p);
+      expect(out.length).toBeGreaterThan(500);
+      expect(out, p.slug).not.toMatch(/NaN|undefined|\[object|>null</);
+      for (const f of p.faq ?? []) expect(`${f.question} ${f.answer}`, p.slug).not.toMatch(/NaN|undefined|\[object/);
+    }
+  });
+
+  it("commence par une réponse courte et contient l'avertissement", () => {
+    for (const p of BLOG_POSTS) expect(html(p), p.slug).toContain("Réponse courte");
+  });
+
+  it("les liens internes vers /blog et /guides pointent vers des pages existantes", () => {
+    const blog = new Set(BLOG_POSTS.map((p) => p.slug));
+    const guides = new Set(GUIDES.map((g) => g.slug));
+    for (const p of BLOG_POSTS) {
+      for (const [, slug] of html(p).matchAll(/href="\/blog\/([a-z0-9-]+)"/g)) expect(blog.has(slug ?? ""), `${p.slug} → blog/${slug}`).toBe(true);
+      for (const [, slug] of html(p).matchAll(/href="\/guides\/([a-z0-9-]+)"/g)) expect(guides.has(slug ?? ""), `${p.slug} → guides/${slug}`).toBe(true);
+    }
+  });
+
+  it("toute estimation de revenu mentionne la nature d'estimation", () => {
+    for (const p of BLOG_POSTS) {
+      const out = html(p);
+      if (/€/.test(out)) expect(out, p.slug).toMatch(/[Ee]stimation|exemple|indicati/);
+    }
+  });
+
+  it("le net de l'exemple de budget est cohérent avec le simulateur", () => {
+    const required = Math.ceil(TARGET_NET / (1 - TAX_PARAMS.urssafRate.bic));
+    expect(simulate({ monthlyRevenue: required, regime: "bic" }).netMonthly).toBeGreaterThanOrEqual(TARGET_NET);
+    expect(simulate({ monthlyRevenue: required - 1, regime: "bic" }).netMonthly).toBeLessThan(TARGET_NET);
   });
 });

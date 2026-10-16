@@ -1,6 +1,9 @@
 import type { ComponentType } from "react";
 import type { Source } from "@/components/guides/blocks";
+import { CalculerNetMicro, faq as calculerNetFaq } from "@/content/blog/calculer-net-micro-entrepreneur";
+import { ObjectifRevenuBudget, faq as objectifFaq } from "@/content/blog/objectif-revenu-complementaire-budget";
 import { PremiersPasComplement } from "@/content/blog/premiers-pas-revenu-complementaire";
+import { QuelTarifFixer, faq as tarifFaq } from "@/content/blog/quel-tarif-fixer-activite-services";
 
 /**
  * Blog de demande generation. Même modèle que les guides (composants typés, pas de MDX) : les chiffres fiscaux sont
@@ -80,6 +83,63 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
     Content: PremiersPasComplement,
+  },
+  {
+    slug: "calculer-net-micro-entrepreneur",
+    title: "Micro-entrepreneur : calculer ce qu'il reste après cotisations",
+    description:
+      "La formule du net avant impôt en micro-entreprise, trois exemples chiffrés avec les taux 2026 et les seuils à surveiller, calculés avec le simulateur de Compléo.",
+    category: "revenu-complementaire",
+    published: "2026-10-17",
+    updated: "2026-10-17",
+    sources: [
+      {
+        label: "Régime micro-social",
+        url: "https://entreprendre.service-public.gouv.fr/vosdroits/F37353",
+        verified: "21 février 2026",
+      },
+    ],
+    faq: calculerNetFaq,
+    related: ["quel-tarif-fixer-activite-services", "premiers-pas-revenu-complementaire"],
+    Content: CalculerNetMicro,
+  },
+  {
+    slug: "quel-tarif-fixer-activite-services",
+    title: "Quel tarif fixer pour une activité de services, et que reste-t-il ?",
+    description:
+      "Du tarif affiché au net par heure : cotisations 2026, temps non facturé et repères de tarifs du catalogue Compléo pour chaque activité de services.",
+    category: "revenu-complementaire",
+    published: "2026-10-17",
+    updated: "2026-10-17",
+    sources: [
+      {
+        label: "Régime micro-social",
+        url: "https://entreprendre.service-public.gouv.fr/vosdroits/F37353",
+        verified: "21 février 2026",
+      },
+    ],
+    faq: tarifFaq,
+    related: ["calculer-net-micro-entrepreneur", "objectif-revenu-complementaire-budget"],
+    Content: QuelTarifFixer,
+  },
+  {
+    slug: "objectif-revenu-complementaire-budget",
+    title: "Combien de revenu complémentaire viser pour équilibrer son budget",
+    description:
+      "Mesurer l'écart de budget, convertir un objectif net en chiffre d'affaires puis en heures de travail, avec un exemple chiffré fictif et les taux 2026.",
+    category: "budget",
+    published: "2026-10-17",
+    updated: "2026-10-17",
+    sources: [
+      {
+        label: "Régime micro-social",
+        url: "https://entreprendre.service-public.gouv.fr/vosdroits/F37353",
+        verified: "21 février 2026",
+      },
+    ],
+    faq: objectifFaq,
+    related: ["calculer-net-micro-entrepreneur", "quel-tarif-fixer-activite-services"],
+    Content: ObjectifRevenuBudget,
   },
 ];
 

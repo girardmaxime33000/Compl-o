@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { BLOG_AUTHOR, BLOG_POSTS, findCategory, findPost, isIndexable, postPath, categoryPath, relatedPosts } from "@/lib/blog";
 import { DEFAULT_CTA } from "@/lib/guides";
 import { NOINDEX, pageMetadata } from "@/lib/seo";
-import { ArticleJsonLd, BreadcrumbJsonLd, FaqJsonLd } from "@/components/seo/json-ld";
+import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { Sources } from "@/components/guides/blocks";
 import { FaqSection } from "@/components/marketing/faq";
 import { SiteFooter } from "@/components/marketing/site-footer";
@@ -56,7 +56,6 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
         imagePath={`${postPath(post)}/opengraph-image`}
         authorName={BLOG_AUTHOR.name}
       />
-      {post.faq && <FaqJsonLd items={post.faq} />}
       <BlogViewTracker article={post.slug} />
       <SiteHeader />
       <main className="container max-w-3xl space-y-8 py-10">

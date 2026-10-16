@@ -116,13 +116,15 @@ export function Sources({ items }: { items: Source[] }) {
   );
 }
 
-export function Disclaimer() {
+export function Disclaimer({ variant = "guide" }: { variant?: "guide" | "article" }) {
   return (
     <Callout kind="attention">
       <p>
-        Ce guide est une information générale tirée de fiches officielles, à la date indiquée. Il ne constitue ni un
-        conseil fiscal, ni un conseil juridique. Pour votre situation précise, vérifiez sur urssaf.fr et
-        service-public.fr ou demandez conseil à un professionnel.
+        {variant === "guide"
+          ? "Ce guide est une information générale tirée de fiches officielles, à la date indiquée. "
+          : "Cet article est une information générale, à la date indiquée ; les montants donnés sont des estimations ou des exemples fictifs, calculés avec les paramètres du simulateur Compléo. "}
+        Il ne constitue ni un conseil fiscal, ni un conseil juridique. Pour votre situation précise, vérifiez sur
+        urssaf.fr et service-public.fr ou demandez conseil à un professionnel.
       </p>
     </Callout>
   );
