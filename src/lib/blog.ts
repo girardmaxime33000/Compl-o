@@ -78,6 +78,7 @@ export const BLOG_POSTS: BlogPost[] = [
     category: "revenu-complementaire",
     published: "2026-10-16",
     updated: "2026-10-16",
+    reviewedOn: "2026-10-16",
     sources: [
       {
         label: "Régime micro-social",
@@ -95,6 +96,7 @@ export const BLOG_POSTS: BlogPost[] = [
     category: "revenu-complementaire",
     published: "2026-10-16",
     updated: "2026-10-16",
+    reviewedOn: "2026-10-16",
     sources: [
       {
         label: "Régime micro-social",
@@ -114,6 +116,7 @@ export const BLOG_POSTS: BlogPost[] = [
     category: "revenu-complementaire",
     published: "2026-10-16",
     updated: "2026-10-16",
+    reviewedOn: "2026-10-16",
     sources: [
       {
         label: "Régime micro-social",
@@ -133,6 +136,7 @@ export const BLOG_POSTS: BlogPost[] = [
     category: "budget",
     published: "2026-10-16",
     updated: "2026-10-16",
+    reviewedOn: "2026-10-16",
     sources: [
       {
         label: "Régime micro-social",
@@ -152,6 +156,7 @@ export const BLOG_POSTS: BlogPost[] = [
     category: "economies",
     published: "2026-10-16",
     updated: "2026-10-16",
+    reviewedOn: "2026-10-16",
     sources: [
       {
         label: "Date limite de consommation (DLC), de durabilité minimale (DDM), de congélation",
@@ -177,6 +182,7 @@ export const BLOG_POSTS: BlogPost[] = [
     category: "economies",
     published: "2026-10-16",
     updated: "2026-10-16",
+    reviewedOn: "2026-10-16",
     sources: [
       {
         label: "Affichage des prix : règles à respecter",
@@ -208,6 +214,7 @@ export const BLOG_POSTS: BlogPost[] = [
     category: "economies",
     published: "2026-10-16",
     updated: "2026-10-16",
+    reviewedOn: "2026-10-16",
     sources: [
       {
         label: "Résiliation « en 3 clics » : application et étapes",

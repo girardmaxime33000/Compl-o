@@ -1,6 +1,6 @@
 # Blog : dossier de relecture avant publication
 
-État au 16 octobre 2026. Les 7 articles sont rédigés mais **aucun n'est public** : sans `reviewedOn`, un article reste en `noindex` et absent du sitemap, de `/blog`, des pages catégorie, du flux RSS, de `llms.txt` et des newsletters. Ce dossier liste, article par article, ce qu'il faut vérifier (relecture ciblée : chiffres, juridique, sources) avant de publier. Les listes de chiffres ont été extraites du rendu réel des articles ; elles se régénèrent si le code change (voir « Mise à jour »).
+État au 16 octobre 2026. **Les 7 articles ont été relus et publiés le 16 octobre 2026** (`reviewedOn` renseigné). Ce dossier garde la trace de la relecture ; la suite décrit la règle qui s'applique à tout nouvel article. Avant la relecture, aucun n'était public : sans `reviewedOn`, un article reste en `noindex` et absent du sitemap, de `/blog`, des pages catégorie, du flux RSS, de `llms.txt` et des newsletters. Ce dossier liste, article par article, ce qu'il faut vérifier (relecture ciblée : chiffres, juridique, sources) avant de publier. Les listes de chiffres ont été extraites du rendu réel des articles ; elles se régénèrent si le code change (voir « Mise à jour »).
 
 ## Publier un article
 
@@ -33,7 +33,7 @@ Points de méthode à valider une fois pour toutes :
 
 ## Vérification des sources faite le 16 octobre 2026 (par l'assistant)
 
-Pages rouvertes et relues le jour même sur service-public.gouv.fr. Cela ne remplace pas votre relecture : `reviewedOn` n'a été renseigné pour aucun article.
+Pages rouvertes et relues le jour même sur service-public.gouv.fr. Cette vérification complète votre relecture sans la remplacer ; les articles ont été publiés après votre accord.
 
 | Point | Résultat |
 |---|---|
