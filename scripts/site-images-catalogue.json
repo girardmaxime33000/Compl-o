@@ -17,7 +17,7 @@
   "urban:conciergerie-quartier": { "query": "parcel delivery neighbour door", "orientation": "landscape" },
   "urban:configuration-objets-connectes": { "query": "setting up smart home device", "orientation": "landscape" },
   "guide:annonces-efficaces": { "query": "writing advertisement laptop", "orientation": "landscape" },
-  "guide:cumul-chomage-micro-entreprise": { "query": "job center unemployment", "orientation": "landscape" },
+  "guide:cumul-chomage-micro-entreprise": { "query": "person working laptop kitchen table", "orientation": "landscape" },
   "guide:franchise-tva-micro-entrepreneur": { "query": "invoice calculator desk", "orientation": "landscape" },
   "guide:plafonds-micro-entreprise-2026": { "query": "calculator paperwork desk", "orientation": "landscape" },
   "guide:premier-devis-micro-entrepreneur": { "query": "quote document signing", "orientation": "landscape" },
