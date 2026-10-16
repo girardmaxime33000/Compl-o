@@ -27,3 +27,35 @@ describe("identité visuelle", () => {
     }
   });
 });
+
+describe("logo horizontal et favicon", () => {
+  it("logo.svg et logo-white.svg : symbole identique à brand.ts, nom en tracés (aucun élément <text>), couleurs attendues", () => {
+    for (const [file, color] of [["public/logo/logo.svg", BRAND_BLUE], ["public/logo/logo-white.svg", "#ffffff"]] as const) {
+      const svg = read(file);
+      expect(svg, file).toContain(`d="${LOGO_ARC.d}" stroke-width="${LOGO_ARC.strokeWidth}"`);
+      expect(svg, file).toContain(`d="${LOGO_PLUS.d}" stroke-width="${LOGO_PLUS.strokeWidth}"`);
+      expect(svg, file).toContain(`fill="${color}" d="M`);
+      expect(svg, file).not.toContain("<text");
+      expect(svg, file).toMatch(/viewBox="0 0 \d+(\.\d)? \d+(\.\d)?"/);
+    }
+  });
+
+  it("buildIco : en-tête, entrées et décalages cohérents, PNG conservés tels quels", async () => {
+    const { buildIco } = await import("@/lib/ico");
+    const png16 = new Uint8Array([137, 80, 78, 71, 1, 2, 3]);
+    const png32 = new Uint8Array([137, 80, 78, 71, 9, 9, 9, 9, 9]);
+    const ico = buildIco([{ size: 16, png: png16 }, { size: 32, png: png32 }]);
+    const v = new DataView(ico.buffer);
+    expect([v.getUint16(0, true), v.getUint16(2, true), v.getUint16(4, true)]).toEqual([0, 1, 2]);
+    expect([ico[6], ico[7]]).toEqual([16, 16]);
+    expect([ico[22], ico[23]]).toEqual([32, 32]);
+    const off0 = v.getUint32(6 + 12, true);
+    const off1 = v.getUint32(22 + 12, true);
+    expect(off0).toBe(6 + 32);
+    expect(off1).toBe(off0 + png16.length);
+    expect(v.getUint32(6 + 8, true)).toBe(png16.length);
+    expect(Array.from(ico.slice(off0, off0 + png16.length))).toEqual(Array.from(png16));
+    expect(Array.from(ico.slice(off1))).toEqual(Array.from(png32));
+    expect(ico.length).toBe(off1 + png32.length);
+  });
+});

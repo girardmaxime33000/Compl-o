@@ -1,9 +1,11 @@
-import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { Document, Link, Page, Path, StyleSheet, Svg, Text, View } from "@react-pdf/renderer";
+import { BRAND_BLUE, BRAND_FOOTER_TEXT, LOGO_ARC, LOGO_PLUS, LOGO_VIEWBOX } from "@/lib/brand";
+import { LEGAL } from "@/lib/legal";
 import type { Invoice, Profile } from "@/types/database";
 import { invoiceNumber, TVA_MENTION } from "@/lib/invoice-number";
 
 const styles = StyleSheet.create({
-  page: { padding: 48, fontSize: 10, fontFamily: "Helvetica", color: "#0f172a" },
+  page: { padding: 48, paddingBottom: 84, fontSize: 10, fontFamily: "Helvetica", color: "#0f172a" },
   header: { flexDirection: "row", justifyContent: "space-between", marginBottom: 32 },
   title: { fontSize: 22, fontFamily: "Helvetica-Bold", color: "#2563eb" },
   muted: { color: "#64748b" },
@@ -14,7 +16,9 @@ const styles = StyleSheet.create({
   colDesc: { flexGrow: 1 },
   colAmount: { width: 100, textAlign: "right" },
   total: { flexDirection: "row", justifyContent: "flex-end", marginTop: 16, fontSize: 13, fontFamily: "Helvetica-Bold" },
-  footer: { position: "absolute", bottom: 40, left: 48, right: 48, fontSize: 9, color: "#64748b" },
+  footer: { position: "absolute", bottom: 34, left: 48, right: 48, fontSize: 9, color: "#64748b" },
+  brandLine: { flexDirection: "row", alignItems: "center", marginTop: 6, fontSize: 8, color: "#94a3b8" },
+  brandLink: { marginLeft: 4, color: "#94a3b8", textDecoration: "none" },
 });
 
 const fmtEur = (n: number) => `${new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n).replace(/[  ]/g, " ")} EUR`;
@@ -69,9 +73,19 @@ export function InvoicePdf({ invoice, issuer }: { invoice: Invoice; issuer: Pick
           )}
         </View>
 
-        <Text style={styles.footer} fixed>
-          {issuer.full_name} · SIRET {issuer.siret} · {TVA_MENTION}
-        </Text>
+        <View style={styles.footer} fixed>
+          <Text>
+            {issuer.full_name} · SIRET {issuer.siret} · {TVA_MENTION}
+          </Text>
+          {/* Mention de marque discrète : sous les mentions légales de l'émetteur, sans les remplacer. */}
+          <View style={styles.brandLine}>
+            <Svg width={10} height={10} viewBox={LOGO_VIEWBOX}>
+              <Path d={LOGO_ARC.d} stroke={BRAND_BLUE} strokeWidth={LOGO_ARC.strokeWidth} strokeLinecap="round" fill="none" />
+              <Path d={LOGO_PLUS.d} stroke={BRAND_BLUE} strokeWidth={LOGO_PLUS.strokeWidth} strokeLinecap="round" fill="none" />
+            </Svg>
+            <Link src={LEGAL.siteUrl} style={styles.brandLink}>{BRAND_FOOTER_TEXT}</Link>
+          </View>
+        </View>
       </Page>
     </Document>
   );

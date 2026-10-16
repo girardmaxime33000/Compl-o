@@ -273,8 +273,9 @@ Logo : symbole « C + » (un arc ouvert complété par un plus), bleu `#2563eb` 
 - Composant `LogoMark` (`src/components/brand/logo.tsx`) : en-tête public, page de connexion, en-tête du tableau de bord.
 - Icône du site : `src/app/icon.svg` ; icône iOS : `src/app/apple-icon.tsx` (générée) ; symbole PNG pour les e-mails : route `/logo/mark.png` (générée, 192 × 192, fond transparent). Aucun fichier binaire n'est versionné.
 - Cartes de partage (`src/lib/og.tsx`) : symbole blanc à côté du nom. E-mails (`src/lib/email-templates.ts`) : symbole et nom en tête. PDF de simulation : symbole vectoriel et nom en tête.
-- Les PDF de factures et de devis restent volontairement neutres : ce sont les documents de l'utilisateur (voir T17).
-- Non fait : version horizontale avec le nom, fichier favicon `.ico`, déclinaisons PNG versionnées. Droits : vérifier les conditions d'utilisation commerciale du générateur d'images utilisé et faire une recherche d'antériorité avant tout dépôt de marque.
+- **Factures et devis** (décision du propriétaire, 16 octobre 2026 : marque sur tous les documents, tous plans confondus) : PDF (`src/components/invoices/invoice-pdf.tsx`) et aperçu public (`/modele-facture-auto-entrepreneur`) portent en pied de page, sous les mentions légales de l'émetteur, le symbole et la mention « Document créé avec Compléo » (`BRAND_FOOTER_TEXT`, avec lien vers le site dans le PDF). La marque ne remplace aucune mention de l'émetteur et n'apparaît pas en en-tête : l'identité en haut du document reste celle de l'utilisateur. Un utilisateur qui souhaiterait retirer la mention n'a pas d'option aujourd'hui (à décider, par exemple un plan payant).
+- `/favicon.ico` : route générée (16, 32 et 48 px, `src/lib/ico.ts`), aucun fichier `.ico` versionné.
+- Droits : vérifier les conditions d'utilisation commerciale du générateur d'images utilisé et faire une recherche d'antériorité avant tout dépôt de marque.
 
 ## Photos (Unsplash)
 
