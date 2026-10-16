@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { LEGAL } from "@/lib/legal";
 import { ToastProvider } from "@/components/ui/toast";
+import { CookieConsent } from "@/components/consent/cookie-consent";
 
 // Police auto-hébergée par next/font (aucune requête vers Google au chargement des pages).
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 
-// Umami Cloud (mesure d'audience sans cookie). Chargé uniquement en production pour ne pas fausser les statistiques
-// avec les prévisualisations. data-exclude-search : les paramètres d'URL (liens de connexion, retours de paiement)
-// ne sont jamais transmis ; data-do-not-track : respecte l'en-tête « Do Not Track » du navigateur.
+// Umami Cloud (mesure d'audience sans cookie), chargé après consentement par <CookieConsent> (bandeau, RGPD).
+// Présent uniquement en production : les prévisualisations et le développement local ne faussent pas les statistiques
+// et n'affichent pas le bandeau. L'identifiant du site est public.
 const UMAMI_WEBSITE_ID = "47ee9358-dfb5-495e-904b-723d5a5fee6f";
 const UMAMI_ENABLED = process.env.VERCEL_ENV === "production";
 
@@ -26,15 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={inter.variable}>
       <body><ToastProvider>{children}</ToastProvider>
-        {UMAMI_ENABLED && (
-          <Script
-            src="https://cloud.umami.is/script.js"
-            data-website-id={UMAMI_WEBSITE_ID}
-            data-exclude-search="true"
-            data-do-not-track="true"
-            strategy="afterInteractive"
-          />
-        )}
+        {UMAMI_ENABLED && <CookieConsent umamiWebsiteId={UMAMI_WEBSITE_ID} />}
       </body>
     </html>
   );

@@ -29,7 +29,7 @@ export default function PrivacyPage() {
           <li>Vercel : hébergement de l'application.</li>
           <li>Stripe : paiement et gestion des abonnements.</li>
           <li>Resend : envoi des e-mails (documents envoyés à vos clients à votre demande, e-mails de conseils si vous les avez acceptés). L'adresse e-mail de votre client n'est pas conservée par Compléo.</li>
-          <li>Umami Cloud : mesure de fréquentation sans cookie (voir section 6).</li>
+          <li>Umami Cloud : mesure de fréquentation sans cookie, uniquement si vous l'acceptez (voir section 6).</li>
           <li>Fournisseur du modèle d'IA : reçoit le service, la ville et la plateforme saisis pour générer une annonce.</li>
         </ul>
         <p>
@@ -58,9 +58,12 @@ export default function PrivacyPage() {
           tiers. Elle est désactivée si votre navigateur envoie « Do Not Track » ou « Global Privacy Control ».
         </p>
         <p>
-          Le site utilise en complément Umami Cloud (Umami Software, Inc.) pour mesurer la fréquentation : pages vues,
-          provenance, type d'appareil et de navigateur. Cet outil ne dépose aucun cookie, n'enregistre pas l'adresse IP
-          et ne transmet pas les paramètres d'URL. Il est désactivé si votre navigateur envoie « Do Not Track ».
+          Avec votre accord uniquement, le site utilise en complément Umami Cloud (Umami Software, Inc.) pour mesurer la
+          fréquentation : pages vues, provenance, type d'appareil et de navigateur. Cet outil ne dépose aucun cookie,
+          n'enregistre pas l'adresse IP et ne transmet pas les paramètres d'URL. Il n'est chargé qu'après un clic sur
+          « Accepter » dans le bandeau, et reste désactivé si vous refusez ou si votre navigateur envoie « Do Not Track ».
+          Votre choix est conservé 6 mois dans votre navigateur, puis redemandé ; vous pouvez le modifier à tout moment
+          avec « Gérer mes cookies » en bas de chaque page. Refuser n'a aucune incidence sur l'usage du site.
           Informations de l'éditeur : <a className="text-primary underline" href="https://umami.is/privacy" rel="noopener noreferrer">umami.is/privacy</a>.
         </p>
       </LegalSection>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ACTIVITIES, activitySlug } from "@/lib/activities";
+import { CookieSettingsLink } from "@/components/consent/cookie-settings-link";
 import { activitiesForCity, CITIES, cityPath } from "@/lib/cities";
 
 /** Villes affichées dans le footer : les plus peuplées parmi celles qui ont une page. */
@@ -47,6 +48,7 @@ export function SiteFooter() {
             <li><Link href="/cgu" className={linkClass}>CGU</Link></li>
             <li><Link href="/cgv" className={linkClass}>CGV</Link></li>
             <li><Link href="/confidentialite" className={linkClass}>Confidentialité</Link></li>
+            <li><CookieSettingsLink className={linkClass} /></li>
             <li><Link href="/credits-photos" className={linkClass}>Crédits photos</Link></li>
           </ul>
         </nav>
