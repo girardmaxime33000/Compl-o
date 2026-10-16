@@ -56,6 +56,45 @@ export async function sendEmail(msg: EmailMessage): Promise<{ ok: boolean; error
   }
 }
 
+/**
+ * Envoi groupé via l'endpoint /emails/batch de Resend (100 messages maximum par requête, sans pièce jointe). Tout ou rien :
+ * en cas d'échec aucun message n'est considéré comme envoyé. Ne lève jamais.
+ */
+export async function sendEmailBatch(msgs: EmailMessage[]): Promise<{ ok: boolean; error?: string }> {
+  const key = process.env.RESEND_API_KEY;
+  const from = process.env.EMAIL_FROM;
+  if (!key || !from) return { ok: false, error: "E-mail non configuré." };
+  if (msgs.length === 0) return { ok: true };
+  if (msgs.length > 100) return { ok: false, error: "Lot trop grand (100 maximum)." };
+
+  const payload = msgs.map((m) => ({
+    from,
+    to: [m.to],
+    subject: m.subject,
+    html: m.html,
+    text: m.text,
+    reply_to: m.replyTo,
+    headers: m.unsubscribeUrl
+      ? { "List-Unsubscribe": `<${m.unsubscribeUrl}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" }
+      : {},
+  }));
+  try {
+    const res = await fetch("https://api.resend.com/emails/batch", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      console.error("resend batch", res.status, await res.text().catch(() => ""));
+      return { ok: false, error: "Envoi impossible." };
+    }
+    return { ok: true };
+  } catch (e) {
+    console.error("resend batch", e);
+    return { ok: false, error: "Envoi impossible." };
+  }
+}
+
 function unsubscribeSecret() {
   return process.env.EMAIL_UNSUBSCRIBE_SECRET || process.env.CRON_SECRET || "";
 }

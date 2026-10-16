@@ -1,4 +1,5 @@
 import { LEGAL } from "@/lib/legal";
+import { findCategory, postPath, type BlogPost } from "@/lib/blog";
 import { absoluteUrl } from "@/lib/seo";
 import { eur, TAX_PARAMS } from "@/lib/tax";
 import { newsletterUnsubscribeToken, unsubscribeToken } from "@/lib/email";
@@ -93,4 +94,34 @@ export function newsletterConfirmationEmail(confirmUrl: string): Rendered {
       `${esc(LEGAL.siteName)} · ${esc(LEGAL.email)}`,
     ),
   };
+}
+
+/**
+ * Newsletter : introduction facultative puis une carte par article (titre, catégorie, résumé, lien). Chaque message porte
+ * le lien de désinscription propre à l'abonné. `subscriberId` absent (aperçu, test) : pas de lien de désinscription actif.
+ */
+export function newsletterEmail(p: { subject: string; intro?: string; posts: BlogPost[]; subscriberId?: string }): Rendered & { unsubscribeUrl?: string } {
+  const unsub = p.subscriberId ? newsletterUnsubscribeUrl(p.subscriberId) : undefined;
+  const footerText = `Vous recevez cet e-mail car vous êtes inscrit à la newsletter de ${LEGAL.siteName}, éditée par ${LEGAL.publisherName}.`;
+  const unsubText = unsub ? `Se désinscrire : ${unsub}` : "(Aperçu : le lien de désinscription est actif dans les envois réels.)";
+  const items = p.posts.map((post) => ({
+    title: post.title,
+    category: findCategory(post.category)?.name ?? "",
+    description: post.description,
+    url: absoluteUrl(postPath(post)),
+  }));
+  const text = [
+    p.intro ?? "",
+    ...items.map((i) => `${i.title}\n${i.description}\n${i.url}`),
+    `${footerText}\n${unsubText}\n${LEGAL.email}`,
+  ].filter(Boolean).join("\n\n");
+  const cards = items
+    .map(
+      (i) =>
+        `<div style="border-top:1px solid #e5e7eb;padding:16px 0"><p style="margin:0;font-size:12px;color:#666;text-transform:uppercase">${esc(i.category)}</p><p style="margin:4px 0"><a href="${esc(i.url)}" style="font-size:17px;font-weight:bold;color:#1d4ed8;text-decoration:none">${esc(i.title)}</a></p><p style="margin:0;color:#444">${esc(i.description)}</p></div>`,
+    )
+    .join("");
+  const intro = p.intro ? `<p>${esc(p.intro).replace(/\n/g, "<br>")}</p>` : "";
+  const footer = `${esc(footerText)} ${unsub ? `<a href="${esc(unsub)}">Se désinscrire</a>` : "(Aperçu : lien de désinscription actif dans les envois réels.)"} · ${esc(LEGAL.email)}`;
+  return { subject: p.subject, text, html: layout(`${intro}${cards}`, footer), unsubscribeUrl: unsub };
 }
