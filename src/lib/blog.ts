@@ -45,8 +45,16 @@ export const BLOG_CATEGORIES: BlogCategory[] = [
 /** Même format que les guides : `verified` reprend la date « Vérifié le » affichée sur la fiche officielle. */
 export type BlogSource = Source;
 
-/** Signature éditoriale (décision du propriétaire). Aucune biographie n'est publiée tant qu'elle n'est pas fournie. */
-export const BLOG_AUTHOR = { name: "Maxime Girard" } as const;
+/**
+ * Signature éditoriale (décision du propriétaire). La biographie est celle fournie par l'auteur le 16 octobre 2026 ;
+ * seules des corrections de grammaire y ont été faites (« fonds d'investissement publics et privés »). Elle n'est pas
+ * vérifiable par l'assistant : l'auteur en répond.
+ */
+export const BLOG_AUTHOR = {
+  name: "Maxime Girard",
+  path: "/blog/auteur/maxime-girard",
+  bio: "Maxime a été dirigeant d'entreprise dans plusieurs startups et PME françaises, occupant les fonctions de directeur marketing. Maxime a été sollicité plusieurs fois par des fonds d'investissement publics et privés pour son expertise à développer et générer de nouveaux modèles d'affaires.",
+} as const;
 
 export interface BlogPost {
   slug: string;

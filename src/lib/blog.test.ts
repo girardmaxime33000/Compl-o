@@ -2,12 +2,12 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import {
-  activeCategories, BLOG_CATEGORIES, BLOG_POSTS, indexablePosts, isIndexable, latestBlogUpdate, postsInCategory, relatedPosts,
+  activeCategories, BLOG_AUTHOR, BLOG_CATEGORIES, BLOG_POSTS, indexablePosts, isIndexable, latestBlogUpdate, postsInCategory, relatedPosts,
   type BlogPost,
 } from "@/lib/blog";
 import { buildBlogRss } from "@/lib/blog-rss";
 import { absoluteUrl, sitemapEntries } from "@/lib/seo";
-import { articleJsonLd } from "@/lib/seo/jsonld";
+import { articleJsonLd, personJsonLd } from "@/lib/seo/jsonld";
 import { sanitizeProps, CLIENT_EVENTS } from "@/lib/analytics";
 import { GUIDES } from "@/lib/guides";
 import { simulate, TAX_PARAMS } from "@/lib/tax";
@@ -99,6 +99,9 @@ describe("JSON-LD Article", () => {
   const base = { title: "T", description: "D", path: "/blog/x", published: "2026-01-01", updated: "2026-01-02" };
   it("auteur nommé (Person) pour le blog, organisation par défaut pour les guides", () => {
     expect(articleJsonLd({ ...base, authorName: "Maxime Girard" }).author).toEqual({ "@type": "Person", name: "Maxime Girard" });
+    expect(articleJsonLd({ ...base, authorName: "Maxime Girard", authorPath: "/blog/auteur/maxime-girard" }).author).toEqual({
+      "@type": "Person", name: "Maxime Girard", url: absoluteUrl("/blog/auteur/maxime-girard"),
+    });
     expect((articleJsonLd(base).author as { "@type": string })["@type"]).toBe("Organization");
   });
 });
@@ -172,5 +175,23 @@ describe("articles économies : exemples chiffrés", () => {
       }
       expect(p.cta?.href).toBe("/onboarding");
     }
+  });
+});
+
+describe("page auteur", () => {
+  it("biographie fournie, sans pronom personnel ajouté ni chiffre inventé, et page dans le sitemap dès qu'un article est public", () => {
+    expect(BLOG_AUTHOR.bio).toContain("directeur marketing");
+    expect(BLOG_AUTHOR.bio).toContain("fonds d'investissement publics et privés");
+    expect(BLOG_AUTHOR.bio).not.toMatch(/\b(il|elle)\b/i);
+    expect(BLOG_AUTHOR.bio).not.toMatch(/\d/);
+    const paths = sitemapEntries().map((e) => e.path);
+    expect(paths.includes(BLOG_AUTHOR.path)).toBe(indexablePosts().length > 0);
+  });
+
+  it("JSON-LD Person : description identique au texte affiché", () => {
+    const ld = personJsonLd({ name: BLOG_AUTHOR.name, description: BLOG_AUTHOR.bio, path: BLOG_AUTHOR.path });
+    expect(ld["@type"]).toBe("Person");
+    expect(ld.description).toBe(BLOG_AUTHOR.bio);
+    expect(ld.url).toBe(absoluteUrl(BLOG_AUTHOR.path));
   });
 });

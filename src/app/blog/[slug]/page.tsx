@@ -56,6 +56,7 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
         updated={post.updated}
         imagePath={`${postPath(post)}/opengraph-image`}
         authorName={BLOG_AUTHOR.name}
+        authorPath={BLOG_AUTHOR.path}
       />
       <BlogViewTracker article={post.slug} />
       <SiteHeader />
@@ -67,7 +68,7 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
           </p>
           <h1 className="mt-1 text-3xl font-bold">{post.title}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Par {BLOG_AUTHOR.name} · Publié le {formatDate(post.published)} · Mis à jour le {formatDate(post.updated)}
+            Par <Link href={BLOG_AUTHOR.path} className="underline">{BLOG_AUTHOR.name}</Link> · Publié le {formatDate(post.published)} · Mis à jour le {formatDate(post.updated)}
             {post.reviewedOn && <> · Chiffres et sources relus le {formatDate(post.reviewedOn)}</>}
           </p>
         </div>

@@ -4,7 +4,7 @@ import { ACTIVITIES, activitySlug } from "@/lib/activities";
 import { publishedUrbanActivities } from "@/lib/urban-activities";
 import { activitiesForCity, CITIES, CITY_ACTIVITY_PAIRS, CITY_DATA, cityActivityPath, cityPath } from "@/lib/cities";
 import { GUIDES, guidePath } from "@/lib/guides";
-import { activeCategories, categoryPath, indexablePosts, latestBlogUpdate, postPath, postsInCategory } from "@/lib/blog";
+import { BLOG_AUTHOR, activeCategories, categoryPath, indexablePosts, latestBlogUpdate, postPath, postsInCategory } from "@/lib/blog";
 
 /** Pages publiques (fil d'Ariane). `indexable: false` : `noindex, follow` et absente du sitemap (pages légales). */
 export const PUBLIC_PAGES = [
@@ -42,6 +42,7 @@ function blogEntries(): SitemapEntry[] {
   if (posts.length === 0) return [];
   return [
     { path: "/blog", lastModified: latestBlogUpdate() ?? BUILD_DATE },
+    { path: BLOG_AUTHOR.path, lastModified: latestBlogUpdate() ?? BUILD_DATE },
     ...activeCategories().map((c) => ({ path: categoryPath(c), lastModified: postsInCategory(c.slug).map((p) => p.updated).sort().at(-1) ?? BUILD_DATE })),
     ...posts.map((p) => ({ path: postPath(p), lastModified: p.updated })),
   ];

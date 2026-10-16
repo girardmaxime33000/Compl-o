@@ -92,6 +92,8 @@ export function articleJsonLd(args: {
   imagePath?: string;
   /** Auteur nommé (blog). Sans lui, l'auteur est l'organisation (guides). */
   authorName?: string;
+  /** Page de l'auteur : ajoutée à l'auteur nommé. */
+  authorPath?: string;
 }): JsonLdObject {
   return {
     "@context": CONTEXT,
@@ -101,10 +103,24 @@ export function articleJsonLd(args: {
     inLanguage: "fr-FR",
     datePublished: args.published,
     dateModified: args.updated,
-    author: args.authorName ? { "@type": "Person", name: args.authorName } : organizationRef(),
+    author: args.authorName
+      ? { "@type": "Person", name: args.authorName, ...(args.authorPath ? { url: absoluteUrl(args.authorPath) } : {}) }
+      : organizationRef(),
     publisher: organizationRef(),
     image: absoluteUrl(args.imagePath ?? DEFAULT_IMAGE_PATH),
     mainEntityOfPage: { "@type": "WebPage", "@id": absoluteUrl(args.path) },
+  };
+}
+
+/** Page d'un auteur : la description est le texte de présentation visible sur la page. */
+export function personJsonLd(args: { name: string; description: string; path: string }): JsonLdObject {
+  return {
+    "@context": CONTEXT,
+    "@type": "Person",
+    name: args.name,
+    description: args.description,
+    url: absoluteUrl(args.path),
+    mainEntityOfPage: { "@type": "ProfilePage", "@id": absoluteUrl(args.path) },
   };
 }
 
