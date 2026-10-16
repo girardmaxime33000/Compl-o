@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { PRIMARY_CTA_LABEL } from "@/components/marketing/ctas";
 import { TrackedLink } from "@/components/marketing/tracked-link";
 import { cn } from "@/lib/utils";
 
@@ -36,7 +37,7 @@ export function StickyCta() {
       >
         <Button asChild size="lg" className="w-full">
           <TrackedLink href="/onboarding" tabIndex={visible ? 0 : -1} trackProps={{ source: "sticky", target: "diagnostic" }}>
-            Faire mon diagnostic gratuit
+            {PRIMARY_CTA_LABEL}
           </TrackedLink>
         </Button>
       </div>
