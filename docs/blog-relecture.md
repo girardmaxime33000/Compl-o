@@ -31,6 +31,22 @@ Points de méthode à valider une fois pour toutes :
 - **Tarifs du catalogue** : présentés comme « repères indicatifs communs à la France » ; aucune donnée de prix par ville n'existe. La formule « tarif moyen constaté en France » des pages activité n'a pas de source dans le dépôt.
 - **Exemples** (300 / 600 / 1 000 € par mois, objectif de 300 €, paquets, abonnements) : fictifs, signalés comme tels dans le texte.
 
+## Vérification des sources faite le 16 octobre 2026 (par l'assistant)
+
+Pages rouvertes et relues le jour même sur service-public.gouv.fr. Cela ne remplace pas votre relecture : `reviewedOn` n'a été renseigné pour aucun article.
+
+| Point | Résultat |
+|---|---|
+| Taux micro-social 2026 (fiche F37353, vérifiée le 21 février 2026) | **Conforme** : 12,3 % (vente), 21,2 % (prestation de services BIC), 25,6 % (professions libérales non réglementées hors Cipav). La fiche n'a pas de ligne « prestations de services BNC » : les articles disent désormais « professions libérales non réglementées hors Cipav, qui relèvent des BNC ». La Cipav (23,2 %) n'est pas traitée. |
+| Franchise de TVA 2026 (F21746, vérifiée le 1er janvier 2026) | **Conforme** : 37 500 € (services), seuil majoré 41 250 €, inchangés pour 2026. |
+| Plafond micro 2026 (F32353, vérifiée le 21 février 2026) | **Conforme** : 83 600 € (prestations de services et activités libérales), 203 100 € (vente). Un dépassement pendant deux années consécutives fait basculer au régime réel ; les articles ne détaillent pas ce point. |
+| DLC / DDM (F10990, vérifiée le 6 février 2026) | **Conforme** : définitions, mentions et seuils de précision de la DDM (moins de 3 mois, 3 à 18 mois, plus de 18 mois). |
+| Prix à l'unité (F34344, vérifiée le 2 juillet 2024, toujours cette date) | **Conforme**. |
+| Shrinkflation | **Corrigé** dans l'article : la durée est de deux mois **à compter de la mise en vente de la quantité réduite** (et non « les deux premiers mois de commercialisation du produit »), et la règle vise les **supermarchés de plus de 400 m² à prédominance alimentaire**. Autre information non reprise dans l'article : un arrêté du 28 juin 2024 étend l'obligation aux lots dont le nombre d'unités diminue ; et les sites de vente à distance seraient hors champ (source secondaire, texte non lu). Aucune modification de l'arrêté du 16 avril 2024 trouvée pour 2025 ou 2026 (recherche, pas lecture de Légifrance). |
+| Résiliation en 3 clics | Parcours conforme à l'actualité A16599 (septembre 2023). Le texte de loi (article L215-1-1 du code de la consommation) et la date d'application (1er juin 2023 pour les contrats futurs, d'après une source secondaire) n'ont pas été relus sur Légifrance : l'article ne cite pas de date. **À noter** : une recherche indique qu'un bouton « renoncer au contrat ici » est exigé sur les sites depuis le 19 juin 2026 pour le droit de rétractation (distinct de la résiliation). Non vérifié sur le texte, non repris dans l'article. |
+
+Non vérifié par l'assistant : le texte de l'arrêté du 16 avril 2024 et de l'article L215-1-1 sur Légifrance, la fiche F22486 (téléphonie et internet), l'exactitude des tarifs du catalogue, la répartition BIC/BNC par activité, l'hypothèse des 60 %.
+
 ## Article par article
 
 ### 1. `premiers-pas-revenu-complementaire` (revenu complémentaire)
@@ -64,7 +80,7 @@ Points de méthode à valider une fois pour toutes :
 
 ### 6. `comparer-prix-au-kilo-shrinkflation` (économies)
 - Sources : fiche « Affichage des prix : règles à respecter » (<https://www.service-public.gouv.fr/particuliers/vosdroits/F34344>, vérifiée le 2 juillet 2024) ; actualité « Shrinkflation » (<https://entreprendre.service-public.gouv.fr/actualites/A17378>, mise à jour le 29 juillet 2024, signalée « ancienne » par le site). Lues en entier.
-- Chiffres affichés : 400 m² (seuil des magasins), deux premiers mois de commercialisation, 1er juillet 2024 ; exemples fictifs 500 g à 2,40 € (4,80 €/kg) contre 750 g à 3,30 € (4,40 €/kg) ; 500 g → 450 g au même prix : 5,33 €/kg, soit 11,1 % de plus.
+- Chiffres affichés : 400 m² (supermarchés à prédominance alimentaire), deux mois à compter de la mise en vente de la quantité réduite, 1er juillet 2024 ; exemples fictifs 500 g à 2,40 € (4,80 €/kg) contre 750 g à 3,30 € (4,40 €/kg) ; 500 g → 450 g au même prix : 5,33 €/kg, soit 11,1 % de plus.
 - **À revérifier avant publication** : la règle de la shrinkflation et la liste officielle des produits soumis au prix à l'unité ont pu évoluer depuis 2024.
 
 ### 7. `resilier-abonnement-en-ligne-trois-clics` (économies)

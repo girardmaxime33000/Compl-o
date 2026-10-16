@@ -19,7 +19,7 @@ export const faq = [
   {
     question: "Qu'est-ce que la shrinkflation ?",
     answer:
-      "C'est la baisse de la quantité vendue d'un produit sans baisse équivalente du prix, ce qui fait monter le prix au kilo ou au litre. Depuis le 1er juillet 2024, les magasins de plus de 400 m² doivent l'indiquer sur les produits concernés pendant les deux premiers mois de leur commercialisation (page de service-public.gouv.fr, mise à jour le 29 juillet 2024).",
+      "C'est la baisse de la quantité vendue d'un produit sans baisse équivalente du prix, ce qui fait monter le prix au kilo ou au litre. Depuis le 1er juillet 2024, les supermarchés de plus de 400 m² à prédominance alimentaire doivent l'indiquer sur les produits concernés, pendant deux mois à compter de la mise en vente de la quantité réduite (pages de service-public.gouv.fr, vérifiée le 2 juillet 2024 et mise à jour le 29 juillet 2024).",
   },
   {
     question: "Tous les produits sont-ils concernés par l'affichage de la shrinkflation ?",
@@ -51,7 +51,7 @@ export function ComparerPrix() {
         rows={[
           ["Prix à l'unité de mesure", "Obligatoire pour les produits préemballés alimentaires, d'hygiène et d'entretien d'une liste officielle"],
           ["Prix affiché", "En euros, toutes taxes comprises, avec la quantité nette"],
-          ["Shrinkflation", "Mention obligatoire depuis le 1er juillet 2024 dans les magasins de plus de 400 m², sur les produits concernés"],
+          ["Shrinkflation", "Mention obligatoire depuis le 1er juillet 2024 dans les supermarchés de plus de 400 m² à prédominance alimentaire, sur les produits concernés"],
           ["Sources", "Service-public.gouv.fr : fiche vérifiée le 2 juillet 2024, actualité mise à jour le 29 juillet 2024"],
         ]}
       />
@@ -89,8 +89,9 @@ export function ComparerPrix() {
           affiché sur le paquet n'a pas bougé.
         </p>
         <p>
-          Depuis le 1er juillet 2024, les magasins dont la surface de vente dépasse 400 m² doivent signaler cette
-          évolution pendant les deux premiers mois de commercialisation du produit. La mention indique que la quantité
+          Depuis le 1er juillet 2024, les supermarchés dont la surface de vente dépasse 400 m² et dont l'activité est à
+          prédominance alimentaire doivent signaler cette évolution pendant deux mois à compter de la mise en vente du
+          produit dans sa quantité réduite. La mention indique que la quantité
           vendue est passée de X à Y et que le prix au kilo, au litre ou à l'unité a augmenté d'un pourcentage ou d'un
           montant. Elle figure sur l'emballage ou sur une étiquette proche, avec des caractères de la même taille que le
           prix.

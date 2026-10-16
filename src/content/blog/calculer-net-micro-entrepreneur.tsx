@@ -14,7 +14,7 @@ export const faq = [
   },
   {
     question: "Quel taux de cotisations s'applique en 2026 ?",
-    answer: `En 2026, le taux est de ${pct(T.urssafRate.bic)} du chiffre d'affaires pour les prestations de services relevant des BIC et de ${pct(T.urssafRate.bnc)} pour les activités relevant des BNC non réglementés (source : fiche Entreprendre Service Public sur le régime micro-social).`,
+    answer: `En 2026, le taux est de ${pct(T.urssafRate.bic)} du chiffre d'affaires pour les prestations de services relevant des BIC et de ${pct(T.urssafRate.bnc)} pour les professions libérales non réglementées hors Cipav, qui relèvent des BNC (source : fiche Entreprendre Service Public sur le régime micro-social, vérifiée le 21 février 2026).`,
   },
   {
     question: "Comment savoir si mon activité relève des BIC ou des BNC ?",
