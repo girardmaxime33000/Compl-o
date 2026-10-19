@@ -26,5 +26,5 @@ export const LEGAL = {
   mediatorUrl: "",
   lastUpdate: "14 octobre 2026",
   /** Version des CGU/CGV acceptées au paiement : à modifier à chaque changement de texte. */
-  termsVersion: "2026-10-14-brouillon-3",
+  termsVersion: "2026-10-19-relu-1",
 } as const;

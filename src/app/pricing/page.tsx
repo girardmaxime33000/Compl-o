@@ -113,8 +113,7 @@ export default async function PricingPage() {
           les <Link href="/cgv" className="underline">conditions générales de vente</Link> et les{" "}
           <Link href="/cgu" className="underline">conditions générales d'utilisation</Link> par une case à cocher, et vous
           indiquez si vous demandez l'accès immédiat au contenu numérique, ce qui entraîne la renonciation au droit de
-          rétractation de 14 jours une fois le contenu fourni. Ces textes sont des brouillons en attente de relecture par
-          un juriste.
+          rétractation de 14 jours une fois le contenu fourni.
         </p>
         <p className="text-sm leading-relaxed">
           Les données personnelles traitées lors de l'achat sont décrites dans la{" "}
