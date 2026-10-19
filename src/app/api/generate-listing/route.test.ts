@@ -68,7 +68,9 @@ beforeEach(() => {
   h.rpc.mockImplementation(async (name: string, args: Record<string, unknown>) => {
     if (name === "rate_limit_hit") return { data: h.rateAllowed(String(args.p_key)), error: null };
     if (name === "claim_listing_slot") return { data: h.slot, error: null };
-    if (name === "consume_listing_credit") return { data: h.credit, error: null };
+    if (name === "consume_listing_credit_grant") {
+      return { data: [h.credit >= 0 ? { grant_id: "grant-1", balance: h.credit } : { grant_id: null, balance: -1 }], error: null };
+    }
     return { data: null, error: null };
   });
   h.generate.mockReset();
@@ -85,7 +87,7 @@ describe("POST /api/generate-listing : quotas", () => {
     expect((await call()).status).toBe(200);
     expect(h.rpc).toHaveBeenCalledWith("claim_listing_slot", { p_user: "user-1", p_limit: FREE_MONTHLY_LISTINGS, p_period: "month" });
     expect(h.rpc).toHaveBeenCalledWith("release_listing_slot", { p_id: "slot-1" });
-    expect(h.rpc).not.toHaveBeenCalledWith("consume_listing_credit", expect.anything());
+    expect(h.rpc).not.toHaveBeenCalledWith("consume_listing_credit_grant", expect.anything());
   });
 
   it("la base décide : sans place réservée ni crédit, 403 LIMIT_REACHED et rien n'est généré", async () => {
@@ -103,16 +105,17 @@ describe("POST /api/generate-listing : quotas", () => {
     const res = await call();
     expect(res.status).toBe(200);
     expect(await res.json()).toMatchObject({ credits: 3 });
-    expect(h.rpc).toHaveBeenCalledWith("consume_listing_credit", { p_user: "user-1" });
+    expect(h.rpc).toHaveBeenCalledWith("consume_listing_credit_grant", { p_user: "user-1" });
   });
 
-  it("rembourse le crédit si la génération échoue", async () => {
+  it("rend le crédit au lot d'origine si la génération échoue (un remboursement du pack le retire aussi)", async () => {
     h.slot = null;
     h.credit = 3;
     h.generate.mockRejectedValue(new Error("llm down"));
     vi.spyOn(console, "error").mockImplementation(() => {});
     expect((await call()).status).toBe(502);
-    expect(h.rpc).toHaveBeenCalledWith("grant_listing_credits", { p_user: "user-1", p_amount: 1 });
+    expect(h.rpc).toHaveBeenCalledWith("restore_listing_credit", { p_grant: "grant-1" });
+    expect(h.rpc).not.toHaveBeenCalledWith("grant_listing_credits", expect.anything());
   });
 
   it("rend la place réservée si la génération échoue", async () => {
@@ -180,12 +183,12 @@ describe("POST /api/generate-listing : limitation de débit", () => {
     expect(h.generate).not.toHaveBeenCalled();
   });
 
-  it("plafond global : le crédit consommé est remboursé", async () => {
+  it("plafond global : le crédit consommé est rendu au lot d'origine", async () => {
     h.slot = null;
     h.credit = 3;
     h.rateAllowed = (key) => key !== "gen:global:day";
     expect((await call()).status).toBe(503);
-    expect(h.rpc).toHaveBeenCalledWith("grant_listing_credits", { p_user: "user-1", p_amount: 1 });
+    expect(h.rpc).toHaveBeenCalledWith("restore_listing_credit", { p_grant: "grant-1" });
   });
 
   it("une panne de la mesure de débit n'empêche pas de générer", async () => {
@@ -212,7 +215,7 @@ describe("POST /api/generate-listing : annonce multi-sites et personnalisation",
     h.slot = null;
     h.credit = 3;
     await call();
-    expect(h.rpc.mock.calls.filter((c) => c[0] === "consume_listing_credit")).toHaveLength(1);
+    expect(h.rpc.mock.calls.filter((c) => c[0] === "consume_listing_credit_grant")).toHaveLength(1);
   });
 
   it("transmet les informations de la personne au modèle", async () => {
