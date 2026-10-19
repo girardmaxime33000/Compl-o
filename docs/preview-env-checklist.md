@@ -49,7 +49,7 @@ Préparation côté Supabase (hors Vercel) :
 Préparation côté Stripe :
 
 - ☐ Trois prix de **test** aux montants affichés dans `src/lib/offers.ts` (pack ponctuel, mensuel, annuel).
-- ☐ Point de terminaison de webhook de test : `<adresse de prévisualisation>/api/webhooks/stripe`, événements `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `customer.subscription.*` (liste du README).
+- ☐ Point de terminaison de webhook de test : `<adresse de prévisualisation>/api/webhooks/stripe`, événements `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `customer.subscription.*`, `charge.refunded`, `charge.dispute.created` (liste du README).
 - ☐ Portail client activé en mode test (Paramètres > Facturation > Portail client), sinon `/api/stripe/portal` échoue.
 - ☐ Attention à la protection Vercel : si « Vercel Authentication » protège les prévisualisations, Stripe recevra une page de connexion à la place du webhook. Dans Vercel > Settings > Deployment Protection, soit désactiver la protection pour Preview le temps du test, soit utiliser « Protection Bypass for Automation » (le secret se passe en paramètre de requête `x-vercel-protection-bypass=…` dans l'URL du webhook). À valider dans l'interface Vercel avant de compter sur le webhook.
 

@@ -65,6 +65,7 @@ const packEvent = (id: string, paymentStatus = "paid") => ({
       payment_status: paymentStatus,
       customer: "cus_1",
       client_reference_id: "user-1",
+      payment_intent: "pi_1",
       metadata: { offer: "pack" },
     },
   },
@@ -101,7 +102,7 @@ describe("POST /api/webhooks/stripe", () => {
     expect(second.status).toBe(200);
     expect(await second.json()).toMatchObject({ duplicate: true });
     expect(state.rpc).toHaveBeenCalledTimes(1);
-    expect(state.rpc).toHaveBeenCalledWith("grant_listing_credits", { p_user: "user-1", p_amount: PACK_LISTING_CREDITS });
+    expect(state.rpc).toHaveBeenCalledWith("grant_listing_credits", { p_user: "user-1", p_amount: PACK_LISTING_CREDITS, p_payment_intent: "pi_1" });
   });
 
   it("ne crédite pas un paiement non confirmé", async () => {
@@ -140,5 +141,46 @@ describe("POST /api/webhooks/stripe", () => {
     state.event = { id: "evt_5", type: "customer.subscription.deleted", data: { object: { customer: "cus_1", items: { data: [] } } } };
     expect((await POST(request())).status).toBe(200);
     expect(state.updates[0]).toMatchObject({ patch: { subscription_status: "canceled", subscription_plan: null } });
+  });
+
+  it("remboursement total du pack : retire les crédits restants du paiement", async () => {
+    state.event = { id: "evt_6", type: "charge.refunded", data: { object: { refunded: true, payment_intent: "pi_1" } } };
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    expect((await POST(request())).status).toBe(200);
+    expect(state.rpc).toHaveBeenCalledWith("revoke_listing_credits", { p_payment_intent: "pi_1" });
+  });
+
+  it("remboursement partiel : les crédits sont conservés", async () => {
+    state.event = { id: "evt_7", type: "charge.refunded", data: { object: { refunded: false, payment_intent: "pi_1" } } };
+    expect((await POST(request())).status).toBe(200);
+    expect(state.rpc).not.toHaveBeenCalled();
+  });
+
+  it("litige ouvert : retire les crédits restants du paiement contesté", async () => {
+    state.event = { id: "evt_8", type: "charge.dispute.created", data: { object: { payment_intent: { id: "pi_2" } } } };
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    expect((await POST(request())).status).toBe(200);
+    expect(state.rpc).toHaveBeenCalledWith("revoke_listing_credits", { p_payment_intent: "pi_2" });
+  });
+
+  it("remboursement : libère l'événement et répond 500 si le retrait échoue, pour permettre le rejeu", async () => {
+    state.rpc.mockResolvedValue({ data: null, error: new Error("db") });
+    state.event = { id: "evt_9", type: "charge.refunded", data: { object: { refunded: true, payment_intent: "pi_1" } } };
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    expect((await POST(request())).status).toBe(500);
+    expect(state.deleted).toContain("evt_9");
+  });
+
+  it("abonnement impayé : l'accès est conservé et la date d'impayé est enregistrée", async () => {
+    state.event = { id: "evt_10", type: "customer.subscription.updated", data: { object: { customer: "cus_1", status: "past_due", items: { data: [] } } } };
+    expect((await POST(request())).status).toBe(200);
+    expect(state.rpc).toHaveBeenCalledWith("mark_past_due", { p_customer: "cus_1" });
+    expect(state.updates).toHaveLength(0);
+  });
+
+  it("abonnement de nouveau actif : la période d'impayé prend fin", async () => {
+    state.event = { id: "evt_11", type: "customer.subscription.updated", data: { object: { customer: "cus_1", status: "active", items: { data: [] } } } };
+    expect((await POST(request())).status).toBe(200);
+    expect(state.updates[0]).toMatchObject({ patch: { subscription_status: "active", past_due_since: null } });
   });
 });

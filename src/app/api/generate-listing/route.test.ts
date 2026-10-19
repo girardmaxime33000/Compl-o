@@ -6,6 +6,10 @@ const h = vi.hoisted(() => ({
   monthCount: 0,
   dayCount: 0,
   rpc: vi.fn(),
+  /** Réponses des fonctions de la base : réservation du quota, crédit du pack, limites de débit. */
+  slot: "slot-1" as string | null,
+  credit: -1,
+  rateAllowed: (() => true) as (key: string) => boolean,
   inserted: [] as unknown[],
   generate: vi.fn(),
 }));
@@ -57,8 +61,16 @@ beforeEach(() => {
   h.monthCount = 0;
   h.dayCount = 0;
   h.inserted = [];
+  h.slot = "slot-1";
+  h.credit = -1;
+  h.rateAllowed = () => true;
   h.rpc.mockReset();
-  h.rpc.mockResolvedValue({ data: -1, error: null });
+  h.rpc.mockImplementation(async (name: string, args: Record<string, unknown>) => {
+    if (name === "rate_limit_hit") return { data: h.rateAllowed(String(args.p_key)), error: null };
+    if (name === "claim_listing_slot") return { data: h.slot, error: null };
+    if (name === "consume_listing_credit") return { data: h.credit, error: null };
+    return { data: null, error: null };
+  });
   h.generate.mockReset();
   h.generate.mockResolvedValue(generated);
 });
@@ -69,14 +81,16 @@ describe("POST /api/generate-listing : quotas", () => {
     expect((await call()).status).toBe(401);
   });
 
-  it("autorise une annonce gratuite sous le plafond mensuel", async () => {
-    h.monthCount = FREE_MONTHLY_LISTINGS - 1;
+  it("gratuit : réserve une place du quota mensuel avant de générer, puis la rend une fois l'annonce enregistrée", async () => {
     expect((await call()).status).toBe(200);
-    expect(h.rpc).not.toHaveBeenCalled();
+    expect(h.rpc).toHaveBeenCalledWith("claim_listing_slot", { p_user: "user-1", p_limit: FREE_MONTHLY_LISTINGS, p_period: "month" });
+    expect(h.rpc).toHaveBeenCalledWith("release_listing_slot", { p_id: "slot-1" });
+    expect(h.rpc).not.toHaveBeenCalledWith("consume_listing_credit", expect.anything());
   });
 
-  it("bloque la 3e annonce du mois sans crédit (403 LIMIT_REACHED) et ne génère rien", async () => {
-    h.monthCount = FREE_MONTHLY_LISTINGS;
+  it("la base décide : sans place réservée ni crédit, 403 LIMIT_REACHED et rien n'est généré", async () => {
+    h.slot = null;
+    h.monthCount = 0; // la lecture non verrouillée ne fait plus foi : seule la réservation compte
     const res = await call();
     expect(res.status).toBe(403);
     expect(await res.json()).toMatchObject({ code: "LIMIT_REACHED" });
@@ -84,8 +98,8 @@ describe("POST /api/generate-listing : quotas", () => {
   });
 
   it("consomme un crédit quand le quota est épuisé", async () => {
-    h.monthCount = FREE_MONTHLY_LISTINGS;
-    h.rpc.mockResolvedValue({ data: 3, error: null });
+    h.slot = null;
+    h.credit = 3;
     const res = await call();
     expect(res.status).toBe(200);
     expect(await res.json()).toMatchObject({ credits: 3 });
@@ -93,25 +107,92 @@ describe("POST /api/generate-listing : quotas", () => {
   });
 
   it("rembourse le crédit si la génération échoue", async () => {
-    h.monthCount = FREE_MONTHLY_LISTINGS;
-    h.rpc.mockResolvedValue({ data: 3, error: null });
+    h.slot = null;
+    h.credit = 3;
     h.generate.mockRejectedValue(new Error("llm down"));
     vi.spyOn(console, "error").mockImplementation(() => {});
     expect((await call()).status).toBe(502);
     expect(h.rpc).toHaveBeenCalledWith("grant_listing_credits", { p_user: "user-1", p_amount: 1 });
   });
 
-  it("plan mensuel : plafond quotidien", async () => {
-    h.profile = { subscription_status: "active", subscription_plan: "monthly" };
-    h.dayCount = MONTHLY_PLAN_DAILY_LISTINGS;
-    expect((await call()).status).toBe(403);
-    h.dayCount = MONTHLY_PLAN_DAILY_LISTINGS - 1;
-    expect((await call()).status).toBe(200);
+  it("rend la place réservée si la génération échoue", async () => {
+    h.generate.mockRejectedValue(new Error("llm down"));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    expect((await call()).status).toBe(502);
+    expect(h.rpc).toHaveBeenCalledWith("release_listing_slot", { p_id: "slot-1" });
   });
 
-  it("plan annuel : jamais bloqué", async () => {
+  it("plan mensuel : réservation sur le plafond quotidien", async () => {
+    h.profile = { subscription_status: "active", subscription_plan: "monthly" };
+    expect((await call()).status).toBe(200);
+    expect(h.rpc).toHaveBeenCalledWith("claim_listing_slot", { p_user: "user-1", p_limit: MONTHLY_PLAN_DAILY_LISTINGS, p_period: "day" });
+    h.slot = null;
+    expect((await call()).status).toBe(403);
+  });
+
+  it("plan annuel : aucune réservation, jamais bloqué", async () => {
     h.profile = { subscription_status: "active", subscription_plan: "annual" };
     h.dayCount = 500;
+    expect((await call()).status).toBe(200);
+    expect(h.rpc).not.toHaveBeenCalledWith("claim_listing_slot", expect.anything());
+  });
+
+  it("répond 503 si la réservation échoue côté base, sans générer", async () => {
+    h.rpc.mockImplementation(async (name: string) =>
+      name === "claim_listing_slot" ? { data: null, error: { message: "db" } } : { data: true, error: null },
+    );
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    expect((await call()).status).toBe(503);
+    expect(h.generate).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/generate-listing : limitation de débit", () => {
+  it("429 quand le compte dépasse sa limite, avant toute réservation ou génération", async () => {
+    h.rateAllowed = (key) => !key.startsWith("gen:user:");
+    const res = await call();
+    expect(res.status).toBe(429);
+    expect(await res.json()).toMatchObject({ code: "RATE_LIMITED" });
+    expect(h.rpc).not.toHaveBeenCalledWith("claim_listing_slot", expect.anything());
+    expect(h.generate).not.toHaveBeenCalled();
+  });
+
+  it("429 quand l'adresse dépasse sa limite ; seule l'empreinte de l'IP est transmise", async () => {
+    h.rateAllowed = (key) => !key.startsWith("gen:ip:");
+    const res = await POST(
+      new Request("http://localhost/api/generate-listing", {
+        method: "POST",
+        headers: { "x-forwarded-for": "203.0.113.7, 10.0.0.1" },
+        body: JSON.stringify({ service: "Petit bricolage", city: "Lyon" }),
+      }),
+    );
+    expect(res.status).toBe(429);
+    const keys = h.rpc.mock.calls.filter((c) => c[0] === "rate_limit_hit").map((c) => String((c[1] as { p_key: string }).p_key));
+    expect(keys.some((k) => k.startsWith("gen:ip:") && !k.includes("203.0.113.7"))).toBe(true);
+  });
+
+  it("plafond global journalier : 503, la place réservée est rendue et rien n'est généré", async () => {
+    h.rateAllowed = (key) => key !== "gen:global:day";
+    const res = await call();
+    expect(res.status).toBe(503);
+    expect(await res.json()).toMatchObject({ code: "DAILY_CAP" });
+    expect(h.rpc).toHaveBeenCalledWith("release_listing_slot", { p_id: "slot-1" });
+    expect(h.generate).not.toHaveBeenCalled();
+  });
+
+  it("plafond global : le crédit consommé est remboursé", async () => {
+    h.slot = null;
+    h.credit = 3;
+    h.rateAllowed = (key) => key !== "gen:global:day";
+    expect((await call()).status).toBe(503);
+    expect(h.rpc).toHaveBeenCalledWith("grant_listing_credits", { p_user: "user-1", p_amount: 1 });
+  });
+
+  it("une panne de la mesure de débit n'empêche pas de générer", async () => {
+    h.rpc.mockImplementation(async (name: string) =>
+      name === "rate_limit_hit" ? { data: null, error: { message: "db" } } : name === "claim_listing_slot" ? { data: "slot-1", error: null } : { data: null, error: null },
+    );
+    vi.spyOn(console, "error").mockImplementation(() => {});
     expect((await call()).status).toBe(200);
   });
 });
@@ -128,10 +209,10 @@ describe("POST /api/generate-listing : annonce multi-sites et personnalisation",
   });
 
   it("consomme un seul crédit pour les trois versions", async () => {
-    h.monthCount = FREE_MONTHLY_LISTINGS;
-    h.rpc.mockResolvedValue({ data: 3, error: null });
+    h.slot = null;
+    h.credit = 3;
     await call();
-    expect(h.rpc).toHaveBeenCalledTimes(1);
+    expect(h.rpc.mock.calls.filter((c) => c[0] === "consume_listing_credit")).toHaveLength(1);
   });
 
   it("transmet les informations de la personne au modèle", async () => {

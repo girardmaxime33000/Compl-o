@@ -33,15 +33,29 @@ function planOfPrice(priceId: string | undefined): SubscriptionPlan | null {
 
 async function setStatus(customerId: string, status: SubscriptionStatus, userId?: string | null, plan?: SubscriptionPlan | null) {
   const admin = createAdminClient();
-  const patch: { subscription_status: SubscriptionStatus; stripe_customer_id: string; subscription_plan?: SubscriptionPlan | null } = {
-    subscription_status: status,
-    stripe_customer_id: customerId,
-  };
+  // Un statut connu (actif ou résilié) met fin à la période d'impayé éventuelle.
+  const patch: {
+    subscription_status: SubscriptionStatus;
+    stripe_customer_id: string;
+    subscription_plan?: SubscriptionPlan | null;
+    past_due_since: null;
+  } = { subscription_status: status, stripe_customer_id: customerId, past_due_since: null };
   if (status === "canceled") patch.subscription_plan = null;
   else if (plan) patch.subscription_plan = plan;
   const query = admin.from("profiles").update(patch);
   const { error } = await (userId ? query.eq("id", userId) : query.eq("stripe_customer_id", customerId));
   if (error) throw error;
+}
+
+/** Identifiant du paiement Stripe (pi_...) d'une session, d'une charge ou d'un litige. */
+const paymentIntentOf = (p: string | Stripe.PaymentIntent | null | undefined) => (typeof p === "string" ? p : p?.id ?? null);
+
+/** Retire les crédits restants d'un pack remboursé ou contesté. Les crédits déjà utilisés ne sont pas repris. */
+async function revokePackCredits(admin: ReturnType<typeof createAdminClient>, paymentIntent: string | null, reason: string) {
+  if (!paymentIntent) return;
+  const { data, error } = await admin.rpc("revoke_listing_credits", { p_payment_intent: paymentIntent });
+  if (error) throw error;
+  console.warn("stripe webhook", reason, paymentIntent, "crédits retirés :", data);
 }
 
 const customerIdOf = (c: string | Stripe.Customer | Stripe.DeletedCustomer | null) => (typeof c === "string" ? c : c?.id ?? null);
@@ -84,6 +98,7 @@ export async function POST(request: Request) {
           const { error } = await admin.rpc("grant_listing_credits", {
             p_user: session.client_reference_id,
             p_amount: PACK_LISTING_CREDITS,
+            p_payment_intent: paymentIntentOf(session.payment_intent),
           });
           if (error) throw error;
           await recordEvent("payment_success", { offer: "pack" });
@@ -98,6 +113,21 @@ export async function POST(request: Request) {
         const status = event.type === "customer.subscription.deleted" ? "canceled" : mapStatus(sub.status);
         const plan = planOfPrice(sub.items.data[0]?.price.id);
         if (customerId && status) await setStatus(customerId, status, null, plan);
+        // Impayé : l'accès est conservé pendant le délai de grâce, puis retiré par /api/cron/billing si Stripe n'a pas encaissé.
+        else if (customerId && sub.status === "past_due") {
+          const { error } = await admin.rpc("mark_past_due", { p_customer: customerId });
+          if (error) throw error;
+        }
+        break;
+      }
+      case "charge.refunded": {
+        // Remboursement total uniquement : un remboursement partiel ne retire pas les crédits.
+        const charge = event.data.object;
+        if (charge.refunded) await revokePackCredits(admin, paymentIntentOf(charge.payment_intent), "remboursement");
+        break;
+      }
+      case "charge.dispute.created": {
+        await revokePackCredits(admin, paymentIntentOf(event.data.object.payment_intent), "litige");
         break;
       }
     }
