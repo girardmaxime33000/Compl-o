@@ -1,7 +1,7 @@
 import { Document, Link, Page, Path, StyleSheet, Svg, Text, View } from "@react-pdf/renderer";
 import { BRAND_BLUE, BRAND_FOOTER_TEXT, LOGO_ARC, LOGO_PLUS, LOGO_VIEWBOX } from "@/lib/brand";
 import { LEGAL } from "@/lib/legal";
-import type { Invoice, Profile } from "@/types/database";
+import type { Invoice } from "@/types/database";
 import { invoiceNumber, TVA_MENTION } from "@/lib/invoice-number";
 
 const styles = StyleSheet.create({
@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
 const fmtEur = (n: number) => `${new Intl.NumberFormat("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n).replace(/[  ]/g, " ")} EUR`;
 const fmtDate = (iso: string) => iso.split("-").reverse().join("/");
 
-export function InvoicePdf({ invoice, issuer }: { invoice: Invoice; issuer: Pick<Profile, "full_name" | "siret" | "address" | "email"> }) {
+/** L'identité de l'émetteur vient du document lui-même (figée à la création), pas du profil courant. */
+export function InvoicePdf({ invoice }: { invoice: Invoice }) {
   const isQuote = invoice.document_type === "devis";
   return (
     <Document title={`${isQuote ? "Devis" : "Facture"} ${invoiceNumber(invoice)}`}>
@@ -40,10 +41,10 @@ export function InvoicePdf({ invoice, issuer }: { invoice: Invoice; issuer: Pick
         </View>
 
         <View style={styles.block}>
-          <Text style={styles.bold}>{issuer.full_name}</Text>
-          <Text>{issuer.address}</Text>
-          <Text>SIRET : {issuer.siret}</Text>
-          {issuer.email && <Text>{issuer.email}</Text>}
+          <Text style={styles.bold}>{invoice.issuer_name}</Text>
+          <Text>{invoice.issuer_address}</Text>
+          <Text>SIRET : {invoice.issuer_siret}</Text>
+          {invoice.issuer_email && <Text>{invoice.issuer_email}</Text>}
         </View>
 
         <View style={styles.block}>
@@ -75,7 +76,7 @@ export function InvoicePdf({ invoice, issuer }: { invoice: Invoice; issuer: Pick
 
         <View style={styles.footer} fixed>
           <Text>
-            {issuer.full_name} · SIRET {issuer.siret} · {TVA_MENTION}
+            {invoice.issuer_name} · SIRET {invoice.issuer_siret} · {TVA_MENTION}
           </Text>
           {/* Mention de marque discrète : sous les mentions légales de l'émetteur, sans les remplacer. */}
           <View style={styles.brandLine}>

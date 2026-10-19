@@ -76,6 +76,15 @@ export interface Invoice {
   document_type: DocumentType;
   issue_date: string;
   created_at: string;
+  /** Numéro séquentiel par utilisateur, type et année (null pour les documents antérieurs à la migration 0012). */
+  number: number | null;
+  /** Numéro affiché sur le document, attribué par la base à la création (ex. F-2026-0001). */
+  reference: string;
+  /** Identité de l'émetteur figée à la création du document. */
+  issuer_name: string | null;
+  issuer_siret: string | null;
+  issuer_address: string | null;
+  issuer_email: string | null;
 }
 
 export interface ListingCreditGrant {

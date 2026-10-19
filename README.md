@@ -70,7 +70,7 @@ Calcul en temps réel pour une prestation de services en micro-entreprise :
 
 ### 4. Facturation simplifiée (`/dashboard/invoices`)
 
-Création de devis et de factures sans TVA avec la mention « TVA non applicable, art. 293 B du CGI », numérotation automatique, suivi du statut (brouillon, envoyé, payé) et **téléchargement en PDF**.
+Création de devis et de factures sans TVA avec la mention « TVA non applicable, art. 293 B du CGI », numérotation séquentielle attribuée par la base (`F-AAAA-0001`, par utilisateur, type et année, ordre chronologique imposé pour les factures), identité de l'émetteur figée à la création, documents immuables (seul le statut avance : brouillon, envoyé, payé ; seuls les devis se suppriment) et **téléchargement en PDF**.
 
 ### 5. Abonnement Premium (`/pricing`)
 

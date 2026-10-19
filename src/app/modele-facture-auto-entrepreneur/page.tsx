@@ -51,7 +51,7 @@ export default function InvoiceTemplatePage() {
             <div className="flex justify-between gap-4">
               <div>
                 <p className="text-2xl font-bold text-primary">FACTURE</p>
-                <p className="text-slate-500">N° F-2026-001</p>
+                <p className="text-slate-500">N° F-2026-0001</p>
               </div>
               <p>Date : 14/10/2026</p>
             </div>

@@ -1,4 +1,4 @@
-# Migrations Supabase à appliquer (0007 à 0011)
+# Migrations Supabase à appliquer (0007 à 0012)
 
 État au 16 octobre 2026. Les migrations 0001 à 0006 sont déjà appliquées sur le Supabase de production (confirmé dans `TASKS.md`). Restent 0007 à 0011. Aucune n'a été appliquée par l'assistant : il n'a pas accès à votre projet Supabase.
 
@@ -13,6 +13,7 @@ Les 11 fichiers `supabase/migrations/*.sql` ont été rejoués dans l'ordre sur 
 | 3 | `0009_testimonials.sql` | table `testimonials` + RLS | page Annonces du tableau de bord et preuve sociale (T24) | de déployer le code actuel |
 | 4 | `0010_newsletter.sql` | table `newsletter_subscribers` + RLS | inscription à la newsletter (T25) | de définir `NEWSLETTER_ENABLED=true` |
 | 5 | `0011_newsletter_campaigns.sql` | tables `newsletter_campaigns` et `newsletter_deliveries` + RLS | envoi des newsletters (T25) | du premier envoi |
+| 6 | `0012_invoice_integrity.sql` | colonnes `number`, `number_year`, `reference`, `issuer_*` sur `invoices`, déclencheurs, droits | des factures (numérotation, immuabilité) | de déployer le code actuel |
 
 **Appliquer 0007, 0008 et 0009 avant de déployer cette branche** : sans 0009, la page Annonces du tableau de bord échoue à lire `testimonials` ; sans 0007 et 0008, la génération d'annonces échoue. 0010 et 0011 peuvent attendre l'activation de la newsletter, mais rien n'interdit de les appliquer maintenant : tant que `NEWSLETTER_ENABLED` est vide, les tables restent vides.
 
