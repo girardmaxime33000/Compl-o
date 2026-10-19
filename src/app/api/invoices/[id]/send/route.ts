@@ -7,7 +7,7 @@ import { InvoicePdf } from "@/components/invoices/invoice-pdf";
 import { invoiceNumber } from "@/lib/invoice-number";
 import { isEmailConfigured, sendEmail } from "@/lib/email";
 import { invoiceEmail } from "@/lib/email-templates";
-import type { Invoice, Profile } from "@/types/database";
+import type { Invoice } from "@/types/database";
 
 export const runtime = "nodejs";
 
@@ -30,11 +30,8 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
   if (!user) return NextResponse.json({ error: "Connexion requise." }, { status: 401 });
 
   // La RLS garantit que seul un document de l'utilisateur est retourné.
-  const [{ data: invoice }, { data: issuer }] = await Promise.all([
-    supabase.from("invoices").select("*").eq("id", params.id).single<Invoice>(),
-    supabase.from("profiles").select("full_name, siret, address, email").eq("id", user.id).single<Pick<Profile, "full_name" | "siret" | "address" | "email">>(),
-  ]);
-  if (!invoice || !issuer) return NextResponse.json({ error: "Document introuvable." }, { status: 404 });
+  const { data: invoice } = await supabase.from("invoices").select("*").eq("id", params.id).single<Invoice>();
+  if (!invoice) return NextResponse.json({ error: "Document introuvable." }, { status: 404 });
 
   const admin = createAdminClient();
   const since = new Date(Date.now() - 86_400_000).toISOString();
@@ -51,7 +48,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
   const number = invoiceNumber(invoice);
   let pdf: Buffer;
   try {
-    pdf = await renderToBuffer(InvoicePdf({ invoice, issuer }));
+    pdf = await renderToBuffer(InvoicePdf({ invoice }));
   } catch (e) {
     console.error("invoice-send pdf render", e);
     return NextResponse.json({ error: "Génération du PDF impossible." }, { status: 500 });
@@ -59,7 +56,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
   const mail = invoiceEmail({
     number,
     documentLabel: invoice.document_type === "devis" ? "Devis" : "Facture",
-    issuerName: issuer.full_name ?? "Votre prestataire",
+    issuerName: invoice.issuer_name ?? "Votre prestataire",
     clientName: invoice.client_name,
     amount: Number(invoice.amount),
   });
@@ -67,7 +64,7 @@ export async function POST(req: Request, props: { params: Promise<{ id: string }
   const res = await sendEmail({
     to: body.data.to,
     ...mail,
-    replyTo: issuer.email ?? user.email ?? undefined,
+    replyTo: invoice.issuer_email ?? user.email ?? undefined,
     attachments: [{ filename: `${number}.pdf`, content: Buffer.from(pdf) }],
   });
   if (!res.ok) return NextResponse.json({ error: "Envoi impossible. Réessayez plus tard." }, { status: 502 });

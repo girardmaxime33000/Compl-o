@@ -1,7 +1,7 @@
 import { FaqSection } from "@/components/marketing/faq";
 import { PublicCtas } from "@/components/marketing/ctas";
 import { pricingFaq } from "@/lib/seo/faq";
-import { formatCents, OFFERS } from "@/lib/offers";
+import { formatCents, isOfferId, OFFERS } from "@/lib/offers";
 import { MONTHLY_PLAN_DAILY_LISTINGS, PACK_LISTING_CREDITS } from "@/lib/platforms";
 import { BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { pageMetadata } from "@/lib/seo";
@@ -37,7 +37,8 @@ function Features({ items }: { items: { label: string; ok: boolean }[] }) {
   );
 }
 
-export default async function PricingPage() {
+export default async function PricingPage(props: { searchParams: Promise<{ offer?: string }> }) {
+  const { offer } = await props.searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -68,7 +69,7 @@ export default async function PricingPage() {
             </Button>
           </CardContent>
         </Card>
-        <Offers subscribed={subscribed} />
+        <Offers subscribed={subscribed} signedIn={Boolean(user)} selected={isOfferId(offer) ? offer : undefined} />
       </div>
 
       <section className="mt-12 space-y-3">

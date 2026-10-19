@@ -1,6 +1,6 @@
-# Migrations Supabase à appliquer (0007 à 0011)
+# Migrations Supabase à appliquer (0007 à 0012)
 
-État au 16 octobre 2026. Les migrations 0001 à 0006 sont déjà appliquées sur le Supabase de production (confirmé dans `TASKS.md`). Restent 0007 à 0011. Aucune n'a été appliquée par l'assistant : il n'a pas accès à votre projet Supabase.
+État au 16 octobre 2026. Les migrations 0001 à 0006 sont déjà appliquées sur le Supabase de production (confirmé dans `TASKS.md`). Restent 0007 à 0012 (0012 a été appliquée le 19 octobre 2026 par le propriétaire). Aucune n'a été appliquée par l'assistant : il n'a pas accès à votre projet Supabase.
 
 Les 11 fichiers `supabase/migrations/*.sql` ont été rejoués dans l'ordre sur un PostgreSQL de test (PGlite, avec des substituts pour le schéma `auth` et les rôles Supabase) : aucune erreur, résultats des contrôles ci-dessous conformes, rejeu de 0007 et 0008 sans erreur. Ce test ne remplace pas l'essai sur votre vraie base.
 
@@ -13,8 +13,9 @@ Les 11 fichiers `supabase/migrations/*.sql` ont été rejoués dans l'ordre sur 
 | 3 | `0009_testimonials.sql` | table `testimonials` + RLS | page Annonces du tableau de bord et preuve sociale (T24) | de déployer le code actuel |
 | 4 | `0010_newsletter.sql` | table `newsletter_subscribers` + RLS | inscription à la newsletter (T25) | de définir `NEWSLETTER_ENABLED=true` |
 | 5 | `0011_newsletter_campaigns.sql` | tables `newsletter_campaigns` et `newsletter_deliveries` + RLS | envoi des newsletters (T25) | du premier envoi |
+| 6 | `0012_invoice_integrity.sql` | colonnes `number`, `number_year`, `reference`, `issuer_*` sur `invoices`, déclencheurs, droits | des factures (numérotation, immuabilité) | de déployer le code actuel |
 
-**Appliquer 0007, 0008 et 0009 avant de déployer cette branche** : sans 0009, la page Annonces du tableau de bord échoue à lire `testimonials` ; sans 0007 et 0008, la génération d'annonces échoue. 0010 et 0011 peuvent attendre l'activation de la newsletter, mais rien n'interdit de les appliquer maintenant : tant que `NEWSLETTER_ENABLED` est vide, les tables restent vides.
+**Appliquer 0007, 0008, 0009 et 0012 avant de déployer cette branche** : sans 0009, la page Annonces du tableau de bord échoue à lire `testimonials` ; sans 0007 et 0008, la génération d'annonces échoue ; sans 0012, les PDF et l'envoi de factures n'ont ni numéro ni identité d'émetteur (colonnes `reference` et `issuer_*` absentes) et les nouvelles factures ne sont plus numérotées. 0010 et 0011 peuvent attendre l'activation de la newsletter, mais rien n'interdit de les appliquer maintenant : tant que `NEWSLETTER_ENABLED` est vide, les tables restent vides.
 
 Toutes sont additives : aucune ne supprime ni ne modifie de donnée existante.
 
@@ -23,7 +24,7 @@ Toutes sont additives : aucune ne supprime ni ne modifie de donnée existante.
 1. Faire une sauvegarde ou vérifier que celle du jour existe (Database > Backups).
 2. Ouvrir **SQL Editor**, nouvelle requête. Coller le contenu de `0007_listing_variants.sql`, **Run**. Contrôle : « Success. No rows returned ».
 3. Nouvelle requête pour **`0008_listing_platforms.sql` seule** (ne pas la regrouper avec d'autres fichiers) : elle ajoute des valeurs à un type énuméré. Run.
-4. Même chose pour `0009_testimonials.sql`, puis `0010_newsletter.sql`, puis `0011_newsletter_campaigns.sql`, un fichier par requête.
+4. Même chose pour `0009_testimonials.sql`, puis `0010_newsletter.sql`, puis `0011_newsletter_campaigns.sql`, puis `0012_invoice_integrity.sql`, un fichier par requête. L'éditeur affiche un avertissement « destructive operations » pour 0012 (`drop policy`, `revoke`) : attendu, aucune donnée n'est supprimée.
 5. Lancer les contrôles ci-dessous.
 
 Variante en ligne de commande, si le projet est lié (`supabase link`) : `supabase db push` applique les fichiers manquants dans l'ordre.
@@ -56,6 +57,13 @@ select t.relname, has_table_privilege('anon', t.oid, 'select') as anon_select,
 from pg_class t where t.relnamespace = 'public'::regnamespace
   and t.relname in ('newsletter_subscribers', 'newsletter_campaigns', 'newsletter_deliveries');
 
+-- 0012 : les factures existantes ont une référence et une identité d'émetteur (aucune ligne avec reference null)
+select reference, number, issuer_name from public.invoices order by created_at;
+
+-- 0012 : une seule politique de suppression (invoices_delete_own_quotes) et les deux déclencheurs
+select policyname from pg_policies where schemaname = 'public' and tablename = 'invoices' and cmd = 'DELETE';
+select tgname from pg_trigger where tgrelid = 'public.invoices'::regclass and not tgisinternal;
+
 -- 0009 : politiques de la table testimonials (4 politiques : select_approved, select_own, insert_own, delete_own)
 select policyname, cmd from pg_policies where schemaname = 'public' and tablename = 'testimonials' order by policyname;
 ```
@@ -63,6 +71,8 @@ select policyname, cmd from pg_policies where schemaname = 'public' and tablenam
 Dans **Database > Advisors** (Security), aucun avertissement « RLS désactivée » ne doit apparaître pour ces quatre tables.
 
 ## Essais à faire après le déploiement
+
+0. **0012** : créer une facture : son numéro est `F-AAAA-0001` (puis 0002, etc.) ; une seconde facture datée avant la première est refusée avec un message ; le PDF et l'e-mail portent le nom, le SIRET et l'adresse saisis à la création, même après modification du profil ; le bouton de suppression n'apparaît que sur les devis.
 
 1. **T20 et T21** : connecté, générer une annonce multi-sites avec plusieurs plateformes (dont Geev et PAP) ; l'annonce apparaît dans la liste, une seule unité de quota est consommée.
 2. **T24** : ouvrir la page Annonces du tableau de bord (elle doit s'afficher) ; envoyer un témoignage de test ; le retrouver en `pending` dans la table ; le retirer depuis la page.
@@ -75,4 +85,5 @@ Les migrations sont additives, l'annulation se fait à la main et seulement si n
 - 0007 : `alter table public.listings drop column variants;` (perd les versions multi-sites déjà générées).
 - 0009 : `drop table public.testimonials;` (perd les témoignages).
 - 0010 et 0011 : `drop table public.newsletter_deliveries, public.newsletter_campaigns, public.newsletter_subscribers;` (perd les abonnés et l'historique d'envoi).
+- 0012 : `drop trigger invoices_before_insert on public.invoices; drop trigger invoices_before_update on public.invoices; drop policy invoices_delete_own_quotes on public.invoices; create policy "invoices_delete_own" on public.invoices for delete using (auth.uid() = user_id); grant update on public.invoices to authenticated;` (les colonnes ajoutées peuvent rester ; les factures redeviennent modifiables et supprimables).
 - 0008 : **non réversible** : PostgreSQL ne permet pas de retirer une valeur d'un type énuméré. Les valeurs ajoutées sont sans effet si elles ne sont pas utilisées.

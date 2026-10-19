@@ -17,6 +17,7 @@ import { eur } from "@/lib/tax";
 import type { DocumentType, Invoice, InvoiceStatus } from "@/types/database";
 
 const STATUS_LABEL: Record<InvoiceStatus, string> = { draft: "Brouillon", sent: "Envoyé", paid: "Payé" };
+const STATUS_ORDER: InvoiceStatus[] = ["draft", "sent", "paid"];
 
 interface Issuer { name: string; siret: string; address: string }
 
@@ -56,7 +57,9 @@ function NewInvoiceDialog({ issuer }: { issuer: Issuer }) {
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Nouveau devis ou facture</DialogTitle>
-          <DialogDescription>{TVA_MENTION}. Le PDF se télécharge à la création.</DialogDescription>
+          <DialogDescription>
+            {TVA_MENTION}. Le PDF se télécharge à la création. Le numéro est attribué automatiquement dans l'ordre chronologique ; une facture créée ne peut plus être modifiée ni supprimée.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div className="space-y-2">
@@ -162,19 +165,23 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
           >
             <SelectTrigger className="h-9 w-[120px]" aria-label="Statut"><SelectValue /></SelectTrigger>
             <SelectContent>
-              {(Object.keys(STATUS_LABEL) as InvoiceStatus[]).map((s) => <SelectItem key={s} value={s}>{STATUS_LABEL[s]}</SelectItem>)}
+              {/* Le statut ne recule pas : seuls l'état actuel et les suivants sont proposés. */}
+              {STATUS_ORDER.slice(STATUS_ORDER.indexOf(invoice.status)).map((s) => <SelectItem key={s} value={s}>{STATUS_LABEL[s]}</SelectItem>)}
             </SelectContent>
           </Select>
           <Button asChild variant="outline" size="icon" aria-label="Télécharger le PDF">
             <a href={`/api/invoices/${invoice.id}/pdf`}><Download className="h-4 w-4" /></a>
           </Button>
           <SendDialog invoice={invoice} />
-          <Button
-            variant="ghost" size="icon" aria-label="Supprimer" disabled={pending}
-            onClick={() => { if (confirm("Supprimer ce document ?")) startTransition(async () => { await deleteInvoice(invoice.id); }); }}
-          >
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
+          {/* Une facture numérotée ne se supprime pas ; seuls les devis le peuvent. */}
+          {invoice.document_type === "devis" && (
+            <Button
+              variant="ghost" size="icon" aria-label="Supprimer le devis" disabled={pending}
+              onClick={() => { if (confirm("Supprimer ce devis ?")) startTransition(async () => { const r = await deleteInvoice(invoice.id); if (!r.ok) toast("Suppression impossible.", "error"); }); }}
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

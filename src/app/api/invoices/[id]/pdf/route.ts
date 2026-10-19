@@ -4,7 +4,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { InvoicePdf } from "@/components/invoices/invoice-pdf";
 import { invoiceNumber } from "@/lib/invoice-number";
-import type { Invoice, Profile } from "@/types/database";
+import type { Invoice } from "@/types/database";
 
 export const runtime = "nodejs";
 
@@ -19,15 +19,12 @@ export async function GET(_req: Request, props: { params: Promise<{ id: string }
   if (!user) return NextResponse.json({ error: "Connexion requise." }, { status: 401 });
 
   // La RLS garantit que seule une facture de l'utilisateur est retournée.
-  const [{ data: invoice }, { data: issuer }] = await Promise.all([
-    supabase.from("invoices").select("*").eq("id", params.id).single<Invoice>(),
-    supabase.from("profiles").select("full_name, siret, address, email").eq("id", user.id).single<Pick<Profile, "full_name" | "siret" | "address" | "email">>(),
-  ]);
-  if (!invoice || !issuer) return NextResponse.json({ error: "Document introuvable." }, { status: 404 });
+  const { data: invoice } = await supabase.from("invoices").select("*").eq("id", params.id).single<Invoice>();
+  if (!invoice) return NextResponse.json({ error: "Document introuvable." }, { status: 404 });
 
   let buffer: Buffer;
   try {
-    buffer = await renderToBuffer(InvoicePdf({ invoice, issuer }));
+    buffer = await renderToBuffer(InvoicePdf({ invoice }));
   } catch (e) {
     console.error("invoice-pdf render", e);
     return NextResponse.json({ error: "Génération du PDF impossible." }, { status: 500 });

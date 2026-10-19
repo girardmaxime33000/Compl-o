@@ -42,12 +42,20 @@ export async function createInvoice(input: z.input<typeof createSchema>): Promis
     })
     .select("id")
     .single();
+  if (error?.message.includes("DATE_ANTERIEURE")) {
+    const last = error.details?.split("-").reverse().join("/");
+    return {
+      ok: false,
+      error: `Une facture ne peut pas être datée avant la précédente${last ? ` (${last})` : ""} : la numérotation doit suivre l'ordre chronologique.`,
+    };
+  }
   if (error || !data) return { ok: false, error: "Création impossible." };
 
   revalidatePath("/dashboard/invoices");
   return { ok: true, id: data.id };
 }
 
+/** Le statut ne va que vers l'avant (brouillon, envoyé, payé) : la base refuse tout retour en arrière. */
 export async function updateInvoiceStatus(id: string, status: "draft" | "sent" | "paid") {
   if (!z.uuid().safeParse(id).success || !["draft", "sent", "paid"].includes(status)) return { ok: false };
   const { error } = await (await createClient()).from("invoices").update({ status }).eq("id", id);
@@ -55,9 +63,10 @@ export async function updateInvoiceStatus(id: string, status: "draft" | "sent" |
   return { ok: !error };
 }
 
+/** Seuls les devis se suppriment : une facture numérotée est conservée (la base refuse la suppression). */
 export async function deleteInvoice(id: string) {
   if (!z.uuid().safeParse(id).success) return { ok: false };
-  const { error } = await (await createClient()).from("invoices").delete().eq("id", id);
+  const { data, error } = await (await createClient()).from("invoices").delete().eq("id", id).eq("document_type", "devis").select("id");
   revalidatePath("/dashboard/invoices");
-  return { ok: !error };
+  return { ok: !error && (data?.length ?? 0) > 0 };
 }
