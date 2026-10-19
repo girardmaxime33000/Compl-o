@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { ArrowRight, Calculator, FileText, Megaphone, Sparkles } from "lucide-react";
 import { requireUser, isPremium } from "@/lib/auth";
+import { CheckoutStatus } from "@/components/pricing/checkout-status";
 import { recommend, formatRate, categoryLabel } from "@/lib/activities";
 import { PLATFORMS } from "@/lib/platforms";
 import { getQuota } from "@/lib/quota";
-import { formatCents, OFFERS } from "@/lib/offers";
+import { isCheckoutActivated } from "@/lib/checkout";
+import { formatCents, isOfferId, OFFERS } from "@/lib/offers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +14,7 @@ import { ManageSubscription } from "@/components/pricing/manage-subscription";
 
 export const metadata = { title: "Tableau de bord | Compléo" };
 
-export default async function DashboardPage(props: { searchParams: Promise<{ checkout?: string }> }) {
+export default async function DashboardPage(props: { searchParams: Promise<{ checkout?: string; offer?: string }> }) {
   const searchParams = await props.searchParams;
   const { supabase, user, profile } = await requireUser();
 
@@ -31,6 +33,10 @@ export default async function DashboardPage(props: { searchParams: Promise<{ che
 
   const premium = isPremium(profile);
 
+  // Retour de paiement : l'achat est visible côté serveur quand le webhook Stripe l'a enregistré.
+  const checkoutOffer = searchParams.checkout === "success" && isOfferId(searchParams.offer) ? searchParams.offer : null;
+  const checkoutActivated = checkoutOffer ? await isCheckoutActivated(supabase, profile, checkoutOffer) : false;
+
   return (
     <div className="space-y-6">
       <div>
@@ -38,11 +44,7 @@ export default async function DashboardPage(props: { searchParams: Promise<{ che
         <p className="text-muted-foreground">Votre complément de salaire, étape par étape, près de chez vous.</p>
       </div>
 
-      {searchParams.checkout === "success" && (
-        <div className="rounded-md border border-success/40 bg-success/10 p-4 text-sm text-success" role="status">
-          Merci ! Votre achat est en cours d'activation : vos annonces seront disponibles dans un instant.
-        </div>
-      )}
+      {checkoutOffer && <CheckoutStatus activated={checkoutActivated} />}
 
       {recommendations.length === 0 ? (
         <Card>

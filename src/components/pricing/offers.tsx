@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { Check, CreditCard, Loader2, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,13 +26,24 @@ const ORDER: OfferId[] = ["pack", "monthly", "annual"];
 // Équivalent mensuel de l'annuel, calculé à partir des prix affichés.
 const annualPerMonth = formatCents(Math.round(OFFERS.annual.cents / 12));
 
-export function Offers({ subscribed }: { subscribed: boolean }) {
+/** Visiteur non connecté : le choix d'offre est repris dans l'URL de retour, les consentements restent à donner au paiement. */
+const loginUrl = (offer: OfferId) => `/login?next=${encodeURIComponent(`/pricing?offer=${offer}`)}`;
+
+export function Offers({ subscribed, signedIn, selected }: { subscribed: boolean; signedIn: boolean; selected?: OfferId }) {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [waiveWithdrawal, setWaiveWithdrawal] = useState(false);
   const [loading, setLoading] = useState<OfferId | null>(null);
+  const [consentMissing, setConsentMissing] = useState(false);
+  const consentRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   async function start(offer: OfferId) {
+    if (!(acceptTerms && waiveWithdrawal)) {
+      // Le bouton reste actif : on explique ce qui manque et on amène l'utilisateur aux cases.
+      setConsentMissing(true);
+      consentRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
     setLoading(offer);
     try {
       const res = await fetch("/api/stripe/checkout", {
@@ -41,7 +52,7 @@ export function Offers({ subscribed }: { subscribed: boolean }) {
         body: JSON.stringify({ offer, acceptTerms, waiveWithdrawal }),
       });
       if (res.status === 401) {
-        window.location.href = "/login?next=/pricing";
+        window.location.href = loginUrl(offer);
         return;
       }
       const data = (await res.json()) as { url?: string; error?: string };
@@ -53,8 +64,6 @@ export function Offers({ subscribed }: { subscribed: boolean }) {
     }
   }
 
-  const consentGiven = acceptTerms && waiveWithdrawal;
-
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-3">
@@ -62,11 +71,11 @@ export function Offers({ subscribed }: { subscribed: boolean }) {
           const offer = OFFERS[id];
           const blocked = offer.mode === "subscription" && subscribed;
           return (
-            <Card key={id} className={id === "monthly" ? "border-primary shadow-md" : undefined}>
+            <Card key={id} className={id === selected ? "border-primary ring-2 ring-primary/30" : id === "monthly" && !selected ? "border-primary shadow-md" : undefined}>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>{offer.name}</CardTitle>
-                  {id === "monthly" && <Badge>Populaire</Badge>}
+                  {id === selected ? <Badge>Votre choix</Badge> : id === "monthly" && !selected && <Badge>Populaire</Badge>}
                 </div>
                 <CardDescription>{DESCRIPTION[id]}</CardDescription>
                 <p className="pt-2 text-3xl font-bold">
@@ -82,10 +91,12 @@ export function Offers({ subscribed }: { subscribed: boolean }) {
                 </ul>
                 {blocked ? (
                   <Button asChild variant="outline" size="lg" className="w-full"><Link href="/dashboard">Abonnement actif</Link></Button>
-                ) : (
-                  <Button size="lg" className="w-full" onClick={() => start(id)} disabled={!consentGiven || loading !== null}>
+                ) : signedIn ? (
+                  <Button size="lg" className="w-full" onClick={() => start(id)} disabled={loading !== null}>
                     {loading === id && <Loader2 className="h-4 w-4 animate-spin" />} Choisir
                   </Button>
+                ) : (
+                  <Button asChild size="lg" className="w-full"><Link href={loginUrl(id)}>Créer un compte pour choisir</Link></Button>
                 )}
               </CardContent>
             </Card>
@@ -98,7 +109,12 @@ export function Offers({ subscribed }: { subscribed: boolean }) {
         <li className="flex items-center gap-1.5"><RotateCcw className="h-4 w-4" aria-hidden="true" /> Abonnements résiliables à tout moment</li>
       </ul>
 
-      <div className="space-y-2 rounded-md border p-4">
+      <div ref={consentRef} className={`space-y-2 rounded-md border p-4 ${consentMissing && !(acceptTerms && waiveWithdrawal) ? "border-destructive" : ""}`}>
+        {signedIn ? (
+          <p className="text-sm font-medium">Avant de payer, cochez les deux cases :</p>
+        ) : (
+          <p className="text-sm text-muted-foreground">Un compte gratuit est nécessaire pour payer. Les deux consentements ci-dessous vous seront demandés au moment du paiement.</p>
+        )}
         <label className="flex items-start gap-2 text-xs text-muted-foreground">
           <input type="checkbox" className="mt-0.5" checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)} />
           <span>
@@ -114,6 +130,9 @@ export function Offers({ subscribed }: { subscribed: boolean }) {
             une fois ce contenu fourni.
           </span>
         </label>
+        {consentMissing && !(acceptTerms && waiveWithdrawal) && (
+          <p className="text-sm text-destructive" role="alert">Cochez les deux cases pour continuer vers le paiement.</p>
+        )}
       </div>
     </div>
   );
