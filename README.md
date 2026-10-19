@@ -190,7 +190,8 @@ Elles se renseignent uniquement dans `.env.local` (ignoré par git) et dans les 
 | `STRIPE_SECRET_KEY` | Clé secrète Stripe |
 | `NEWSLETTER_ENABLED` | `true` : affiche le formulaire d'inscription du blog et ouvre `/api/newsletter/subscribe`. Vide par défaut. À activer seulement après relecture juridique de la politique de confidentialité et du texte de consentement. Valeur lue au build : redéployer après changement |
 | `RESEND_API_KEY`, `EMAIL_FROM` | Envoi d'e-mails via Resend (documents, séquence d'accueil, alertes). `EMAIL_FROM` : adresse d'un domaine vérifié dans Resend. Sans ces variables, l'envoi est désactivé (503) |
-| `CRON_SECRET` | Secret du cron quotidien `/api/cron/emails` (envoyé par Vercel en `Authorization: Bearer`) et des liens de désinscription |
+| `CRON_SECRET` | Secret des crons quotidiens `/api/cron/emails` et `/api/cron/billing` (envoyé par Vercel en `Authorization: Bearer`) et des liens de désinscription |
+| `GENERATE_DAILY_CAP` | Optionnel : plafond global de générations d'annonces par jour (UTC), tous comptes confondus. Défaut 300. Au-delà : 503 `DAILY_CAP`. Complète le plafond de dépense à fixer chez le fournisseur d'IA |
 | `EMAIL_UNSUBSCRIBE_SECRET` | Optionnel : secret dédié aux liens de désinscription (défaut : `CRON_SECRET`) |
 | `STRIPE_PACK_PRICE_ID` | Prix du pack ponctuel (paiement unique, 4 annonces) |
 | `STRIPE_MONTHLY_PRICE_ID` | Prix du pack mensuel (abonnement, 10 annonces/jour) |
@@ -219,7 +220,7 @@ Elles se renseignent uniquement dans `.env.local` (ignoré par git) et dans les 
    stripe listen --forward-to localhost:3000/api/webhooks/stripe
    ```
    et reporter le secret `whsec_...` affiché.
-4. Événements traités : `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`.
+4. Événements traités : `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `charge.refunded` (remboursement total d'un pack : retire les crédits restants) et `charge.dispute.created` (litige : idem). Ces deux derniers événements doivent être ajoutés à la destination du webhook dans Stripe. Un abonnement `past_due` garde son accès `PAST_DUE_GRACE_DAYS` jours (`src/lib/limits.ts`), puis `/api/cron/billing` (quotidien) le retire ; si Stripe encaisse ensuite, l'abonnement est réactivé. Réglage Stripe conseillé : Paramètres > Facturation > Relances d'abonnement, résilier l'abonnement à la fin des relances.
 5. Carte de test : `4242 4242 4242 4242`, date future, CVC quelconque.
 
 ### IA
