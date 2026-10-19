@@ -12,9 +12,9 @@ Suivi des tâches. Source : `CLAUDE.md` section 4.
 - statut: done
 - dépend de: -
 - branche: claude/new-session-og6dhq
-- critères d'acceptation: pages `/cgu`, `/cgv`, `/confidentialite` ; liens footer et écran de paiement ; case(s) à cocher avant Stripe Checkout validée(s) côté serveur ; textes marqués brouillon.
-- vérifications faites / non faites: typecheck, lint, build OK (2026-10-14). Non fait : test manuel du flux Checkout (pas de clés Stripe), relecture juridique (textes en brouillon, bannière affichée).
-- notes: deux cases (acceptation CGU/CGV/confidentialité ; accès immédiat + renonciation rétractation), validées dans `/api/stripe/checkout` (400 sinon) ; version et horodatage stockés en metadata de la session Stripe (`LEGAL.termsVersion`). Branche imposée par la session : `claude/new-session-og6dhq`.
+- critères d'acceptation: pages `/cgu`, `/cgv`, `/confidentialite` ; liens footer et écran de paiement ; case(s) à cocher avant Stripe Checkout validée(s) côté serveur ; textes marqués brouillon jusqu'à relecture juridique.
+- vérifications faites / non faites: typecheck, lint, build OK (2026-10-14). 2026-10-19 : le propriétaire déclare la relecture des 3 textes par un juriste ; bannière « brouillon » retirée, `termsVersion` = `2026-10-19-relu-1`. Non vérifié : identité du juriste et contenu de la relecture (déclaration du propriétaire), test manuel du flux Checkout en live.
+- notes: deux cases (acceptation CGU/CGV/confidentialité ; accès immédiat + renonciation rétractation), validées dans `/api/stripe/checkout` (400 sinon) ; version et horodatage stockés en metadata de la session Stripe (`LEGAL.termsVersion`). Branche imposée par la session : `claude/new-session-og6dhq`. Point ouvert : le nom du vendeur dans les CGV (« Maxime Girard ») doit correspondre à l'entité qui encaisse sur Stripe (T01).
 
 ### T03 Déploiement production
 - statut: blocked

@@ -22,9 +22,6 @@ export function LegalPage({ title, path, children }: { title: string; path: stri
           <h1 className="text-3xl font-bold">{title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">Dernière mise à jour : {LEGAL.lastUpdate}</p>
         </div>
-        <p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
-          Texte en brouillon : il n'a pas été relu par un juriste et ne doit pas être considéré comme validé.
-        </p>
         {children}
       </main>
       <SiteFooter />
