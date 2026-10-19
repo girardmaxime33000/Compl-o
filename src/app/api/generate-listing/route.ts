@@ -70,7 +70,8 @@ export async function POST(request: Request) {
   const quota = await getQuota(supabase, user.id, profile);
   let reservationId: string | null = null;
   let creditsLeft: number | undefined;
-  let creditConsumed = false;
+  /** Lot de crédits débité : le crédit lui est rendu en cas d'échec, pour qu'un remboursement du pack le retire aussi. */
+  let creditGrantId: string | null = null;
   if (quota.limit !== null) {
     const { data: slot, error: slotError } = await admin.rpc("claim_listing_slot", {
       p_user: user.id,
@@ -83,16 +84,17 @@ export async function POST(request: Request) {
     }
     reservationId = typeof slot === "string" ? slot : null;
     if (!reservationId) {
-      const { data: remaining, error: creditError } = await admin.rpc("consume_listing_credit", { p_user: user.id });
-      if (creditError || typeof remaining !== "number" || remaining < 0) {
+      const { data: credit, error: creditError } = await admin.rpc("consume_listing_credit_grant", { p_user: user.id });
+      const row = (Array.isArray(credit) ? credit[0] : credit) as { grant_id: string | null; balance: number } | null | undefined;
+      if (creditError || !row || !row.grant_id || typeof row.balance !== "number" || row.balance < 0) {
         const message =
           quota.period === "day"
             ? `Limite de ${quota.limit} annonces par jour atteinte. Revenez demain, passez à l'abonnement annuel ou achetez un pack d'annonces.`
             : `Limite de ${quota.limit} annonces par mois atteinte. Achetez un pack d'annonces ou abonnez-vous pour en générer davantage.`;
         return NextResponse.json({ error: message, code: "LIMIT_REACHED" }, { status: 403 });
       }
-      creditConsumed = true;
-      creditsLeft = remaining;
+      creditGrantId = row.grant_id;
+      creditsLeft = row.balance;
     }
   }
 
@@ -100,7 +102,7 @@ export async function POST(request: Request) {
     if (reservationId) await admin.rpc("release_listing_slot", { p_id: reservationId });
   };
   const refundCredit = async () => {
-    if (creditConsumed) await admin.rpc("grant_listing_credits", { p_user: user.id, p_amount: 1 });
+    if (creditGrantId) await admin.rpc("restore_listing_credit", { p_grant: creditGrantId });
   };
 
   // Plafond global journalier : protège la dépense du fournisseur d'IA. Le quota réservé est rendu.
